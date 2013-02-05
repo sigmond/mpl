@@ -1,4 +1,0 @@
-mpl
-===
-
-Marshalling Parameter Library
