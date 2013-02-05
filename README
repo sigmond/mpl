@@ -1,4 +1,355 @@
-mpl
-===
+MPL Marshalling Parameter Library
 
-Marshalling Parameter Library
+MPL provides the means to store and transfer data in a generic and
+platform independent manner.
+
+MPL concepts:
+
+    - A parameter consists of an identifier and a value
+    - A parameter identifier defines the name, datatype and parameter set
+      of the parameter
+    - A parameter set is a collection of parameter identifiers (a kind of
+      namespace)
+    - A parameter element is an instance of a parameter (identifier +
+      value)
+    - Parameter elements can be chained to form a parameter list - an
+      unordered sequence of parameters
+    - Parameters can be represented using a local format or a transfer
+      format
+        - The local format is binary (the "unpacked" format). The exact
+	  representation is cpu/compiler dependant and is thus not suitable
+	  for exchanging data with other systems.
+        - The transfer format is (currently) text (the "packed" format).
+	- This format is common to all systems using MPL, and is thus
+	  suitable for exchanging data. Because it is text-based it is also
+	  convenient for the human observer (e.g. for logging and debugging
+	  purposes). Other non-text transfer formats may be defined in the
+	  future.
+        - Functions are provided for conversion between local format and
+	  transfer format. These operations are often called marshalling
+	  or serialization.
+
+The MPL Parameter Definition Language:
+
+    This is a formal language (suitable for parsing by a compiler)
+        - This language is used to define parameter sets and parameters.
+        - It can also be used to define RPC (Remote Procedure Call) 
+          protocols based on MPL parameters.
+        - A utility (MPL Compiler) exists that can generate code and 
+          documentation.
+
+The MPL Parameter API
+    - provides the means to manipulate parameters and parameter lists.
+
+MPL used internally in a system:
+
+    MPL has several properties that makes it convenient for representing
+    and storing data internally in a system (program or groups of
+    programs/processes):
+
+    - Data can be represented, stored and exchanged using one formal data
+      type: the mpl_list_t* (see MPL list API). This opens for extendable
+      APIs.
+    - Presence (or absence) of a particular parameter can easily be
+      detected (opens for optional parameters)
+    - File storage support
+    - Configuration support with default values
+    - Value range control
+    - ...
+
+MPL used in a communication system:
+
+    - MPL can be used to exchange data between heterogeneous systems
+      (systems with different local data representations)
+    - The conversion between local format (unpacked) and transfer format
+      (packed) corresponds to the OSI model layer 6 functionality
+      (presentation layer).
+        - The conversion operation is sometimes referred to as
+          "marshalling" or "serializing"
+        - The MPL definition language is used to define the meaning of
+          the data types that are to be exchanged - this is sometimes
+          referred to as defining the "abstract data types"
+    - The RPC (Remote Procedure Call) part of the MPL language can be
+      used to implement protocols corresponding to some of the OSI model
+      layer 5 functionality (session layer).
+
+Limitations:
+
+    - Note that MPL is optimized for relatively small data volumes,
+      typically for use in control systems, control protocols and test
+      systems. Using MPL for storing or exchanging large amounts of data
+      is not recommended.
+
+MPL data types:
+
+    Basic data types
+        int - signed integer (cpu-depandent size)
+        sint8 - signed integer (1 byte)
+        sint16 - signed integer (2 bytes)
+        sint32 - signed integer (4 bytes)
+        sint64 - signed integer (8 bytes)
+        uint8 - unsigned integer (1 byte)
+        uint16 - unsigned integer (2 bytes)
+        uint32 - unsigned integer (4 bytes)
+        uint64 - unsigned integer (8 bytes)
+        enum - enumerated integer (cpu/compiler-depandent size and
+               signedness)
+        enum8 - unsigned enumerated integer (1 byte)
+        enum16 - unsigned enumerated integer (2 bytes)
+        enum32 - unsigned enumerated integer (5 bytes)
+        signed_enum8 - signed enumerated integer (1 byte)
+        signed_enum16 - signed enumerated integer (2 bytes)
+        signed_enum32 - signed enumerated integer (4 bytes)
+        bool - boolean (cpu/compiler-native size)
+        bool8 - boolean (1 byte)
+        string - ascii character string (one byte per character)
+        wstring - wide character string (cpu/compiler dependant size per
+                  character)
+        addr - address (cpu-dependant size)
+
+    Structured data types
+        uint8_array - array of unsigned integers (1 byte per element)
+        uint16_array - array of unsigned integers (2 bytes per element)
+        uint32_array - array of unsigned integers (4 bytes per element)
+        string_tuple - tuple (key/value) of two ascii character strings
+        int_tuple - tuple (key/value) of two signed integers
+                    (cpu-dependant size)
+        strint_tuple - tuple of one ascii string (key) and one integer
+                       (value)
+        struint8_tuple - tuple of one ascii string (key) and one unsigned
+                         1-byte integer (value)
+    Compound data types
+        bag - data type encapsulating other parameters in an unordered
+              manner
+
+MPL data representation basics:
+
+    - Parameter element:
+
+        Unpacked format:
+
+                                  mpl_param_element
+               param_elem_p -->+---------------------+
+                               | id (0x00ab0001)     |
+                               | tag (0)             |
+                               | value_p (123)       |
+                               | ...                 |
+                               | list_entry          |
+                               +---------------------+
+           
+
+        Packed format:
+
+                'my_pset.param1=123'
+           
+
+    - Parameter list:
+
+        Unpacked format:
+
+                          mpl_param_element          mpl_param_element
+                         +----------------------+   +----------------------+
+                         |  id (0x00ab0001)     |   |  id (0x00ab0002)     |
+                         |  tag (0)             |   |  tag (1)             |
+        param_list_p -+  |  value_p (123)       |   |  value_p ("string1") |
+                      |  |  ...                 |   |  ...                 |
+                      +--|->list_entry.next_p-------|->list_entry.next_p------+
+                         +----------------------+   +----------------------+  |
+                                                                              |
+                                             +--------------------------------+
+                                             |
+                                             |     mpl_param_element
+                                             |    +----------------------+
+                                             |    |  id (0x00ab0002)     |
+                                             |    |  tag (2)             |
+                                             |    |  value_p ("string2") |
+                                             |    |  ...                 |
+                                             +----|->list_entry.next_p-------+
+                                                  +----------------------+   |
+                                                                            ---
+           
+        Packed format:
+
+
+    'my_pset.param1=123,my_pset.param2[1]="string1",my_pset.param2[2]="string2"'
+
+    - Bag data type:
+
+        Unpacked format:
+                          mpl_param_element
+     param_elem_p ------->+---------------------+
+                          | id (0x00ab0003)     |
+                          | tag (0)             |
+                          | value_p----------------+
+                          | ...                 |  |
+                          | list_entry          |  |
+                          +---------------------+  |
+                                                   |
+                   +-------------------------------+
+                   |
+                   |
+                   |
+                   |   mpl_param_element          mpl_param_element
+                   |  +----------------------+   +----------------------+
+                   |  |  id (0x00ab0001)     |   |  id (0x00ab0002)     |
+                   |  |  tag (0)             |   |  tag (1)             |
+                   |  |  value_p (123)       |   |  value_p ("string1") |
+                   |  |  ...                 |   |  ...                 |
+                   +--|->list_entry.next_p-------|->list_entry.next_p------+
+                      +----------------------+   +----------------------+  |
+                                                                           |
+                                          +--------------------------------+
+                                          |
+                                          |     mpl_param_element
+                                          |    +----------------------+
+                                          |    |  id (0x00ab0002)     |
+                                          |    |  tag (2)             |
+                                          |    |  value_p ("string2") |
+                                          |    |  ...                 |
+                                          +----|->list_entry.next_p-------+
+                                               +----------------------+   |
+                                                                         ---
+        Packed format:
+
+   'my_pset.param3={my_pset.param1=123,my_pset.param2[1]="string1",my_pset.param2[2]="string2"}'
+
+
+MPL packed format details:
+
+    - Basic data types
+        int
+            value: -123
+            packed: 'my_pset.my_int_param=-123'
+        sint8
+            value: -123
+            packed: 'my_pset.my_sint8_param=-123'
+        sint16
+            value: -123
+            packed: 'my_pset.my_sint16_param=-123'
+        sint32
+            value: -123
+            packed: 'my_pset.my_sint32_param=-123'
+        sint64
+            value: -123
+            packed: 'my_pset.my_sint64_param=-123'
+        uint8
+            value: 123
+            packed: 'my_pset.my_uint8_param=0x7b'
+        uint16
+            value: 123
+            packed: 'my_pset.my_uint16_param=0x7b'
+        uint32
+            value: 123
+            packed: 'my_pset.my_uint32_param=0x7b'
+        uint64
+            value: 123
+            packed: 'my_pset.my_uint64_param=0x7b'
+        enum
+            value: 123
+            packed: 'my_pset.my_enum_param=MY_SYMBOLIC_123_NAME'
+        enum8
+            value: 123
+            packed: 'my_pset.my_enum8_param=MY_SYMBOLIC_123_NAME'
+        enum16
+            value: 123
+            packed: 'my_pset.my_enum16_param=MY_SYMBOLIC_123_NAME'
+        enum32
+            value: 123
+            packed: 'my_pset.my_enum32_param=MY_SYMBOLIC_123_NAME'
+        signed_enum8
+            value: -123
+            packed: 'my_pset.my_signed_enum8_param=MY_SYMBOLIC_MINUS_123_NAME'
+        signed_enum16
+            value: -123
+            packed: 'my_pset.my_signed_enum16_param=MY_SYMBOLIC_MINUS_123_NAME'
+        signed_enum32
+            value: -123
+            packed: 'my_pset.my_signed_enum32_param=MY_SYMBOLIC_MINUS_123_NAME'
+        bool
+            value: 1
+            packed: 'my_pset.my_bool_param=true'
+        bool8
+            value: 1
+            packed: 'my_pset.my_bool8_param=true'
+        string
+            value: hello
+            packed: 'my_pset.my_string_param=hello'
+            value: "hello world"
+            packed: 'my_pset.my_string_param="hello world"'
+            value: hello\ world
+            packed: 'my_pset.my_string_param=hello world'
+            value: "hello, world"
+            packed: 'my_pset.my_string_param="hello\, world"'
+        wstring
+            value: L"hi"
+            packed: 'my_pset.my_wstring_param=00000003000000480000004900000000'
+        addr
+            value: 0xabbababe
+            packed: 'my_pset.my_addr_param=0xabbababe'
+    - Structured data types
+        uint8_array
+            length: 4
+            value: {0x01,0x02,0x03,0x04}
+            packed: 'my_pset.my_uint8_array_param=0000000401020304'
+        uint16_array
+            length: 4
+            value: {0x0101,0x0202,0x0303,0x0404}
+            packed: 'my_pset.my_uint16_array_param=000000040101020203030404'
+        uint32_array
+            length: 4
+            value: {0x01010101,0x02020202,0x03030303,0x04040404}
+            packed: 'my_pset.my_uint32_array_param=0000000401010101020202020303030304040404'
+        string_tuple
+            value: {"thekey","thevalue"]
+            packed: 'my_pset.my_string_tuple_param=thekey:thevalue'
+        int_tuple
+            value: {123,456]
+            packed: 'my_pset.my_int_tuple_param=123:456'
+        strint_tuple
+            value: {"thekey",456]
+            packed: 'my_pset.my_strint_tuple_param=thekey:456'
+        struint8_tuple
+            value: {"192.168.0.1",24]
+            packed: 'my_pset.my_struint8_tuple_param=192.168.0.1/24'
+    Tagged parameters
+        tag 56 (legal values 0-99)
+            value: 123
+            packed: 'my_pset.my_int_param[56]=123'
+        tag 0 (the default)
+            value: 123
+            packed: 'my_pset.my_int_param=123'
+    - Compound data types
+        bag - note that bags do not preserve the sequence of the members
+            value: 123 + "s1" + false
+            packed: 'my_pset.my_bag_param={my_pset.my_bool_param=false,my_pset.my_int_param=123,my_pset.my_string_param=s1}'
+        bag with fields
+            fields: my_pset.my_int_param i, my_pset.my_string_param s, my_pset.my_bool_param b
+            value: 123 + "s1" + false
+            packed: 'my_pset.my_bag_param={b=false,i=123,s=s1}'
+
+    Commands, responses and events
+
+    - The messages generated by commands, responses and events are implemented as
+    bags. The encoding of these bags follows the same rules as with any other
+    bag parameter. Commands and events will typically be specified using field
+    names, resulting in a "bag with fields" type of encoding as shown above.
+
+    - The members of a command bag are the in- and inout-parameters specified in
+      the command along with the members of the "command_bag" (see MPL Parameter
+      Definition Language). The "command_bag" of a category is a parent of all
+      the command bags. The members of a response bag are the out- and
+      inout-parameters specified in the command along with the members of the
+      "response_bag". The "response_bag" of a category is a parent of all the
+      response bags. The members of an event bag are the parameters specified in
+      the event along with the members of the "event_bag". The "event_bag" of a
+      category is a parent of all the event bags.
+
+    - For a command, the name of the bag parameter will be the command name with
+      a suffix appended. The suffix is based on the name of the "command_bag"
+      (the parent). For example, if the "command_bag" is named "req", then
+      command "dosomething" would generate a bag named "dosomething_req" in the
+      category's parameter set. The same goes for responses and events. If the
+      "response_bag" is named "resp", then the response bag of "dosomething"
+      would be "dosomething_resp". If the "event_bag" is named "evt", then an
+      event "somethinghappened" would generate a bag called
+      "somethinghappened_evt".
