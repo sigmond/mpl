@@ -1246,7 +1246,6 @@ void mpl_compiler::gc_h_header(FILE *f, char *out_name_p)
            );
     fprintf(f,
             "#include \"mpl_param.h\"\n"
-            "#include <assert.h>\n"
            );
     if (codegen_mode != codegen_mode_api) {
         fprintf(f,
