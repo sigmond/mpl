@@ -34,13 +34,6 @@
  *
  *****************************************************************************/
 #include "mpl_dbgtrace.h"
-//#include "t_basicdefinitions.h"
-
-#if !defined(UNIT_TEST) && (MPL_INCLUDE_TV_LOGGING==1)
-#include "r_log_rmm_macros_c.h"
-#include "mpl_tv_print.def"
-#include "r_log_rmm_macros_c_init.h"
-#endif
 
 /*****************************************************************************
  *
@@ -80,9 +73,6 @@ const char *MPL_ErrorCodeNames[] =
 
 void mpl_debugtrace_init(void)
 {
-#if !defined(UNIT_TEST) && (MPL_INCLUDE_TV_LOGGING==1)
-  #include "mpl_tv_print.def"
-#endif
 }
 
 /****************************************************************************

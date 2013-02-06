@@ -39,12 +39,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#if !defined(UNIT_TEST) && (MPL_INCLUDE_TV_LOGGING==1)
-#include "r_log_rmm_macros_h.h"
-#include "mpl_tv_print.def"
-#include "r_tvlog.h"
-#endif
-
 /*****************************************************************************
  *
  * Defines & Type definitions
@@ -53,8 +47,6 @@
 
 
 extern const char *MPL_ErrorCodeNames[];
-
-#if defined(UNIT_TEST) || (MPL_INCLUDE_TV_LOGGING==0) || defined(__linux__)
 
 #define MPL_DBG_TRACE_ERROR(E_CODE,E_INFO)                              \
   do                                                                    \
@@ -67,27 +59,6 @@ extern const char *MPL_ErrorCodeNames[];
            file_p!=NULL?file_p:"",__LINE__,MPL_ErrorCodeNames[E_CODE]); \
     printf E_INFO;                                                      \
   } while(0)
-
-#else
-
-#define _MPL_DBG_TRACE_ERROR(fstr, ...) \
-  LOG_PRINTF_ERR(BS_MPL, fstr, ##__VA_ARGS__)
-
-#define MPL_DBG_TRACE_ERROR(E_CODE,E_INFO)                              \
-  do                                                                    \
-  {                                                                     \
-    char *file_p = "/"__FILE__;                                         \
-    file_p = strrchr(file_p,'/');                                       \
-    if (file_p != NULL)                                                 \
-        file_p++;                                                       \
-    _MPL_DBG_TRACE_ERROR("%s:%d ERROR! %s ",                            \
-                         file_p!=NULL?file_p:"",                        \
-                         __LINE__,MPL_ErrorCodeNames[E_CODE]);          \
-    _MPL_DBG_TRACE_ERROR E_INFO;                                        \
-  } while(0)
-
-#endif // UNIT_TEST
-
 
 #define MPL_DBG_ERROR_CODES                                 \
   /* 0  */ MPL_ERROR_CODE_ELEMENT(FAILED_ALLOCATING_MEMORY) \
