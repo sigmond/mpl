@@ -586,6 +586,7 @@ int
 
         if (element_p->id != field_param_id) {
             /* Element is a child */
+            assert(paramset_find(MPL_PARAMID_TO_PARAMSET(field_param_id),NULL));
             child_idx = get_child_index(field_param_id,
                                         element_p->id,
                                         paramset_find(MPL_PARAMID_TO_PARAMSET(field_param_id),
@@ -8856,9 +8857,13 @@ static int snprintf_escape(char delimiter, char escape,
     p = tmpstr;
     num_escapes_needed = 0;
     while (p && strlen(p)) {
-        p = strchr(p, delimiter);
-        if (!p)
+        char *_p;
+        _p = strchr(p, delimiter);
+        if (!_p)
+            _p = strchr(p, escape);
+        if (!_p)
             break;
+        p = _p;
         num_escapes_needed++;
         p++;
     }
@@ -8896,7 +8901,7 @@ static int fill_escape(char *str, int size, char delimiter, char escape)
     s = src;
     d = str;
     while (*s) {
-        if (*s == delimiter) {
+        if ((*s == delimiter) || (*s == escape)) {
             *d = escape;
             d++;
         }

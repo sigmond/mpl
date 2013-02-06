@@ -4343,7 +4343,7 @@ static int tc_byte_stuffing6(void)
   int numargs;
   int i;
 
-  strcpy( stringbuf, "val, \nwith \"fnutts\"");
+  strcpy( stringbuf, "val,\nwith\\ \"fnutts\"\\");
   printf("Orig value: '%s'\n", stringbuf);
 
   /* Find out space need */
