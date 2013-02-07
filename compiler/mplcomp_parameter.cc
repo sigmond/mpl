@@ -4273,19 +4273,19 @@ void array_parameter::cli_c_write_value_help(FILE *f)
     switch(get_type_of_array(get_type())) {
         case 8:
             fprintf(f,
-                    "            sprintf(value_help, \"%s:nnnnnnnnaabbcc.... (n=length(hex),aa/bb/cc=element value(hex));\"\n",
+                    "            sprintf(value_help, \"%s:nnnnnnnnaabbcc.... (n=length(hex),aa/bb/cc=element value(hex))\");\n",
                     get_type()
                    );
             break;
         case 16:
             fprintf(f,
-                    "            sprintf(value_help, \"%s:nnnnnnnnaaaabbbbcccc.... (n=length(hex),aaaa/bbbb/cccc=element value(hex));\"\n",
+                    "            sprintf(value_help, \"%s:nnnnnnnnaaaabbbbcccc.... (n=length(hex),aaaa/bbbb/cccc=element value(hex))\");\n",
                     get_type()
                    );
             break;
         case 32:
             fprintf(f,
-                    "            sprintf(value_help, \"%s:nnnnnnnnaaaaaaaabbbbbbbbcccccccc.... (n=length(hex),aaaaaaaa/bbbbbbbb/cccccccc=element value(hex));\"\n",
+                    "            sprintf(value_help, \"%s:nnnnnnnnaaaaaaaabbbbbbbbcccccccc.... (n=length(hex),aaaaaaaa/bbbbbbbb/cccccccc=element value(hex))\");\n",
                     get_type()
                    );
             break;

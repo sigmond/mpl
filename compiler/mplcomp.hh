@@ -1085,6 +1085,7 @@ class parameter_set : public listable_object {
     enum_parameter *create_field_table_parameter(char *name_p);
     char *get_short_name();
     enumerator_list *get_enumerator_list(char *enumerator_list_name_p);
+    enum_parameter *obtain_number_range_parameter();
     void add_number_range(number_range *number_range_p);
     number_range *find_number_range(const char *number_range_name_p);
     int check_parameters();

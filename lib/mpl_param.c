@@ -7484,14 +7484,16 @@ int mpl_pack_param_value_bag(const void* param_value_p,
 {
     mpl_list_t* l_p = (mpl_list_t*)param_value_p;
     int tmplen;
+    mpl_pack_options_t options = *options_p;
     MPL_IDENTIFIER_NOT_USED(descr_p);
 
     assert(NULL != param_value_p);
+    options.message_delimiter = ',';
 
     tmplen = mpl_param_list_pack_extended(l_p,
                                           NULL,
                                           0,
-                                          options_p);
+                                          &options);
     if (tmplen < 0)
         return tmplen;
 
@@ -7502,7 +7504,7 @@ int mpl_pack_param_value_bag(const void* param_value_p,
     if (mpl_param_list_pack_extended(l_p,
                                      buf+2,
                                      tmplen+1,
-                                     options_p) != (int)tmplen)
+                                     &options) != (int)tmplen)
         return -1;
 
     buf[0] = '=';

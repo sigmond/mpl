@@ -341,6 +341,51 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
 
     if (command_spec_p) {
         if (compiler_p->codegen_mode == codegen_mode_mpl) {
+            /* IS_COMMAND */
+            fprintf(hfile_p,
+                    "/**\n"
+                    "  * Check if a particular message list is a command.\n"
+                    "  * @param list (in) The list to search\n"
+                    "  * @return boolean (true if the message list is a command)\n"
+                    "  */\n"
+                   );
+            fprintf(hfile_p,
+                    "#define %s_IS_COMMAND(list) \\\n"
+                    " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(%s), list)\n",
+                    cnu,
+                    snu,
+                    get_command_bag()->name_p
+                   );
+            /* IS_RESPONSE */
+            fprintf(hfile_p,
+                    "/**\n"
+                    "  * Check if a particular message list is a response.\n"
+                    "  * @param list (in) The list to search\n"
+                    "  * @return boolean (true if the message list is a response)\n"
+                    "  */\n"
+                   );
+            fprintf(hfile_p,
+                    "#define %s_IS_RESPONSE(list) \\\n"
+                    " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(%s), list)\n",
+                    cnu,
+                    snu,
+                    get_response_bag()->name_p
+                   );
+            /* IS_EVENT */
+            fprintf(hfile_p,
+                    "/**\n"
+                    "  * Check if a particular message list is a event.\n"
+                    "  * @param list (in) The list to search\n"
+                    "  * @return boolean (true if the message list is a event)\n"
+                    "  */\n"
+                   );
+            fprintf(hfile_p,
+                    "#define %s_IS_EVENT(list) \\\n"
+                    " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(%s), list)\n",
+                    snu,
+                    cnu,
+                    get_event_bag()->name_p
+                   );
             fprintf(hfile_p,
                     "#define %s_COMMAND_ID_TYPE \\\n"
                     "    mpl_param_element_id_t\n",
@@ -364,10 +409,11 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
                    );
             fprintf(hfile_p,
                     "#define %s_COMMAND_ID(name)          \\\n"
-                    "    ste_ril_cmd_paramid_             \\\n"
+                    "    %s_paramid_             \\\n"
                     "    ##name                           \\\n"
                     "    ##_%s\n",
                     cnu,
+                    lnl,
                     command_spec_p->message_bag_p->name_p
                    );
             fprintf(hfile_p,
@@ -408,10 +454,11 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
                    );
             fprintf(hfile_p,
                     "#define %s_RESPONSE_ID(name)          \\\n"
-                    "    ste_ril_cmd_paramid_             \\\n"
+                    "    %s_paramid_             \\\n"
                     "    ##name                           \\\n"
                     "    ##_%s\n",
                     cnu,
+                    lnl,
                     response_spec_p->message_bag_p->name_p
                    );
             fprintf(hfile_p,
@@ -570,10 +617,11 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
                );
         fprintf(hfile_p,
                 "#define %s_EVENT_ID(name)          \\\n"
-                "    ste_ril_cmd_paramid_             \\\n"
+                "    %s_paramid_             \\\n"
                 "    ##name                           \\\n"
                 "    ##_%s\n",
                 cnu,
+                lnl,
                 event_spec_p->message_bag_p->name_p
                );
         fprintf(hfile_p,
@@ -595,7 +643,6 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
     free(cnu);
     free(snu);
 }
-
 
 void category::api_hh(FILE *f, char *indent)
 {

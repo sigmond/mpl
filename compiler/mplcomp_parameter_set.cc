@@ -209,6 +209,31 @@ enumerator_list *parameter_set::get_enumerator_list(char *enumerator_list_name_p
     return NULL;
 }
 
+enum_parameter *parameter_set::obtain_number_range_parameter()
+{
+    enum_parameter *number_range_parameter_p =
+        (enum_parameter*) find_parameter(range_id_p->value_p);
+
+    if (number_range_parameter_p == NULL) {
+        doc *doc_p;
+        create_parameter_in_default_group("enum", range_id_p->value_p);
+        number_range_parameter_p =
+            (enum_parameter*) find_parameter(range_id_p->value_p);
+        assert(number_range_parameter_p);
+        number_range_parameter_p->add_option("virtual", "true", value_type_bool);
+        doc_p = new doc(strdup("/** The values of this enum is used to identify number ranges. */"), 1);
+        doc_p->append_to(number_range_parameter_p->doc_list_p);
+        number_range_parameter_p->add_enum_value((char*)NUMBER_RANGE_NAME_ANONYMOUS, NULL);
+        enum_value *anon_value_p = number_range_parameter_p->get_enum_value(NUMBER_RANGE_NAME_ANONYMOUS);
+        doc_p = new doc(strdup(
+                               "/** Unnamed number range. All number ranges that are\n"
+                               "  * defined directly as parameter options will get this id. */"
+                              ), 1);
+        doc_p->append_to(anon_value_p->doc_list_p);
+    }
+    return number_range_parameter_p;
+}
+
 void parameter_set::add_number_range(number_range *number_range_p)
 {
     doc *doc_p;
@@ -225,24 +250,7 @@ void parameter_set::add_number_range(number_range *number_range_p)
         add_range_id((char*)NUMBER_RANGE_ID_DEFAULT);
     }
 
-    enum_parameter *number_range_parameter_p =
-        (enum_parameter*) find_parameter(range_id_p->value_p);
-    if (number_range_parameter_p == NULL) {
-        create_parameter_in_default_group("enum", range_id_p->value_p);
-        number_range_parameter_p =
-            (enum_parameter*) find_parameter(range_id_p->value_p);
-        assert(number_range_parameter_p);
-        number_range_parameter_p->add_option("virtual", "true", value_type_bool);
-        doc_p = new doc(strdup("/** The values of this enum is used to identify number ranges. */"), 1);
-        doc_p->append_to(number_range_parameter_p->doc_list_p);
-        number_range_parameter_p->add_enum_value((char*)NUMBER_RANGE_NAME_ANONYMOUS, NULL);
-        enum_value *anon_value_p = number_range_parameter_p->get_enum_value(NUMBER_RANGE_NAME_ANONYMOUS);
-        doc_p = new doc(strdup(
-                               "/** Unnamed number range. All number ranges that are\n"
-                               "  * defined directly as parameter options will get this id. */"
-                              ), 1);
-        doc_p->append_to(anon_value_p->doc_list_p);
-    }
+    enum_parameter *number_range_parameter_p = obtain_number_range_parameter();
     number_range_parameter_p->add_enum_value(number_range_p->name_p, NULL);
     enum_value *named_value_p = number_range_parameter_p->get_enum_value(number_range_p->name_p);
     doc_p = new doc(strdup("/** Named number range */"), 1);
@@ -3452,38 +3460,6 @@ void parameter_set::gc_h_macros(FILE *f)
             snu,
             snu
            );
-    /* IS_RESPONSE */
-    fprintf(f,
-            "/**\n"
-            "  * @ingroup %s\n"
-            "  * Check if a particular message list is a response.\n"
-            "  * @param list (in) The list to search\n"
-            "  * @return boolean (true if the message list is a response)\n"
-            "  */\n",
-            group
-           );
-    fprintf(f,
-            "#define %s_IS_RESPONSE(list) \\\n"
-            " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(RESP), list)\n",
-            snu,
-            snu
-           );
-    /* IS_EVENT */
-    fprintf(f,
-            "/**\n"
-            "  * @ingroup %s\n"
-            "  * Check if a particular message list is a event.\n"
-            "  * @param list (in) The list to search\n"
-            "  * @return boolean (true if the message list is a event)\n"
-            "  */\n",
-            group
-           );
-    fprintf(f,
-            "#define %s_IS_EVENT(list) \\\n"
-            " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(EVENT), list)\n",
-            snu,
-            snu
-           );
     free(lnu);
     free(snu);
 }
@@ -4735,12 +4711,12 @@ void parameter_set::wrap_up_definition()
         free(id_str_p);
     }
 
-    if (range_id_p) {
-        enum_parameter* range_id_parameter_p =
-            (enum_parameter*) find_parameter(range_id_p->value_p);
-        if (range_id_parameter_p)
-            range_id_parameter_p->wrap_up_definition();
+    if (range_id_p == NULL) {
+        add_range_id((char*)NUMBER_RANGE_ID_DEFAULT);
     }
+
+    enum_parameter* range_id_parameter_p = obtain_number_range_parameter();
+    range_id_parameter_p->wrap_up_definition();
 
     if (bag_field_table_suffix_p == NULL) {
         add_bag_field_table_suffix((char*) BAG_FIELD_TABLE_SUFFIX_DEFAULT);
