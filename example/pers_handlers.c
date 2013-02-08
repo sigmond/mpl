@@ -19,31 +19,38 @@
 #include "personnel.h"
 #include "pers_db.h"
 #include <assert.h>
+#include <stdlib.h>
+
 
 static mpl_list_t *handle_Add(mpl_bag_t *reqParams);
 static mpl_list_t *handle_Get(mpl_bag_t *reqParams);
 static mpl_list_t *handle_Delete(mpl_bag_t *reqParams);
 static mpl_list_t *handle_Find(mpl_bag_t *reqParams);
+static char *get_error_info(mpl_list_t *check_result_list_p);
 
 mpl_list_t *handle_persfile(mpl_list_t *reqMsg)
 {
     mpl_bag_t *reqParams;
     int check_ret;
     mpl_list_t *check_result_list_p = NULL;
+    char *errorinfo = NULL;
     mpl_param_element_t *elem_p;
 
     if (!PERSFILE_IS_COMMAND(reqMsg)) {
         goto req_failure;
     }
 
+    reqParams = PERSFILE_GET_COMMAND_PARAMS_PTR(reqMsg);
     elem_p = mpl_param_list_find(PERS_PARAM_ID(Req), reqMsg);
     assert(elem_p != NULL);
     check_ret = personnel_checkBag_Req(elem_p,
                                        &check_result_list_p);
-    if (check_ret)
+    if (check_ret) {
+        errorinfo = get_error_info(check_result_list_p);
+        mpl_param_list_destroy(&check_result_list_p);
         goto req_failure;
+    }
 
-    reqParams = PERSFILE_GET_COMMAND_PARAMS_PTR(reqMsg);
     switch (PERSFILE_GET_COMMAND_ID(reqMsg)) {
         case PERS_PARAM_ID(Add_Req):
             return handle_Add(reqParams);
@@ -63,6 +70,10 @@ req_failure:
         mpl_bag_t *respParams = NULL;
         PERS_ENUM_VAR_DECLARE_INIT(Error, error, parameter);
         PERS_ADD_Resp_error(&respParams, error);
+        if (errorinfo) {
+            PERS_ADD_Resp_errorinfo(&respParams, errorinfo);
+            free(errorinfo);
+        }
         if (PERS_Req_userdata_EXISTS(reqParams))
             PERS_ADD_Resp_userdata(&respParams, PERS_GET_Req_userdata(reqParams));
         mpl_add_param_to_list(&respMsg,
@@ -154,8 +165,17 @@ static mpl_list_t *handle_Find(mpl_bag_t *reqParams)
         last = PERS_GET_Find_Req_last_PTR(reqParams);
     error = persdb_Find(first, middle, last, &employees);
 
-    if (employees)
-        PERS_ADD_Find_Resp_employees(&respParams, employees);
+    if (employees) {
+        int tag = 1;
+        mpl_list_t *tmp;
+
+        MPL_LIST_FOR_EACH(employees, tmp) {
+            mpl_bag_t *tmpempl =
+                MPL_LIST_CONTAINER(tmp, mpl_param_element_t, list_entry)->value_p;
+            PERS_ADD_Find_Resp_employees_TAG(&respParams, tmpempl, tag++);
+        }
+    }
+
     PERS_ADD_Resp_error(&respParams, error);
     if (PERS_Req_userdata_EXISTS(reqParams))
         PERS_ADD_Resp_userdata(&respParams, PERS_GET_Req_userdata(reqParams));
@@ -165,3 +185,24 @@ static mpl_list_t *handle_Find(mpl_bag_t *reqParams)
     return respMsg;
 }
 
+static char *get_error_info(mpl_list_t *check_result_list_p)
+{
+    char *buf = NULL;
+    int len;
+    mpl_pack_options_t options = MPL_PACK_OPTIONS_DEFAULT;
+    options.force_field_pack_mode = true;
+
+    len = mpl_param_list_pack_extended(check_result_list_p,
+                                       NULL,
+                                       0,
+                                       &options);
+    buf = calloc(1, strlen("Protocol: ") + len + 1);
+    strcat(buf, "Protocol: ");
+    if (buf != NULL) {
+        (void)mpl_param_list_pack_extended(check_result_list_p,
+                                           buf + strlen("Protocol: "),
+                                           len+1,
+                                           &options);
+    }
+    return buf;
+}

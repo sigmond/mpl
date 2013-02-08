@@ -36,7 +36,7 @@ extern "C" {
 }
 
 
-#define CHK_FTRACE
+//#define CHK_FTRACE
 
 #define NUMBER_RANGE_ID_DEFAULT "NUMBER_RANGE_ID"
 #define NUMBER_RANGE_NAME_ANONYMOUS "ANONYMOUS"

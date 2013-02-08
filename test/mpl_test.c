@@ -10433,10 +10433,12 @@ static int tc_bag_fields(void)
     char *s1 = "hello there";
     char *s2 = "hello again";
     char *s3 = "bye bye";
-    uint8_t u8_arr[] = {11,12,13,14,15};
-    uint16_t u16_arr[] = {1,2,3,4,5};
-    uint32_t u32_arr[] = {6,7,8,9,10};
-    int arr_len = 5;
+    uint8_t u8a[] = {11,12,13,14,15};
+    mpl_uint8_array_t u8_arr = {5, u8a};
+    uint16_t u16a[] = {1,2,3,4,5};
+    mpl_uint16_array_t u16_arr = {5, u16a};
+    uint32_t u32a[] = {6,7,8,9,10};
+    mpl_uint32_array_t u32_arr = {5, u32a};
     char *st_key = "my string tup key";
     char *st_val = "my string tup val";
     int it_key = 50;
@@ -10536,9 +10538,9 @@ static int tc_bag_fields(void)
     TLL_ADD_mynewbag_it(&bag_p, it_key, it_val);
     TLL_ADD_mynewbag_sit(&bag_p, sit_key, sit_val);
     TLL_ADD_mynewbag_s8t(&bag_p, s8t_key, s8t_val);
-    TLL_ADD_mynewbag_a8(&bag_p, u8_arr, arr_len);
-    TLL_ADD_mynewbag_a16(&bag_p, u16_arr, arr_len);
-    TLL_ADD_mynewbag_a32(&bag_p, u32_arr, arr_len);
+    TLL_ADD_mynewbag_a8(&bag_p, &u8_arr);
+    TLL_ADD_mynewbag_a16(&bag_p, &u16_arr);
+    TLL_ADD_mynewbag_a32(&bag_p, &u32_arr);
 
     TLL_ADD_myparent_list_i(&l1_bag_p, 500);
     TLL_ADD_ENUM_FROM_VALUE(&l1_bag_p, my_enum3, val3);
@@ -10654,19 +10656,13 @@ static int tc_bag_fields(void)
     if (TLL_GET_mynewbag_s8t_VALUE(bag_p) != s8t_val)
         return -1;
 
-    if (memcmp(TLL_GET_mynewbag_a8_ARRAY_PTR(bag_p),u8_arr,arr_len))
-        return -1;
-    if (TLL_GET_mynewbag_a8_ARRAY_LEN(bag_p) != arr_len)
+    if (memcmp(TLL_GET_mynewbag_a8_PTR(bag_p)->arr_p,u8_arr.arr_p,u8_arr.len))
         return -1;
 
-    if (memcmp(TLL_GET_mynewbag_a16_ARRAY_PTR(bag_p),u16_arr,arr_len * 2))
-        return -1;
-    if (TLL_GET_mynewbag_a16_ARRAY_LEN(bag_p) != arr_len)
+    if (memcmp(TLL_GET_mynewbag_a16_PTR(bag_p)->arr_p,u16_arr.arr_p,u16_arr.len * 2))
         return -1;
 
-    if (memcmp(TLL_GET_mynewbag_a32_ARRAY_PTR(bag_p),u32_arr,arr_len * 4))
-        return -1;
-    if (TLL_GET_mynewbag_a32_ARRAY_LEN(bag_p) != arr_len)
+    if (memcmp(TLL_GET_mynewbag_a32_PTR(bag_p)->arr_p,u32_arr.arr_p,u32_arr.len * 4))
         return -1;
 
     if (TLL_GET_mynewbag_b(bag_p) != true)

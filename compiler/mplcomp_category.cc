@@ -382,8 +382,8 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
             fprintf(hfile_p,
                     "#define %s_IS_EVENT(list) \\\n"
                     " MPL_PARAM_PRESENT_IN_LIST(%s_PARAM_ID(%s), list)\n",
-                    snu,
                     cnu,
+                    snu,
                     get_event_bag()->name_p
                    );
             fprintf(hfile_p,
@@ -677,6 +677,7 @@ void category::api_cc(FILE *f, char *indent)
 {
     char *snl = get_parameter_set()->get_short_name();
     char *snu = str_toupper(snl);
+    char *cnu = str_toupper(name_p);
 
     if (parent_p == NULL) {
 
@@ -737,22 +738,74 @@ void category::api_cc(FILE *f, char *indent)
             indent
            );
     fprintf(f,
-            "%s{\n"
-            "%s    if (%s_IS_RESPONSE(inMsg)) {\n"
-            "%s        mpl_bag_t *params_p = %s_GET_RESPONSE_PARAMS_PTR(inMsg);\n"
-            "%s        switch (%s_GET_RESPONSE_ID(inMsg)) {\n",
+            "%s{\n",
+            indent
+           );
+    fprintf(f,
+            "%s    if (%s_IS_COMMAND(inMsg)) {\n"
+            "%s        mpl_bag_t *params_p = %s_GET_COMMAND_PARAMS_PTR(inMsg);\n"
+            "%s        switch (%s_GET_COMMAND_ID(inMsg)) {\n",
             indent,
+            cnu,
             indent,
-            snu,
+            cnu,
             indent,
-            snu,
-            indent,
-            snu
+            cnu
            );
 
     mpl_list_t *tmp_p;
     mpl_list_t *clist_p = NULL;
     object_container *container_p = new object_container(this);
+    container_p->append_to(clist_p);
+    mpl_list_append(&clist_p, get_flat_child_list());
+    MPL_LIST_FOR_EACH(clist_p, tmp_p) {
+        object_container *container_p = LISTABLE_PTR(tmp_p, object_container);
+        category *child_p = (category*) container_p->object_p;
+        mpl_list_t *tmp_p;
+
+        MPL_LIST_FOR_EACH(child_p->commands.method_list_p, tmp_p) {
+            command *command_p = LISTABLE_PTR(tmp_p, command);
+            fprintf(f,
+                    "%s            case %s_PARAM_ID(%s_%s):\n"
+                    "%s                return new %s_%s(params_p);\n",
+                    indent,
+                    snu,
+                    command_p->name_p,
+                    child_p->get_command_bag()->name_p,
+                    indent,
+                    command_p->name_p,
+                    child_p->get_command_bag()->name_p
+                   );
+        }
+    }
+    DELETE_LISTABLE_LIST(&clist_p, object_container);
+
+    fprintf(f,
+            "%s            default:\n"
+            "%s                return NULL;\n",
+            indent,
+            indent
+           );
+    fprintf(f,
+            "%s        }\n"
+            "%s    }\n",
+            indent,
+            indent
+           );
+    fprintf(f,
+            "%s    else if (%s_IS_RESPONSE(inMsg)) {\n"
+            "%s        mpl_bag_t *params_p = %s_GET_RESPONSE_PARAMS_PTR(inMsg);\n"
+            "%s        switch (%s_GET_RESPONSE_ID(inMsg)) {\n",
+            indent,
+            cnu,
+            indent,
+            cnu,
+            indent,
+            cnu
+           );
+
+    clist_p = NULL;
+    container_p = new object_container(this);
     container_p->append_to(clist_p);
     mpl_list_append(&clist_p, get_flat_child_list());
     MPL_LIST_FOR_EACH(clist_p, tmp_p) {
@@ -794,13 +847,14 @@ void category::api_cc(FILE *f, char *indent)
             "%s        mpl_bag_t *params_p = %s_GET_EVENT_PARAMS_PTR(inMsg);\n"
             "%s        switch (%s_GET_EVENT_ID(inMsg)) {\n",
             indent,
-            snu,
+            cnu,
             indent,
-            snu,
+            cnu,
             indent,
-            snu
+            cnu
            );
 
+    clist_p = NULL;
     container_p = new object_container(this);
     container_p->append_to(clist_p);
     mpl_list_append(&clist_p, get_flat_child_list());
@@ -846,6 +900,7 @@ void category::api_cc(FILE *f, char *indent)
             indent
            );
     free(snu);
+    free(cnu);
 }
 
 void category::dox_commands(FILE *f)

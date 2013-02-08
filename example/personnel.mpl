@@ -72,7 +72,7 @@ parameter_set personnel {
             EmployeeNumber number,
             Date hired,
             Date *left,
-            Picture picture
+            Picture *picture
         };
 
         addr Userdata;
@@ -83,6 +83,7 @@ parameter_set personnel {
             memory,
             general
         };
+        string ErrorInfo;
         enum ShutdownReason {
             unknown,
             maintenance,
@@ -99,6 +100,7 @@ category persfile using personnel {
 
     response_bag Resp {
         Error error,
+        ErrorInfo *errorinfo,
         Userdata *userdata
     };
 

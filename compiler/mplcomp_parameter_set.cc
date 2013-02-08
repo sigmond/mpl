@@ -658,9 +658,10 @@ void parameter_set::gc_h_macros(FILE *f)
             "  * Default exception handler for memory allocation error\n"
             "  * Default behaviour is to assert. If a specific handler\n"
             "  * is needed, this can be set by defining\n"
-            "  * USER_MEMORY_EXCEPTION_HANDLER(fn)\n"
+            "  * %s_MEMORY_EXCEPTION_HANDLER(fn)\n"
             "  * @param fn (in) the name of the function/macro that failed\n"
             "  */\n",
+            snu,
             group
            );
     fprintf(f,
@@ -1134,8 +1135,10 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_element_create\"); \\\n"
             "        } \\\n"
             "    } \\\n"
-            "    MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
-            "    mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    else { \\\n"
+            "        MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
+            "        mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             lnl,
@@ -1172,8 +1175,10 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_element_create_tag\"); \\\n"
             "        } \\\n"
             "    } \\\n"
-            "    MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
-            "    mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    else { \\\n"
+            "        MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
+            "        mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             lnl,
@@ -1210,8 +1215,10 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_element_create\"); \\\n"
             "        } \\\n"
             "    } \\\n"
-            "    MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
-            "    mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    else { \\\n"
+            "        MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
+            "        mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -1247,8 +1254,10 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_element_create_tag\"); \\\n"
             "        } \\\n"
             "    } \\\n"
-            "    MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
-            "    mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    else { \\\n"
+            "        MPL_PARAM_ELEMENT_SET_FIELD_INFO(elem_p,%s_paramid_ ##bagName,%s_FIELD_INDEX(bagName, fieldName)); \\\n"
+            "        mpl_list_add((listPtr), &elem_p->list_entry); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -1538,7 +1547,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_element_create_stringn\"); \\\n"
             "       } \\\n"
             "    } \\\n"
-            "    mpl_list_add(listPtr, &param_elem_p->list_entry);\\\n"
+            "    else { \\\n"
+            "        mpl_list_add(listPtr, &param_elem_p->list_entry);\\\n"
+            "    } \\\n"
             "} while(0)\n",
             snu,
             snu,
@@ -2288,14 +2299,14 @@ void parameter_set::gc_h_macros(FILE *f)
     fprintf(f,
             "#define %s_CONCAT_LIST(destPtr, src) \\\n"
             "do {                                                   \\\n"
-            "   mpl_list_t * __elem;                                \\\n"
-            "   __elem = mpl_param_list_clone(src);                 \\\n"
-            "   if (__elem == NULL) {                                \\\n"
+            "   mpl_list_t * __list;                                \\\n"
+            "   __list = mpl_param_list_clone(src);                 \\\n"
+            "   if ((__list == NULL) && (src != NULL)) {            \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_clone\"); \\\n"
             "       }                                               \\\n"
             "   }                                                   \\\n"
-            "   mpl_list_append(destPtr,__elem);                      \\\n"
+            "   mpl_list_append(destPtr,__list);                    \\\n"
             "} while(0)\n",
             snu,
             snu
@@ -2850,7 +2861,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, arr->len);                     \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, arr->len);             \\\n"
+            "    } \\n"
             "} while (0)\n",
             snu,
             snu,
@@ -2888,7 +2901,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, bytes);                        \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, bytes);                \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -3006,7 +3021,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, arr->len * sizeof(uint16_t));  \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, arr->len * sizeof(uint16_t));  \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -3044,7 +3061,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, bytes * sizeof(uint16_t)); \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, bytes * sizeof(uint16_t)); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -3121,7 +3140,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, arr->len * sizeof(uint32_t));  \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, arr->len * sizeof(uint32_t));  \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,
@@ -3159,7 +3180,9 @@ void parameter_set::gc_h_macros(FILE *f)
             "           %s_MEMORY_EXCEPTION_HANDLER(\"malloc\");         \\\n"
             "       }                                                    \\\n"
             "    }                                                       \\\n"
-            "    memcpy(*destPtr, arr->arr_p, bytes * sizeof(uint32_t)); \\\n"
+            "    else { \\\n"
+            "        memcpy(*destPtr, arr->arr_p, bytes * sizeof(uint32_t)); \\\n"
+            "    } \\\n"
             "} while (0)\n",
             snu,
             snu,

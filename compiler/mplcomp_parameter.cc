@@ -2478,13 +2478,13 @@ void bag_parameter::gc_h_bag(FILE *f)
 
             switch(get_type_of_array(parameter_p->get_type())) {
                 case 8:
-                    arr_type_str = "uint8_t";
+                    arr_type_str = "mpl_uint8_array_t";
                     break;
                 case 16:
-                    arr_type_str = "uint16_t";
+                    arr_type_str = "mpl_uint16_array_t";
                     break;
                 case 32:
-                    arr_type_str = "uint32_t";
+                    arr_type_str = "mpl_uint32_array_t";
                     break;
                 default:
                     assert(0);
@@ -2500,8 +2500,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                     "  * Allocates list memory.\n"
                     "  *\n"
                     "  * @param bag_p (in/out) The bag to add to\n"
-                    "  * @param _arr_p (in) Array to add (arr_p field of %s)\n"
-                    "  * @param _len (in) Number of elements in array\n"
+                    "  * @param _arr_p (in) Array to add (%s_array_t*)\n"
                     "  */\n",
                     group,
                     param_c_type(parameter_p),
@@ -2510,17 +2509,13 @@ void bag_parameter::gc_h_bag(FILE *f)
                     param_c_type(parameter_p)
                    );
             fprintf(f,
-                    "#define %s_ADD_%s_%s(bag_p, _arr_p, _len) \\\n"
+                    "#define %s_ADD_%s_%s(bag_p, _arr_p) \\\n"
                     "    do { \\\n"
-                    "        %s __arr; \\\n"
-                    "        __arr.arr_p = _arr_p; \\\n"
-                    "        __arr.len = _len; \\\n"
-                    "        %s_ADD_BAG_FIELD(bag_p, %s, %s, &__arr); \\\n"
+                    "        %s_ADD_BAG_FIELD(bag_p, %s, %s, _arr_p); \\\n"
                     "    } while (0)\n",
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_p->get_c_type(),
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p
@@ -2533,8 +2528,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                     "  * Allocates list memory.\n"
                     "  *\n"
                     "  * @param bag_p (in/out) The bag to add to\n"
-                    "  * @param _arr_p (in) Array to add (arr_p field of %s)\n"
-                    "  * @param _len (in) Number of elements in array\n"
+                    "  * @param _arr_p (in) Array to add (%s_array_t*)\n"
                     "  * @param tag (in) The tag (integer 0-99) to mark the parameter with\n"
                     "  */\n",
                     group,
@@ -2544,17 +2538,13 @@ void bag_parameter::gc_h_bag(FILE *f)
                     param_c_type(parameter_p)
                    );
             fprintf(f,
-                    "#define %s_ADD_%s_%s_TAG(bag_p, _arr_p, _len, tag) \\\n"
+                    "#define %s_ADD_%s_%s_TAG(bag_p, _arr_p, tag) \\\n"
                     "    do { \\\n"
-                    "        %s __arr; \\\n"
-                    "        __arr.arr_p = _arr_p; \\\n"
-                    "        __arr.len = _len; \\\n"
-                    "        %s_ADD_BAG_FIELD_TAG(bag_p, %s, %s, &__arr, tag); \\\n"
+                    "        %s_ADD_BAG_FIELD_TAG(bag_p, %s, %s, _arr_p, tag); \\\n"
                     "    } while (0)\n",
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_p->get_c_type(),
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p
@@ -2571,8 +2561,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                         "  *\n"
                         "  * @param bag_p (in/out) The bag to add to\n"
                         "  * @param child (in) The child parameter name\n"
-                        "  * @param _arr_p (in) Array to add (arr_p field of %s)\n"
-                        "  * @param _len (in) Number of elements in array\n"
+                        "  * @param _arr_p (in) Array to add (%s_array_t*)\n"
                         "  */\n",
                         group,
                         param_c_type(parameter_p),
@@ -2581,17 +2570,13 @@ void bag_parameter::gc_h_bag(FILE *f)
                         param_c_type(parameter_p)
                        );
                 fprintf(f,
-                        "#define %s_ADD_%s_%s_CHILD(bag_p, child, _arr_p, _len) \\\n"
+                        "#define %s_ADD_%s_%s_CHILD(bag_p, child, _arr_p) \\\n"
                         "    do { \\\n"
-                        "        %s __arr; \\\n"
-                        "        __arr.arr_p = _arr_p; \\\n"
-                        "        __arr.len = _len; \\\n"
-                        "        %s_ADD_BAG_FIELD_CHILD(bag_p, %s, %s, %s_PARAM_ID(child), &__arr); \\\n"
+                        "        %s_ADD_BAG_FIELD_CHILD(bag_p, %s, %s, %s_PARAM_ID(child), _arr_p); \\\n"
                         "    } while (0)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        parameter_p->get_c_type(),
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -2608,8 +2593,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                         "  *\n"
                         "  * @param bag_p (in/out) The bag to add to\n"
                         "  * @param child (in) The child parameter name\n"
-                        "  * @param _arr_p (in) Array to add (arr_p field of %s)\n"
-                        "  * @param _len (in) Number of elements in array\n"
+                        "  * @param _arr_p (in) Array to add (%s_array_t*)\n"
                         "  * @param tag (in) The tag (integer 0-99) to mark the parameter with\n"
                         "  */\n",
                         group,
@@ -2619,17 +2603,13 @@ void bag_parameter::gc_h_bag(FILE *f)
                         param_c_type(parameter_p)
                        );
                 fprintf(f,
-                        "#define %s_ADD_%s_%s_CHILD_TAG(bag_p, child, _arr_p, _len, tag) \\\n"
+                        "#define %s_ADD_%s_%s_CHILD_TAG(bag_p, child, _arr_p, tag) \\\n"
                         "    do { \\\n"
-                        "        %s __arr; \\\n"
-                        "        __arr.arr_p = _arr_p; \\\n"
-                        "        __arr.len = _len; \\\n"
-                        "        %s_ADD_BAG_FIELD_CHILD_TAG(bag_p, %s, %s, %s_PARAM_ID(child), &__arr, tag); \\\n"
+                        "        %s_ADD_BAG_FIELD_CHILD_TAG(bag_p, %s, %s, %s_PARAM_ID(child), _arr_p, tag); \\\n"
                         "    } while (0)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        parameter_p->get_c_type(),
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -2641,9 +2621,9 @@ void bag_parameter::gc_h_bag(FILE *f)
             fprintf(f,
                     "/**\n"
                     "  * @ingroup %s\n"
-                    "  * Get pointer to the array component of the field %s from bag %s.\n"
+                    "  * Get pointer to the field %s from bag %s.\n"
                     "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @return Pointer to the array component.\n"
+                    "  * @return Pointer to the array.\n"
                     "  */\n",
                     group,
                     parameter_list_entry_p->field_name_p,
@@ -2651,7 +2631,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                    );
             if (field_context_bag_p == this)
                 fprintf(f,
-                        "%s * %s_GET_%s_%s_ARRAY_PTR(mpl_bag_t *bag_p);\n",
+                        "%s * %s_GET_%s_%s_PTR(mpl_bag_t *bag_p);\n",
                         arr_type_str,
                         snu,
                         name_p,
@@ -2659,8 +2639,8 @@ void bag_parameter::gc_h_bag(FILE *f)
                        );
             else
                 fprintf(f,
-                        "#define %s_GET_%s_%s_ARRAY_PTR(bag_p) \\\n"
-                        "        %s_GET_%s_%s_ARRAY_PTR(bag_p)\n",
+                        "#define %s_GET_%s_%s_PTR(bag_p) \\\n"
+                        "        %s_GET_%s_%s_PTR(bag_p)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -2671,39 +2651,10 @@ void bag_parameter::gc_h_bag(FILE *f)
             fprintf(f,
                     "/**\n"
                     "  * @ingroup %s\n"
-                    "  * Get length component of the field %s from bag %s.\n"
-                    "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @return The length component.\n"
-                    "  */\n",
-                    group,
-                    parameter_list_entry_p->field_name_p,
-                    name_p
-                   );
-            if (field_context_bag_p == this)
-                fprintf(f,
-                        "int %s_GET_%s_%s_ARRAY_LEN(mpl_bag_t *bag_p);\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p
-                       );
-            else
-                fprintf(f,
-                        "#define %s_GET_%s_%s_ARRAY_LEN(bag_p) \\\n"
-                        "        %s_GET_%s_%s_ARRAY_LEN(bag_p)\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        csnu,
-                        field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p
-                       );
-            fprintf(f,
-                    "/**\n"
-                    "  * @ingroup %s\n"
-                    "  * Get pointer to the array component of the field %s from bag %s.\n"
+                    "  * Get pointer to the field %s from bag %s.\n"
                     "  * @param bag_p (in) The bag value pointer\n"
                     "  * @param tag (in) the tag that the field must match\n"
-                    "  * @return Pointer to the array component.\n"
+                    "  * @return Pointer to the array.\n"
                     "  */\n",
                     group,
                     parameter_list_entry_p->field_name_p,
@@ -2711,7 +2662,7 @@ void bag_parameter::gc_h_bag(FILE *f)
                    );
             if (field_context_bag_p == this)
                 fprintf(f,
-                        "%s * %s_GET_%s_%s_ARRAY_PTR_TAG(mpl_bag_t *bag_p, int tag);\n",
+                        "%s * %s_GET_%s_%s_PTR_TAG(mpl_bag_t *bag_p, int tag);\n",
                         arr_type_str,
                         snu,
                         name_p,
@@ -2719,38 +2670,8 @@ void bag_parameter::gc_h_bag(FILE *f)
                        );
             else
                 fprintf(f,
-                        "#define %s_GET_%s_%s_ARRAY_PTR_TAG(bag_p,tag) \\\n"
-                        "        %s_GET_%s_%s_ARRAY_PTR_TAG((bag_p),(tag))\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        csnu,
-                        field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p
-                       );
-            fprintf(f,
-                    "/**\n"
-                    "  * @ingroup %s\n"
-                    "  * Get length component of the field %s from bag %s.\n"
-                    "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @param tag (in) the tag that the field must match\n"
-                    "  * @return The length component.\n"
-                    "  */\n",
-                    group,
-                    parameter_list_entry_p->field_name_p,
-                    name_p
-                   );
-            if (field_context_bag_p == this)
-                fprintf(f,
-                        "int %s_GET_%s_%s_ARRAY_LEN_TAG(mpl_bag_t *bag_p, int tag);\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p
-                       );
-            else
-                fprintf(f,
-                        "#define %s_GET_%s_%s_ARRAY_LEN_TAG(bag_p,tag) \\\n"
-                        "        %s_GET_%s_%s_ARRAY_LEN_TAG((bag_p),(tag))\n",
+                        "#define %s_GET_%s_%s_PTR_TAG(bag_p,tag) \\\n"
+                        "        %s_GET_%s_%s_PTR_TAG((bag_p),(tag))\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -3914,27 +3835,27 @@ void bag_parameter::gc_c_bag(FILE *f)
 
             switch(get_type_of_array(parameter_p->get_type())) {
                 case 8:
-                    arr_type_str = "uint8_t";
+                    arr_type_str = "mpl_uint8_array_t";
                     break;
                 case 16:
-                    arr_type_str = "uint16_t";
+                    arr_type_str = "mpl_uint16_array_t";
                     break;
                 case 32:
-                    arr_type_str = "uint32_t";
+                    arr_type_str = "mpl_uint32_array_t";
                     break;
                 default:
                     assert(0);
             }
 
             fprintf(f,
-                    "%s * %s_GET_%s_%s_ARRAY_PTR(mpl_bag_t *__bag_p)\n"
+                    "%s * %s_GET_%s_%s_PTR(mpl_bag_t *__bag_p)\n"
                     "{\n"
                     "    mpl_param_element_t *elem_p;\n"
                     "    %s *%s;\n"
                     "    elem_p = %s_GET_%s_%s_ELEMENT_PTR(__bag_p);\n"
                     "    assert(elem_p != NULL);\n"
                     "    %s = elem_p->value_p;\n"
-                    "    return %s->arr_p;\n"
+                    "    return %s;\n"
                     "}\n",
                     arr_type_str,
                     snu,
@@ -3949,58 +3870,16 @@ void bag_parameter::gc_c_bag(FILE *f)
                     parameter_list_entry_p->field_name_p
                    );
             fprintf(f,
-                    "int %s_GET_%s_%s_ARRAY_LEN(mpl_bag_t *__bag_p)\n"
-                    "{\n"
-                    "    mpl_param_element_t *elem_p;\n"
-                    "    %s *%s;\n"
-                    "    elem_p = %s_GET_%s_%s_ELEMENT_PTR(__bag_p);\n"
-                    "    assert(elem_p != NULL);\n"
-                    "    %s = elem_p->value_p;\n"
-                    "    return %s->len;\n"
-                    "}\n",
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    param_c_type(parameter_p),
-                    parameter_list_entry_p->field_name_p,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p
-                   );
-            fprintf(f,
-                    "%s * %s_GET_%s_%s_ARRAY_PTR_TAG(mpl_bag_t *__bag_p, int __tag)\n"
+                    "%s * %s_GET_%s_%s_PTR_TAG(mpl_bag_t *__bag_p, int __tag)\n"
                     "{\n"
                     "    mpl_param_element_t *elem_p;\n"
                     "    %s *%s;\n"
                     "    elem_p = %s_GET_%s_%s_ELEMENT_PTR_TAG(__bag_p, __tag);\n"
                     "    assert(elem_p != NULL);\n"
                     "    %s = elem_p->value_p;\n"
-                    "    return %s->arr_p;\n"
+                    "    return %s;\n"
                     "}\n",
                     arr_type_str,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    param_c_type(parameter_p),
-                    parameter_list_entry_p->field_name_p,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p
-                   );
-            fprintf(f,
-                    "int %s_GET_%s_%s_ARRAY_LEN_TAG(mpl_bag_t *__bag_p, int __tag)\n"
-                    "{\n"
-                    "    mpl_param_element_t *elem_p;\n"
-                    "    %s *%s;\n"
-                    "    elem_p = %s_GET_%s_%s_ELEMENT_PTR_TAG(__bag_p, __tag);\n"
-                    "    assert(elem_p != NULL);\n"
-                    "    %s = elem_p->value_p;\n"
-                    "    return %s->len;\n"
-                    "}\n",
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,

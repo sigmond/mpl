@@ -72,6 +72,7 @@ PERS_ENUM_TYPE(Error) persdb_Add(mpl_bag_t *employee, uint16_t *number)
         goto finish;
     }
     fclose(dbfile);
+    *number = new_number;
 
 finish:
     return error;
