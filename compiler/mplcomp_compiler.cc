@@ -1270,6 +1270,7 @@ void mpl_compiler::gc_h_header(FILE *f, char *out_name_p)
     }
     else if (codegen_mode == codegen_mode_api) {
         fprintf(f, "#include \"%s.h\"\n", out_name_p);
+        fprintf(f, "#include <wchar.h>\n");
     }
     else {
         gc_lines(f, hlines_p, code_segment_top, codegen_mode);
@@ -2009,6 +2010,44 @@ bool mpl_compiler::param_is_command_parameter(parameter *param_p)
         MPL_LIST_FOR_EACH(category_p->commands.method_list_p, tmp_p) {
             command_p = LISTABLE_PTR(tmp_p, command);
             if (command_p->command_bag_p->param_is_field_or_subfield(param_p))
+                return true;
+        }
+    }
+    return false;
+}
+
+bool mpl_compiler::bag_is_response(bag_parameter *bag_p)
+{
+    mpl_list_t *tmp_p;
+    category *category_p;
+
+    MPL_LIST_FOR_EACH(categories_p, tmp_p) {
+        category_p = LISTABLE_PTR(tmp_p, category);
+
+        mpl_list_t *tmp_p;
+        command *command_p;
+        MPL_LIST_FOR_EACH(category_p->commands.method_list_p, tmp_p) {
+            command_p = LISTABLE_PTR(tmp_p, command);
+            if (command_p->response_bag_p == bag_p)
+                return true;
+        }
+    }
+    return false;
+}
+
+bool mpl_compiler::bag_is_event(bag_parameter *bag_p)
+{
+    mpl_list_t *tmp_p;
+    category *category_p;
+
+    MPL_LIST_FOR_EACH(categories_p, tmp_p) {
+        category_p = LISTABLE_PTR(tmp_p, category);
+
+        mpl_list_t *tmp_p;
+        event *event_p;
+        MPL_LIST_FOR_EACH(category_p->events.method_list_p, tmp_p) {
+            event_p = LISTABLE_PTR(tmp_p, event);
+            if (event_p->event_bag_p == bag_p)
                 return true;
         }
     }

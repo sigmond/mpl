@@ -112,6 +112,9 @@ class parameter : public inheritable_object {
     virtual void gc_c_field_values(FILE *f, char *parameter_set_name_p);
     virtual void gc_c_children(FILE *f, char *parameter_set_name_p);
     virtual void cli_c_write_value_help(FILE *f) { }
+    virtual void cli_h_help(FILE *f);
+    virtual void cli_c_help(FILE *f);
+    virtual void help(ostream &os);
 
     virtual void api_hh(FILE* f, char *indent) { }
     virtual void api_cc(FILE* f, char *indent) { }
@@ -199,6 +202,7 @@ class int_parameter : public parameter {
     virtual void gc_c_ranges(FILE *f, char *parameter_set_name_p);
     virtual void latex_options(FILE *f);
     virtual void cli_c_write_value_help(FILE *f);
+    virtual void help(ostream &os);
 
     virtual void convert_doc();
     virtual void print(int level);
@@ -409,6 +413,7 @@ class enum_parameter : public parameter {
     void gc_c_enum(FILE *f, char *parameter_set_name_p);
     void cli_h_completions(FILE *f);
     void cli_c_completions(FILE *f);
+    virtual void help(ostream &os);
 
     virtual void convert_doc();
     virtual void print(int level);
@@ -487,6 +492,10 @@ class bag_parameter : public parameter {
     void gc_c_bag(FILE *f);
     void cli_h_completions(FILE *f);
     void cli_c_completions(FILE *f);
+    virtual void cli_h_help(FILE *f);
+    virtual void cli_c_help(FILE *f);
+    virtual void help(ostream &os);
+    
 
     virtual void api_hh(FILE* f, char *indent);
     virtual void api_cc(FILE* f, char *indent);

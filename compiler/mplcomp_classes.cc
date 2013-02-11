@@ -825,7 +825,7 @@ void command::latex(FILE *f, parameter_set *default_parameter_set_p)
 
 void command::help(ostream &os, parameter_set *default_parameter_set_p)
 {
-    os << name_p;
+    os << "Command: " << name_p;
     os << "\\n";
     help_help_list(os, help_list_p, "  ");
     help_parameter_list(os,
@@ -1652,6 +1652,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                  label_p,
                                                                  value_p,
                                                                  text_p);
+        else if (parser_mode == parser_mode_help)
+            ((commands_class *) target_object_p)->add_help_info((help_entry*)this,
+                                                                label_p,
+                                                                value_p,
+                                                                text_p);
     }
     else if (!strcmp(target_object_type_p, "event")) {
         if (parser_mode == parser_mode_dox)
@@ -1664,6 +1669,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                         label_p,
                                                         value_p,
                                                         text_p);
+        else if (parser_mode == parser_mode_help)
+            ((event *) target_object_p)->add_help_info((help_entry*)this,
+                                                       label_p,
+                                                       value_p,
+                                                       text_p);
     }
     else if (!strcmp(target_object_type_p, "events_class")) {
         if (parser_mode == parser_mode_dox)
@@ -1676,6 +1686,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                label_p,
                                                                value_p,
                                                                text_p);
+        else if (parser_mode == parser_mode_help)
+            ((events_class *) target_object_p)->add_help_info((help_entry*)this,
+                                                              label_p,
+                                                              value_p,
+                                                              text_p);
     }
     else if (!strcmp(target_object_type_p, "category")) {
         if (parser_mode == parser_mode_dox)
@@ -1688,6 +1703,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                            label_p,
                                                            value_p,
                                                            text_p);
+        else if (parser_mode == parser_mode_help)
+            ((category *) target_object_p)->add_help_info((help_entry*)this,
+                                                          label_p,
+                                                          value_p,
+                                                          text_p);
     }
     else if (!strcmp(target_object_type_p, "parameter_list_entry")) {
         if (parser_mode == parser_mode_dox)
@@ -1700,6 +1720,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                        label_p,
                                                                        value_p,
                                                                        text_p);
+        else if (parser_mode == parser_mode_help)
+            ((parameter_list_entry *) target_object_p)->add_help_info((help_entry*)this,
+                                                                      label_p,
+                                                                      value_p,
+                                                                      text_p);
     }
     else if (!strcmp(target_object_type_p, "parameter_set")) {
         if (parser_mode == parser_mode_dox)
@@ -1712,6 +1737,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                 label_p,
                                                                 value_p,
                                                                 text_p);
+        else if (parser_mode == parser_mode_help)
+            ((parameter_set *) target_object_p)->add_help_info((help_entry*)this,
+                                                               label_p,
+                                                               value_p,
+                                                               text_p);
     }
     else if (!strcmp(target_object_type_p, "parameter_group")) {
         if (parser_mode == parser_mode_dox)
@@ -1724,6 +1754,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                   label_p,
                                                                   value_p,
                                                                   text_p);
+        else if (parser_mode == parser_mode_help)
+            ((parameter_group *) target_object_p)->add_help_info((help_entry*)this,
+                                                                 label_p,
+                                                                 value_p,
+                                                                 text_p);
     }
     else if (!strcmp(target_object_type_p, "string_entry")) {
         if (parser_mode == parser_mode_dox)
@@ -1736,6 +1771,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                label_p,
                                                                value_p,
                                                                text_p);
+        else if (parser_mode == parser_mode_help)
+            ((string_entry *) target_object_p)->add_help_info((help_entry*)this,
+                                                              label_p,
+                                                              value_p,
+                                                              text_p);
     }
     else if (!strcmp(target_object_type_p, "ellipsis")) {
         if (parser_mode == parser_mode_dox)
@@ -1748,6 +1788,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                            label_p,
                                                            value_p,
                                                            text_p);
+        else if (parser_mode == parser_mode_help)
+            ((ellipsis *) target_object_p)->add_help_info((help_entry*)this,
+                                                          label_p,
+                                                          value_p,
+                                                          text_p);
     }
     else if (!strcmp(target_object_type_p, "enum_value")) {
         if (parser_mode == parser_mode_dox)
@@ -1760,6 +1805,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                              label_p,
                                                              value_p,
                                                              text_p);
+        else if (parser_mode == parser_mode_help)
+            ((enum_value *) target_object_p)->add_help_info((help_entry*)this,
+                                                            label_p,
+                                                            value_p,
+                                                            text_p);
     }
     else if (!strcmp(target_object_type_p, "file")) {
         if (parser_mode == parser_mode_dox)
@@ -1772,6 +1822,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                        label_p,
                                                        value_p,
                                                        text_p);
+        else if (parser_mode == parser_mode_help)
+            ((file *) target_object_p)->add_help_info((help_entry*)this,
+                                                      label_p,
+                                                      value_p,
+                                                      text_p);
     }
     else if (!strcmp(target_object_type_p, "number_range")) {
         if (parser_mode == parser_mode_dox)
@@ -1784,6 +1839,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                label_p,
                                                                value_p,
                                                                text_p);
+        else if (parser_mode == parser_mode_help)
+            ((number_range *) target_object_p)->add_help_info((help_entry*)this,
+                                                              label_p,
+                                                              value_p,
+                                                              text_p);
     }
     else if (get_type_of_int(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1796,6 +1856,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                 label_p,
                                                                 value_p,
                                                                 text_p);
+        else if (parser_mode == parser_mode_help)
+            ((int_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                               label_p,
+                                                               value_p,
+                                                               text_p);
     }
     else if (get_type_of_bool(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1808,6 +1873,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                  label_p,
                                                                  value_p,
                                                                  text_p);
+        else if (parser_mode == parser_mode_help)
+            ((bool_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                label_p,
+                                                                value_p,
+                                                                text_p);
     }
     else if (get_type_of_enum(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1820,6 +1890,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                  label_p,
                                                                  value_p,
                                                                  text_p);
+        else if (parser_mode == parser_mode_help)
+            ((enum_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                label_p,
+                                                                value_p,
+                                                                text_p);
     }
     else if (get_type_of_string(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1832,6 +1907,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                    label_p,
                                                                    value_p,
                                                                    text_p);
+        else if (parser_mode == parser_mode_help)
+            ((string_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                  label_p,
+                                                                  value_p,
+                                                                  text_p);
     }
     else if (get_type_of_tuple(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1844,6 +1924,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                   label_p,
                                                                   value_p,
                                                                   text_p);
+        else if (parser_mode == parser_mode_help)
+            ((tuple_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                 label_p,
+                                                                 value_p,
+                                                                 text_p);
     }
     else if (get_type_of_array(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1856,6 +1941,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                   label_p,
                                                                   value_p,
                                                                   text_p);
+        else if (parser_mode == parser_mode_help)
+            ((array_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                 label_p,
+                                                                 value_p,
+                                                                 text_p);
     }
     else if (get_type_of_addr(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1868,6 +1958,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                  label_p,
                                                                  value_p,
                                                                  text_p);
+        else if (parser_mode == parser_mode_help)
+            ((addr_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                                label_p,
+                                                                value_p,
+                                                                text_p);
     }
     else if (get_type_of_bag(target_object_type_p) != 0) {
         if (parser_mode == parser_mode_dox)
@@ -1880,6 +1975,11 @@ void x_entry::add_info(parser_mode_t parser_mode,
                                                                 label_p,
                                                                 value_p,
                                                                 text_p);
+        else if (parser_mode == parser_mode_help)
+            ((bag_parameter *) target_object_p)->add_help_info((help_entry*)this,
+                                                               label_p,
+                                                               value_p,
+                                                               text_p);
     }
     else {
         fprintf(stderr,

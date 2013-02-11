@@ -189,6 +189,7 @@ static char *get_error_info(mpl_list_t *check_result_list_p)
 {
     char *buf = NULL;
     int len;
+    const char *prompt = "Protocol error: ";
     mpl_pack_options_t options = MPL_PACK_OPTIONS_DEFAULT;
     options.force_field_pack_mode = true;
 
@@ -196,11 +197,11 @@ static char *get_error_info(mpl_list_t *check_result_list_p)
                                        NULL,
                                        0,
                                        &options);
-    buf = calloc(1, strlen("Protocol: ") + len + 1);
-    strcat(buf, "Protocol: ");
+    buf = calloc(1, strlen(prompt) + len + 1);
+    strcat(buf, prompt);
     if (buf != NULL) {
         (void)mpl_param_list_pack_extended(check_result_list_p,
-                                           buf + strlen("Protocol: "),
+                                           buf + strlen(prompt),
                                            len+1,
                                            &options);
     }

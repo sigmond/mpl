@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include "personnel.h"
-#include "personnel_cli.h"
+#include "testprotocol.h"
+#include "testprotocol_cli.h"
 
 #include "linenoise.h"
 
@@ -58,7 +58,7 @@ static void completion(const char *buf, linenoiseCompletions *lc) {
     }
 
     completionPosIndex = 0;
-    numCompletionStrings = persfile_get_command_completions(buf, &completionPosIndex, completionStrings, maxStrings);
+    numCompletionStrings = testprot_get_command_completions(buf, &completionPosIndex, completionStrings, maxStrings);
 
     for (i = 0; i < numCompletionStrings; i++) {
         linenoiseAddCompletion(lc,completionStrings[i]);
@@ -76,13 +76,13 @@ static int readlines(void) {
 
     completionStrings = calloc(maxStrings, sizeof(char *));
 
-    while((line = linenoise("PERS> ")) != NULL) {
+    while((line = linenoise("TESTPROT> ")) != NULL) {
         if (line[0] != '\0') {
             if (strcmp(line,"quit") && strncmp(line, "help ", 5)) {
                 char *req;
                 int ret = -1;
                 req = formatCmdLine(line, "Req");
-                reqMsg = mpl_param_list_unpack_param_set(req, PERSONNEL_PARAM_SET_ID);
+                reqMsg = mpl_param_list_unpack_param_set(req, TESTPROTOCOL_PARAM_SET_ID);
                 if (!reqMsg) {
                     printf("Protocol error\n");
                     ret = -1;
@@ -99,7 +99,7 @@ static int readlines(void) {
             }
             else if (!strncmp(line, "help ", 5)) {
                 char *helptext;
-                persfile_get_command_help(line, &helptext);
+                testprot_get_command_help(line, &helptext);
                 if (helptext != NULL) {
                     printf("%s", helptext);
                     free(helptext);
@@ -133,14 +133,14 @@ int main(int argc, char **argv)
     char *pi = NULL;
     char *po = NULL;
 
-    printf("PERS CLI started with arguments:");
+    printf("TESTPROT CLI started with arguments:");
     for (i = 0 ; i < argc; i++)
         printf(" %s", argv[i]);
     printf("\n");
     while (-1 != (opt = getopt(argc, argv, "i:o:h"))) {
         switch (opt) {
         case 'h':
-            printf("Usage: pers_cli <options>\n");
+            printf("Usage: testprot_cli <options>\n");
             printf("    -h Show command usage\n");
             printf("    -i input pipe\n");
             printf("    -o output pipe\n");
@@ -179,9 +179,9 @@ int main(int argc, char **argv)
         fi = stdin;
     }
 
-    if (personnel_param_init())
+    if (testprotocol_param_init())
     {
-        printf("personnel_param_init() failed\n");
+        printf("testprotocol_param_init() failed\n");
         return -1;
     }
     linenoiseSetCompletionCallback(completion);
@@ -211,12 +211,12 @@ static int checkCommand(mpl_list_t *cmdMsg)
     const char *prompt = "Protocol error: ";
     options.force_field_pack_mode = true;
 
-    elem_p = mpl_param_list_find(PERS_PARAM_ID(Req), cmdMsg);
+    elem_p = mpl_param_list_find(TESTP_PARAM_ID(Req), cmdMsg);
     if (elem_p == NULL) {
         printf("%sno command\n", prompt);
         return -1;
     }
-    if (personnel_checkBag_Req(elem_p, &check_result_list_p)) {
+    if (testprotocol_checkBag_Req(elem_p, &check_result_list_p)) {
         len = mpl_param_list_pack_extended(check_result_list_p,
                                            NULL,
                                            0,

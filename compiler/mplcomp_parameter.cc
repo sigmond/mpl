@@ -4184,7 +4184,7 @@ void string_parameter::cli_c_write_value_help(FILE *f)
             break;
         case 2: /* wstring */
             fprintf(f,
-                    "            sprintf(value_help, \"%s:nnnnnnnnaaaaaaaabbbbbbbbcccccccc.... (n=length(hex),aaaaaaaa/bbbbbbbb/cccccccc=element value(hex));\"\n",
+                    "            sprintf(value_help, \"%s:nnnnnnnnaaaaaaaabbbbbbbbcccccccc.... (n=length(hex),aaaaaaaa/bbbbbbbb/cccccccc=element value(hex))\");\n",
                     get_type()
                    );
             break;
@@ -4521,6 +4521,147 @@ void enum_parameter::cli_c_completions(FILE *f)
             "}\n"
             "\n"
            );
+}
+
+void parameter::cli_h_help(FILE *f)
+{
+    fprintf(f,
+            "int %s_%s_get_parameter_help(char **helptext);\n",
+            parameter_set_p->get_short_name(),
+            name_p
+           );
+}
+
+void parameter::cli_c_help(FILE *f)
+{
+    fprintf(f,
+            "int %s_%s_get_parameter_help(char **helptext)\n"
+            "{\n",
+            parameter_set_p->get_short_name(),
+            name_p
+           );
+    ostringstream help_stream(ostringstream::out);
+    string s;
+    help(help_stream);
+    s = help_stream.str();
+    fprintf(f,
+            "    *helptext = strdup(\"%s\");\n",
+            s.c_str()
+           );
+
+    fprintf(f,
+            "    return 0;\n"
+            "}\n"
+            "\n"
+           );
+}
+
+void parameter::help(ostream &os)
+{
+    os << get_type() << ": " << name_p;
+    os << "\\n";
+    help_help_list(os, help_list_p, "  ");
+}
+
+void int_parameter::help(ostream &os)
+{
+    parameter::help(os);
+    if (get_property("min")) {
+      os << "min=" << (char*)get_property("min") << "\\n";
+    }
+    else if (!get_property("number_ranges")) {
+      os << "min=" << type_min() << "\\n";
+    }
+
+
+    if (get_property("number_ranges")) {
+      os << "range(";
+      const char *rangesep = "";
+
+      mpl_list_t *tmp_p;
+      MPL_LIST_FOR_EACH((mpl_list_t*)get_property("number_ranges"), tmp_p) {
+	number_range *number_range_p = LISTABLE_PTR(tmp_p, number_range);
+	mpl_list_t *tmp_p;
+	integer_range *integer_range_p;
+	MPL_LIST_FOR_EACH(number_range_p->range_list_p, tmp_p) {
+	  integer_range_p = LISTABLE_PTR(tmp_p, integer_range);
+	  os << rangesep << *integer_range_p->get_first_p() << ".." << *integer_range_p->get_last_p();
+	  rangesep = ",";
+        }
+      }
+      os << ")" << "\\n";
+    }
+
+    if (get_property("max")) {
+      os << "max=" << (char*)get_property("max") << "\\n";
+    }
+    else if (!get_property("number_ranges")) {
+      os << "max=" << type_max() << "\\n";
+    }    
+}
+
+void enum_parameter::help(ostream &os)
+{
+    parameter::help(os);
+
+    os << "Values:\\n";
+
+    mpl_list_t *tmp_p;
+    enum_value *enum_value_p;
+    MPL_LIST_FOR_EACH((mpl_list_t*)get_property("enum_values"), tmp_p) {
+        enum_value_p = LISTABLE_PTR(tmp_p, enum_value);
+        os << "  - ";
+        os << enum_value_p->name_p << "=" << *enum_value_p->get_value_p();
+        os << ": ";
+        help_help_list(os, enum_value_p->help_list_p, "    ", "");
+    }
+}
+
+void bag_parameter::cli_h_help(FILE *f)
+{
+    fprintf(f,
+            "int %s_%s_get_bag_help(char **helptext);\n",
+            parameter_set_p->get_short_name(),
+            name_p
+           );
+}
+
+void bag_parameter::cli_c_help(FILE *f)
+{
+    fprintf(f,
+            "int %s_%s_get_bag_help(char **helptext)\n"
+            "{\n",
+            parameter_set_p->get_short_name(),
+            name_p
+           );
+    ostringstream help_stream(ostringstream::out);
+    string s;
+    help(help_stream);
+    s = help_stream.str();
+    fprintf(f,
+            "    *helptext = strdup(\"%s\");\n",
+            s.c_str()
+           );
+
+    fprintf(f,
+            "    return 0;\n"
+            "}\n"
+            "\n"
+           );
+}
+
+void bag_parameter::help(ostream &os)
+{
+    os << "Bag: " << name_p;
+    os << "\\n";
+    help_help_list(os, help_list_p, "  ");
+    help_parameter_list(os,
+                        bag_parameter_list_p,
+                        NULL,
+                        direction_none,
+                        parameter_set_p,
+                        "Members"
+                       );
 }
 
 void bag_parameter::api_hh(FILE *f, char *indent)

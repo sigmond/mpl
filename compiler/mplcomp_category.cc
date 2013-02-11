@@ -582,7 +582,7 @@ void category::gc(FILE *hfile_p, FILE *cfile_p, mpl_list_t *categories_p)
                         command_p->name_p
                        );
                 fprintf(hfile_p,
-                        "int %s_%s_get_parameter_help(char **helptext);\n",
+                        "int %s_%s_get_command_parameter_help(char **helptext);\n",
                         tcn,
                         command_p->name_p
                        );
@@ -1351,6 +1351,7 @@ void category::cli_command_completions(FILE *f)
             lnu,
             name_p
            );
+    get_parameter_set()->cli_parameter_help_completions(f);
     fprintf(f,
             "#define %s_%s_commands_VALUE_ELEMENT(NAME)               \\\n"
             "    if (!strncmp(#NAME,line,strlen(#NAME))) {            \\\n"
@@ -1608,8 +1609,8 @@ void category::cli_command_help(FILE *f)
            );
     fprintf(f,
             "#define %s_%s_commands_VALUE_ELEMENT(NAME)               \\\n"
-            "    if (!strncmp(\"help \" #NAME, line, strlen(line))) \\\n"
-            "        return %s_ ##NAME ##_get_parameter_help(helptext); \\\n"
+            "    if (!strcmp(\"help \" #NAME, line)) \\\n"
+            "        return %s_ ##NAME ##_get_command_parameter_help(helptext); \\\n"
             "\n"
             "        %s_%s_commands\n"
             "\n"
@@ -1623,6 +1624,7 @@ void category::cli_command_help(FILE *f)
             lnu,
             name_p
            );
+    get_parameter_set()->cli_call_parameter_help(f);
     fprintf(f,
             "    *helptext = NULL;\n"
             "    return -1;\n"
@@ -1637,7 +1639,7 @@ void category::cli_parameter_help(FILE *f, command *command_p)
 {
     char *tcn = fix_for_header_define(get_topmost_category()->name_p);
     fprintf(f,
-            "int %s_%s_get_parameter_help(char  **helptext)\n"
+            "int %s_%s_get_command_parameter_help(char  **helptext)\n"
             "{\n",
             tcn,
             command_p->name_p

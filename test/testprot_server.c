@@ -18,8 +18,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "personnel.h"
-#include "pers_handlers.h"
+#include "testprotocol.h"
+#include "testprot_handlers.h"
 #include <assert.h>
 
 int main(int argc, char *argv[])
@@ -45,9 +45,9 @@ int main(int argc, char *argv[])
         fo = stdout;
     }
 
-    fprintf(stderr, "persfile server STARTS\n");
+    fprintf(stderr, "testprot server STARTS\n");
 
-    personnel_param_init();
+    testprotocol_param_init();
 
     while (fgets(buf, 1024, fi) != NULL) {
         mpl_list_t *req;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
         req = mpl_param_list_unpack(buf);
         if (req) {
-            resp = handle_persfile(req);
+            resp = handle_testprot(req);
             if (resp) {
                 if (mpl_param_list_pack(resp, buf, 1023) <= 0) {
                     fprintf(stderr, "!!! FAILED PACKING MESSAGE !!!\n");
@@ -78,6 +78,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    fprintf(stderr, "persfile server QUITS\n");
+    fprintf(stderr, "testprot server QUITS\n");
     return 0;
 }

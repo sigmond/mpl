@@ -1121,6 +1121,8 @@ class parameter_set : public listable_object {
     void gc_c_enums(FILE *f);
     void cli_h(FILE *f);
     void cli_c(FILE *f);
+    void cli_call_parameter_help(FILE *f);
+    void cli_parameter_help_completions(FILE *f);
 
     void api_hh(FILE *f, char *indent);
     void api_cc(FILE *f, char *indent);
@@ -2225,6 +2227,8 @@ class mpl_compiler {
     void gc_c_header(FILE *f, char *out_name_p);
     void cli_c_common(FILE *f);
     bool bag_is_command(bag_parameter *bag_p);
+    bool bag_is_response(bag_parameter *bag_p); 
+    bool bag_is_event(bag_parameter *bag_p); 
     bool param_is_command_parameter(parameter *param_p);
 
     void deja_common(FILE *expect_file_p);

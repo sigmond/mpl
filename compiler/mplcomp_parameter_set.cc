@@ -3537,7 +3537,14 @@ void parameter_set::cli_h(FILE *f)
                 if (compiler_p->bag_is_command((bag_parameter*)parameter_p) ||
                     compiler_p->param_is_command_parameter(parameter_p))
                     ((bag_parameter*)parameter_p)->cli_h_completions(f);
+                if (!compiler_p->bag_is_command((bag_parameter*)parameter_p) &&
+                    !compiler_p->bag_is_response((bag_parameter*)parameter_p) &&
+                    !compiler_p->bag_is_event((bag_parameter*)parameter_p))
+                    parameter_p->cli_h_help(f);
             }
+	    else if (!parameter_p->is_virtual) {
+	      parameter_p->cli_h_help(f);
+	    }
             if (parameter_p->is_enum()) {
                 if (compiler_p->param_is_command_parameter(parameter_p))
                     ((enum_parameter*)parameter_p)->cli_h_completions(f);
@@ -4106,7 +4113,14 @@ void parameter_set::cli_c(FILE *f)
                 if (compiler_p->bag_is_command((bag_parameter*)parameter_p) ||
                     compiler_p->param_is_command_parameter(parameter_p))
                     ((bag_parameter*)parameter_p)->cli_c_completions(f);
+                if (!compiler_p->bag_is_command((bag_parameter*)parameter_p) &&
+                    !compiler_p->bag_is_response((bag_parameter*)parameter_p) &&
+                    !compiler_p->bag_is_event((bag_parameter*)parameter_p))
+                    parameter_p->cli_c_help(f);
             }
+	    else if (!parameter_p->is_virtual) {
+	      parameter_p->cli_c_help(f);
+	    }
             if (parameter_p->is_enum()) {
                 if (compiler_p->param_is_command_parameter(parameter_p))
                     ((enum_parameter*)parameter_p)->cli_c_completions(f);
@@ -4766,5 +4780,82 @@ void parameter_set::use_parameter_group(category *category_p)
             parameter_group_p->add_to(parameter_group_list_p);
         }
         current_parameter_group_p = parameter_group_p;
+    }
+}
+
+
+void parameter_set::cli_call_parameter_help(FILE *f)
+{
+    mpl_list_t *tmp_p;
+    parameter_group *parameter_group_p;
+
+    MPL_LIST_FOR_EACH(parameter_group_list_p, tmp_p) {
+        parameter_group_p = LISTABLE_PTR(tmp_p, parameter_group);
+
+        mpl_list_t *tmp_p;
+        parameter *parameter_p;
+        MPL_LIST_FOR_EACH(parameter_group_p->parameters_p, tmp_p) {
+            parameter_p = LISTABLE_PTR(tmp_p, parameter);
+            if (parameter_p->is_bag() &&
+                !compiler_p->bag_is_command((bag_parameter*)parameter_p) &&
+                !compiler_p->bag_is_response((bag_parameter*)parameter_p) &&
+                !compiler_p->bag_is_event((bag_parameter*)parameter_p)) {
+                fprintf(f,
+                        "    if (!strcmp(\"help %s\", line))\n"
+                        "        return %s_%s_get_bag_help(helptext);\n",
+                        parameter_p->name_p,
+                        get_short_name(),
+                        parameter_p->name_p
+                       );
+            }
+	    else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
+                fprintf(f,
+                        "    if (!strcmp(\"help %s\", line))\n"
+                        "        return %s_%s_get_parameter_help(helptext);\n",
+                        parameter_p->name_p,
+                        get_short_name(),
+                        parameter_p->name_p
+                       );
+	    }
+        }
+    }
+}
+
+void parameter_set::cli_parameter_help_completions(FILE *f)
+{
+    mpl_list_t *tmp_p;
+    parameter_group *parameter_group_p;
+
+    MPL_LIST_FOR_EACH(parameter_group_list_p, tmp_p) {
+        parameter_group_p = LISTABLE_PTR(tmp_p, parameter_group);
+
+        mpl_list_t *tmp_p;
+        parameter *parameter_p;
+        MPL_LIST_FOR_EACH(parameter_group_p->parameters_p, tmp_p) {
+            parameter_p = LISTABLE_PTR(tmp_p, parameter);
+            if (parameter_p->is_bag() &&
+                !compiler_p->bag_is_command((bag_parameter*)parameter_p) &&
+                !compiler_p->bag_is_response((bag_parameter*)parameter_p) &&
+                !compiler_p->bag_is_event((bag_parameter*)parameter_p)) {
+                fprintf(f,
+                        "    if ((len > 4) && !strncmp(\"help %s\",line,len)) {\n"
+                        "        completionStrings[numStrings++] = strdup(\"help %s\");\n"
+                        "        if (numStrings >= maxStrings) goto do_exit;\n"
+                        "    }\n",
+                        parameter_p->name_p,
+                        parameter_p->name_p
+                       );
+            }
+	    else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
+                fprintf(f,
+                        "    if ((len > 4) && !strncmp(\"help %s\",line,len)) {\n"
+                        "        completionStrings[numStrings++] = strdup(\"help %s\");\n"
+                        "        if (numStrings >= maxStrings) goto do_exit;\n"
+                        "    }\n",
+                        parameter_p->name_p,
+                        parameter_p->name_p
+                       );
+	    }
+        }
     }
 }

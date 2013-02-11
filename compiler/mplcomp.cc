@@ -647,6 +647,7 @@ void api_cc_members_allocate_parameter_list(FILE *f,
         int t = parameter_p->is_tuple();
         int a = parameter_p->is_array();
         int s = parameter_p->is_string();
+        int ws = (get_type_of_string(parameter_p->get_type()) == 2);
 
         char *fn = parameter_list_entry_p->field_name_p;
         char *pn = parameter_list_entry_p->parameter_name_p;
@@ -741,11 +742,12 @@ void api_cc_members_allocate_parameter_list(FILE *f,
                         fn ? fn : pn
                        );
                 fprintf(f,
-                        "%s        %s __%s%s = strdup(this->%s%s);\n",
+                        "%s        %s __%s%s = %sdup(this->%s%s);\n",
                         indent,
                         ct,
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn,
+                        ws ? "wcs" : "str",
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn
                        );
@@ -944,10 +946,11 @@ void api_cc_members_allocate_parameter_list(FILE *f,
                             fn ? fn : pn
                            );
                 fprintf(f,
-                        "%s            __%s%s[i] = strdup(this->%s%s[i]);\n",
+                        "%s            __%s%s[i] = %sdup(this->%s%s[i]);\n",
                         indent,
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn,
+                        ws ? "wcs" : "str",
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn
                        );
@@ -1047,6 +1050,7 @@ void api_cc_copy_constructor_parameter_list(FILE *f,
         int t = parameter_p->is_tuple();
         int a = parameter_p->is_array();
         int s = parameter_p->is_string();
+        int ws = (get_type_of_string(parameter_p->get_type()) == 2);
 
         char *fn = parameter_list_entry_p->field_name_p;
         char *pn = parameter_list_entry_p->parameter_name_p;
@@ -1142,10 +1146,11 @@ void api_cc_copy_constructor_parameter_list(FILE *f,
                         indent
                        );
                 fprintf(f,
-                        "%s        this->%s%s = strdup(obj.%s%s);\n",
+                        "%s        this->%s%s = %sdup(obj.%s%s);\n",
                         indent,
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn,
+                        ws ? "wcs" : "str",
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn
                        );
@@ -1271,10 +1276,11 @@ void api_cc_copy_constructor_parameter_list(FILE *f,
             }
             else if (s) {
                 fprintf(f,
-                        "%s            this->%s%s[i] = strdup(obj.%s%s[i]);\n",
+                        "%s            this->%s%s[i] = %sdup(obj.%s%s[i]);\n",
                         indent,
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn,
+                        ws ? "wcs" : "str",
                         fn ? PFX(fn) : "_",
                         fn ? fn : pn
                        );
@@ -1818,6 +1824,7 @@ void api_decode_parameter_list(FILE *f,
         int t = parameter_p->is_tuple();
         int a = parameter_p->is_array();
         int s = parameter_p->is_string();
+        int ws = (get_type_of_string(parameter_p->get_type()) == 2);
         int pt = (strstr(parameter_p->get_c_type(), " *") != NULL);
 
         char *ct;
@@ -1928,11 +1935,12 @@ void api_decode_parameter_list(FILE *f,
                 else if (s) {
                     fprintf(f,
                             "{\n"
-                            "%s            %s%s = strdup(%s_GET_%s_%s_PTR(%s));\n"
+                            "%s            %s%s = %sdup(%s_GET_%s_%s_PTR(%s));\n"
                             "%s        }\n",
                             indent,
                             PFX(fn),
                             fn,
+                            ws ? "wcs" : "str",
                             snu,
                             bag_name_p,
                             fn,
@@ -2018,10 +2026,11 @@ void api_decode_parameter_list(FILE *f,
                 }
                 else if (s) {
                     fprintf(f,
-                            "%s                %s%s[i] = strdup(%s_GET_%s_%s_PTR_TAG(%s, i+1));\n",
+                            "%s                %s%s[i] = %sdup(%s_GET_%s_%s_PTR_TAG(%s, i+1));\n",
                             indent,
                             PFX(fn),
                             fn,
+                            ws ? "wcs" : "str",
                             snu,
                             bag_name_p,
                             fn,
@@ -2124,10 +2133,11 @@ void api_decode_parameter_list(FILE *f,
                 else if (s) {
                     fprintf(f,
                             "{\n"
-                            "%s            _%s = strdup(%s_GET_%s_PTR(%s, %s));\n"
+                            "%s            _%s = %sdup(%s_GET_%s_PTR(%s, %s));\n"
                             "%s        }\n",
                             indent,
                             pn,
+                            ws ? "wcs" : "str",
                             snu,
                             parameter_p->get_macro_type(),
                             bag_param_name_p,
@@ -2207,10 +2217,11 @@ void api_decode_parameter_list(FILE *f,
                 }
                 else if (s) {
                     fprintf(f,
-                            "%s                _%s[i] = strdup(%s_GET_%s_PTR_TAG(%s, %s, i+1));\n",
+                            "%s                _%s[i] = %sdup(%s_GET_%s_PTR_TAG(%s, %s, i+1));\n",
                             indent,
                             pn,
                             snu,
+                            ws ? "wcs" : "str",
                             parameter_p->get_macro_type(),
                             bag_param_name_p,
                             pn
@@ -2281,6 +2292,7 @@ void api_free_decoded_parameter_list(FILE *f,
         int t = parameter_p->is_tuple();
         int a = parameter_p->is_array();
         int s = parameter_p->is_string();
+        int ws = (get_type_of_string(parameter_p->get_type()) == 2);
 
         char *fn = parameter_list_entry_p->field_name_p;
         char *pn = parameter_list_entry_p->parameter_name_p;
@@ -3579,7 +3591,7 @@ void help_parameter_list(ostream &os,
         os << (o && m ? "," : "");
         os << (m ? "multiple" : "");
         os << (o || m ? "," : "");
-        os << parameter_p->get_type();
+        os << parameter_list_entry_p->parameter_name_p;
         os << "): ";
         help_help_list(os, parameter_list_entry_p->help_list_p, "    ", "");
     }
