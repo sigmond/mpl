@@ -1385,41 +1385,15 @@ void api_cc_encode_parameter_list(FILE *f,
         if (fn) {
             if (!m) {
                 if (t) {
-                    const char *key_field_str;
-                    const char *val_field_str;
-
-                    switch(get_type_of_tuple(parameter_p->get_type())) {
-                        case 1:
-                            key_field_str = "key_p";
-                            val_field_str = "value_p";
-                            break;
-                        case -1:
-                            key_field_str = "key";
-                            val_field_str = "value";
-                            break;
-                        case 2:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                        case 8:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                            break;
-                        default:
-                            assert(0);
-                    }
                     fprintf(f,
-                            "%s        %s_ADD_%s_%s(&%s, %s%s->tuple.%s, %s%s->tuple.%s);\n",
+                            "%s        %s_ADD_%s_%s(&%s, &%s%s->tuple);\n",
                             indent,
                             snu,
                             bag_name_p,
                             fn,
                             bag_param_name_p,
                             PFX(fn),
-                            fn,
-                            key_field_str,
-                            PFX(fn),
-                            fn,
-                            val_field_str
+                            fn
                            );
                 }
                 else if (a) {
@@ -1492,42 +1466,16 @@ void api_cc_encode_parameter_list(FILE *f,
                         indent,
                         fn ? fn : pn
                        );
-                                if (t) {
-                    const char *key_field_str;
-                    const char *val_field_str;
-
-                    switch(get_type_of_tuple(parameter_p->get_type())) {
-                        case 1:
-                            key_field_str = "key_p";
-                            val_field_str = "value_p";
-                            break;
-                        case -1:
-                            key_field_str = "key";
-                            val_field_str = "value";
-                            break;
-                        case 2:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                        case 8:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                            break;
-                        default:
-                            assert(0);
-                    }
+                if (t) {
                     fprintf(f,
-                            "%s        %s_ADD_%s_%s_TAG(&%s, %s%s[i]->tuple.%s, %s%s[i]->tuple.%s, i+1);\n",
+                            "%s        %s_ADD_%s_%s_TAG(&%s, &%s%s[i]->tuple, i+1);\n",
                             indent,
                             snu,
                             bag_name_p,
                             fn,
                             bag_param_name_p,
                             PFX(fn),
-                            fn,
-                            key_field_str,
-                            PFX(fn),
-                            fn,
-                            val_field_str
+                            fn
                            );
                 }
                 else if (a) {
@@ -1584,39 +1532,14 @@ void api_cc_encode_parameter_list(FILE *f,
         else {
             if (!m) {
                 if (t) {
-                    const char *key_field_str;
-                    const char *val_field_str;
-
-                    switch(get_type_of_tuple(parameter_p->get_type())) {
-                        case 1:
-                            key_field_str = "key_p";
-                            val_field_str = "value_p";
-                            break;
-                        case -1:
-                            key_field_str = "key";
-                            val_field_str = "value";
-                            break;
-                        case 2:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                        case 8:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                            break;
-                        default:
-                            assert(0);
-                    }
                     fprintf(f,
-                            "%s        %s_ADD_%s(&%s, %s, _%s->tuple.%s, _%s->tuple.%s);\n",
+                            "%s        %s_ADD_%s(&%s, %s, &_%s->tuple);\n",
                             indent,
                             snu,
                             parameter_p->get_macro_type(),
                             bag_param_name_p,
                             pn,
-                            pn,
-                            key_field_str,
-                            pn,
-                            val_field_str
+                            pn
                            );
                 }
                 else if (a) {
@@ -1689,30 +1612,8 @@ void api_cc_encode_parameter_list(FILE *f,
                         fn ? fn : pn
                        );
                 if (t) {
-                    const char *key_field_str;
-                    const char *val_field_str;
-
-                    switch(get_type_of_tuple(parameter_p->get_type())) {
-                        case 1:
-                            key_field_str = "key_p";
-                            val_field_str = "value_p";
-                            break;
-                        case -1:
-                            key_field_str = "key";
-                            val_field_str = "value";
-                            break;
-                        case 2:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                        case 8:
-                            key_field_str = "key_p";
-                            val_field_str = "value";
-                            break;
-                        default:
-                            assert(0);
-                    }
                     fprintf(f,
-                            "%s            %s_ADD_%s_TAG(&%s, %s, _%s[i]->tuple.%s, _%s[i]->tuple.%s, i+1);\n"
+                            "%s            %s_ADD_%s_TAG(&%s, %s, _%s[i]->tuple, i+1);\n"
                             "%s        }\n",
                             indent,
                             snu,
@@ -1720,9 +1621,6 @@ void api_cc_encode_parameter_list(FILE *f,
                             bag_param_name_p,
                             pn,
                             pn,
-                            key_field_str,
-                            pn,
-                            val_field_str,
                             indent
                            );
                 }
@@ -3714,8 +3612,12 @@ int check_paramlist_parameters(mpl_list_t *parameter_list_p)
                 }
             }
 
-            if (parameter_p->is_bag())
-                ret += check_paramlist_parameters((mpl_list_t*) parameter_p->get_property("parameter_list"));
+            if (parameter_p->is_bag()) {
+                mpl_list_t* sub_bag_param_list_p = (mpl_list_t*) parameter_p->get_property("parameter_list");
+                /* Stop recursion if bag is the same */
+                if (sub_bag_param_list_p != parameter_list_p)
+                    ret += check_paramlist_parameters(sub_bag_param_list_p);
+            }
         }
     }
     return ret;

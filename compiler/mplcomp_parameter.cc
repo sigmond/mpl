@@ -2681,48 +2681,6 @@ void bag_parameter::gc_h_bag(FILE *f)
                        );
         }
         else if (parameter_p->is_tuple()) {
-            const char *key_field_str;
-            const char *val_field_str;
-            const char *key_type_str;
-            const char *val_type_str;
-            const char *key_header_str;
-            const char *val_header_str;
-
-            switch(get_type_of_tuple(parameter_p->get_type())) {
-                case 1:
-                    key_field_str = "key_p";
-                    val_field_str = "value_p";
-                    key_type_str = "char *";
-                    val_type_str = "char *";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE_PTR";
-                    break;
-                case -1:
-                    key_field_str = "key";
-                    val_field_str = "value";
-                    key_type_str = "int";
-                    val_type_str = "int";
-                    key_header_str = "KEY";
-                    val_header_str = "VALUE";
-                    break;
-                case 2:
-                    key_field_str = "key_p";
-                    val_field_str = "value";
-                    key_type_str = "char *";
-                    val_type_str = "int";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE";
-                case 8:
-                    key_field_str = "key_p";
-                    val_field_str = "value";
-                    key_type_str = "char *";
-                    val_type_str = "uint8_t";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE";
-                    break;
-                default:
-                    assert(0);
-            }
             /* In group *_ADD */
             sprintf(group, "%s_FM_ADD", snu);
             fprintf(f,
@@ -2733,32 +2691,22 @@ void bag_parameter::gc_h_bag(FILE *f)
                     "  * Allocates list memory.\n"
                     "  *\n"
                     "  * @param bag_p (in/out) The bag to add to\n"
-                    "  * @param _key (in) Key to add (%s field of %s)\n"
-                    "  * @param _value (in) Value to add (%s field of %s)\n"
+                    "  * @param _tup (in) Tuple to add (%s *)\n"
                     "  */\n",
                     group,
                     param_c_type(parameter_p),
                     parameter_list_entry_p->field_name_p,
                     name_p,
-                    key_field_str,
-                    param_c_type(parameter_p),
-                    val_field_str,
                     param_c_type(parameter_p)
                    );
             fprintf(f,
-                    "#define %s_ADD_%s_%s(bag_p, _key, _value) \\\n"
+                    "#define %s_ADD_%s_%s(bag_p, _tup) \\\n"
                     "    do { \\\n"
-                    "        %s __tup; \\\n"
-                    "        __tup.%s = _key; \\\n"
-                    "        __tup.%s = _value; \\\n"
-                    "        %s_ADD_BAG_FIELD(bag_p, %s, %s, &__tup); \\\n"
+                    "        %s_ADD_BAG_FIELD(bag_p, %s, %s, _tup); \\\n"
                     "    } while (0)\n",
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_p->get_c_type(),
-                    key_field_str,
-                    val_field_str,
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p
@@ -2771,33 +2719,23 @@ void bag_parameter::gc_h_bag(FILE *f)
                     "  * Allocates list memory.\n"
                     "  *\n"
                     "  * @param _bag_p (in/out) The bag to add to\n"
-                    "  * @param _key (in) Key to add (%s field of %s)\n"
-                    "  * @param _value (in) Value to add (%s field of %s)\n"
+                    "  * @param _tup (in) Tuple to add (%s *)\n"
                     "  * @param tag (in) The tag (integer 0-99) to mark the parameter with\n"
                     "  */\n",
                     group,
                     param_c_type(parameter_p),
                     parameter_list_entry_p->field_name_p,
                     name_p,
-                    key_field_str,
-                    param_c_type(parameter_p),
-                    val_field_str,
                     param_c_type(parameter_p)
                    );
             fprintf(f,
-                    "#define %s_ADD_%s_%s_TAG(_bag_p, _key, _value, tag) \\\n"
+                    "#define %s_ADD_%s_%s_TAG(_bag_p, _tup, tag) \\\n"
                     "    do { \\\n"
-                    "        %s __tup; \\\n"
-                    "        __tup.%s = _key; \\\n"
-                    "        __tup.%s = _value; \\\n"
-                    "        %s_ADD_BAG_FIELD_TAG(_bag_p, %s, %s, &__tup, tag); \\\n"
+                    "        %s_ADD_BAG_FIELD_TAG(_bag_p, %s, %s, _tup, tag); \\\n"
                     "    } while (0)\n",
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_p->get_c_type(),
-                    key_field_str,
-                    val_field_str,
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p
@@ -2814,32 +2752,22 @@ void bag_parameter::gc_h_bag(FILE *f)
                         "  *\n"
                         "  * @param _bag_p (in/out) The bag to add to\n"
                         "  * @param _child (in) The child parameter name\n"
-                        "  * @param _key (in) Key to add (%s field of %s)\n"
-                        "  * @param _value (in) Value to add (%s field of %s)\n"
+                        "  * @param _tup (in) Tuple to add (%s *)\n"
                         "  */\n",
                         group,
                         param_c_type(parameter_p),
                         parameter_list_entry_p->field_name_p,
                         name_p,
-                        key_field_str,
-                        param_c_type(parameter_p),
-                        val_field_str,
                         param_c_type(parameter_p)
                        );
                 fprintf(f,
-                        "#define %s_ADD_%s_%s_CHILD(_bag_p, _child, _key, _value) \\\n"
+                        "#define %s_ADD_%s_%s_CHILD(_bag_p, _child, _tup) \\\n"
                         "    do { \\\n"
-                        "        %s __tup; \\\n"
-                        "        __tup.%s = _key; \\\n"
-                        "        __tup.%s = _value; \\\n"
-                        "        %s_ADD_BAG_FIELD_CHILD(_bag_p, %s, %s, %s_PARAM_ID(_child), &__tup); \\\n"
+                        "        %s_ADD_BAG_FIELD_CHILD(_bag_p, %s, %s, %s_PARAM_ID(_child), _tup); \\\n"
                         "    } while (0)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        parameter_p->get_c_type(),
-                        key_field_str,
-                        val_field_str,
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -2856,33 +2784,23 @@ void bag_parameter::gc_h_bag(FILE *f)
                         "  *\n"
                         "  * @param _bag_p (in/out) The bag to add to\n"
                         "  * @param _child (in) The child parameter name\n"
-                        "  * @param _key (in) Key to add (%s field of %s)\n"
-                        "  * @param _value (in) Value to add (%s field of %s)\n"
+                        "  * @param _tup (in) Tuple to add (%s *)\n"
                         "  * @param tag (in) The tag (integer 0-99) to mark the parameter with\n"
                         "  */\n",
                         group,
                         param_c_type(parameter_p),
                         parameter_list_entry_p->field_name_p,
                         name_p,
-                        key_field_str,
-                        param_c_type(parameter_p),
-                        val_field_str,
                         param_c_type(parameter_p)
                        );
                 fprintf(f,
-                        "#define %s_ADD_%s_%s_CHILD_TAG(_bag_p, _child, _key, _value, tag) \\\n"
+                        "#define %s_ADD_%s_%s_CHILD_TAG(_bag_p, _child, _tup, tag) \\\n"
                         "    do { \\\n"
-                        "        %s __tup; \\\n"
-                        "        __tup.%s = _key; \\\n"
-                        "        __tup.%s = _value; \\\n"
-                        "        %s_ADD_BAG_FIELD_CHILD_TAG(_bag_p, %s, %s, %s_PARAM_ID(_child), &__tup, tag); \\\n"
+                        "        %s_ADD_BAG_FIELD_CHILD_TAG(_bag_p, %s, %s, %s_PARAM_ID(_child), _tup, tag); \\\n"
                         "    } while (0)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        parameter_p->get_c_type(),
-                        key_field_str,
-                        val_field_str,
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
@@ -2894,136 +2812,65 @@ void bag_parameter::gc_h_bag(FILE *f)
             fprintf(f,
                     "/**\n"
                     "  * @ingroup %s\n"
-                    "  * Get the key component of the field %s from bag %s.\n"
+                    "  * Get the field %s from bag %s.\n"
                     "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @return The key component.\n"
+                    "  * @return Pointer to the tuple (%s *).\n"
                     "  */\n",
                     group,
                     parameter_list_entry_p->field_name_p,
-                    name_p
+                    name_p,
+                    param_c_type(parameter_p)
                    );
             if (field_context_bag_p == this)
                 fprintf(f,
-                        "%s %s_GET_%s_%s_%s(mpl_bag_t *bag_p);\n",
-                        key_type_str,
+                        "%s *%s_GET_%s_%s_PTR(mpl_bag_t *bag_p);\n",
+                        param_c_type(parameter_p),
                         snu,
                         name_p,
-                        parameter_list_entry_p->field_name_p,
-                        key_header_str
+                        parameter_list_entry_p->field_name_p
                        );
             else
                 fprintf(f,
-                        "#define %s_GET_%s_%s_%s(bag_p) \\\n"
-                        "        %s_GET_%s_%s_%s(bag_p)\n",
+                        "#define %s_GET_%s_%s_PTR(bag_p) \\\n"
+                        "        %s_GET_%s_%s_PTR(bag_p)\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        key_header_str,
                         csnu,
                         field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p,
-                        key_header_str
+                        parameter_list_entry_p->field_name_p
                        );
             fprintf(f,
                     "/**\n"
                     "  * @ingroup %s\n"
-                    "  * Get the key component of the field %s from bag %s.\n"
+                    "  * Get the field %s from bag %s.\n"
                     "  * @param bag_p (in) The bag value pointer\n"
                     "  * @param tag (in) the tag that the field must match\n"
-                    "  * @return The key component.\n"
+                    "  * @return Pointer to the tuple (%s *).\n"
                     "  */\n",
                     group,
                     parameter_list_entry_p->field_name_p,
-                    name_p
+                    name_p,
+                    param_c_type(parameter_p)
                    );
             if (field_context_bag_p == this)
                 fprintf(f,
-                        "%s %s_GET_%s_%s_%s_TAG(mpl_bag_t *bag_p, int tag);\n",
-                        key_type_str,
+                        "%s *%s_GET_%s_%s_PTR_TAG(mpl_bag_t *bag_p, int tag);\n",
+                        param_c_type(parameter_p),
                         snu,
                         name_p,
-                        parameter_list_entry_p->field_name_p,
-                        key_header_str
+                        parameter_list_entry_p->field_name_p
                        );
             else
                 fprintf(f,
-                        "#define %s_GET_%s_%s_%s_TAG(bag_p,tag) \\\n"
-                        "        %s_GET_%s_%s_%s_TAG((bag_p),(tag))\n",
+                        "#define %s_GET_%s_%s_PTR_TAG(bag_p,tag) \\\n"
+                        "        %s_GET_%s_%s_PTR_TAG((bag_p),(tag))\n",
                         snu,
                         name_p,
                         parameter_list_entry_p->field_name_p,
-                        key_header_str,
                         csnu,
                         field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p,
-                        key_header_str
-                       );
-            fprintf(f,
-                    "/**\n"
-                    "  * @ingroup %s\n"
-                    "  * Get the value component of the field %s from bag %s.\n"
-                    "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @return The value component.\n"
-                    "  */\n",
-                    group,
-                    parameter_list_entry_p->field_name_p,
-                    name_p
-                   );
-            if (field_context_bag_p == this)
-                fprintf(f,
-                        "%s %s_GET_%s_%s_%s(mpl_bag_t *bag_p);\n",
-                        val_type_str,
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str
-                       );
-            else
-                fprintf(f,
-                        "#define %s_GET_%s_%s_%s(bag_p) \\\n"
-                        "        %s_GET_%s_%s_%s(bag_p)\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str,
-                        csnu,
-                        field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str
-                       );
-            fprintf(f,
-                    "/**\n"
-                    "  * @ingroup %s\n"
-                    "  * Get the value component of the field %s from bag %s.\n"
-                    "  * @param bag_p (in) The bag value pointer\n"
-                    "  * @param tag (in) the tag that the field must match\n"
-                    "  * @return The value component.\n"
-                    "  */\n",
-                    group,
-                    parameter_list_entry_p->field_name_p,
-                    name_p
-                   );
-            if (field_context_bag_p == this)
-                fprintf(f,
-                        "%s %s_GET_%s_%s_%s_TAG(mpl_bag_t *bag_p, int tag);\n",
-                        val_type_str,
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str
-                       );
-            else
-                fprintf(f,
-                        "#define %s_GET_%s_%s_%s_TAG(bag_p,tag) \\\n"
-                        "        %s_GET_%s_%s_%s_TAG((bag_p),(tag))\n",
-                        snu,
-                        name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str,
-                        csnu,
-                        field_context_bag_p->name_p,
-                        parameter_list_entry_p->field_name_p,
-                        val_header_str
+                        parameter_list_entry_p->field_name_p
                        );
         }
         /* In group *_GET */
@@ -3893,143 +3740,49 @@ void bag_parameter::gc_c_bag(FILE *f)
                    );
         }
         else if (parameter_p->is_tuple()) {
-            const char *key_field_str;
-            const char *val_field_str;
-            const char *key_type_str;
-            const char *val_type_str;
-            const char *key_header_str;
-            const char *val_header_str;
-
-            switch(get_type_of_tuple(parameter_p->get_type())) {
-                case 1:
-                    key_field_str = "key_p";
-                    val_field_str = "value_p";
-                    key_type_str = "char *";
-                    val_type_str = "char *";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE_PTR";
-                    break;
-                case -1:
-                    key_field_str = "key";
-                    val_field_str = "value";
-                    key_type_str = "int";
-                    val_type_str = "int";
-                    key_header_str = "KEY";
-                    val_header_str = "VALUE";
-                    break;
-                case 2:
-                    key_field_str = "key_p";
-                    val_field_str = "value";
-                    key_type_str = "char *";
-                    val_type_str = "int";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE";
-                case 8:
-                    key_field_str = "key_p";
-                    val_field_str = "value";
-                    key_type_str = "char *";
-                    val_type_str = "uint8_t";
-                    key_header_str = "KEY_PTR";
-                    val_header_str = "VALUE";
-                    break;
-                default:
-                    assert(0);
-            }
             fprintf(f,
-                    "%s %s_GET_%s_%s_%s(mpl_bag_t *__bag_p)\n"
+                    "%s *%s_GET_%s_%s_PTR(mpl_bag_t *__bag_p)\n"
                     "{\n"
                     "    mpl_param_element_t *elem_p;\n"
                     "    %s *%s;\n"
                     "    elem_p = %s_GET_%s_%s_ELEMENT_PTR(__bag_p);\n"
                     "    assert(elem_p != NULL);\n"
                     "    %s = elem_p->value_p;\n"
-                    "    return %s->%s;\n"
+                    "    return %s;\n"
                     "}\n",
-                    key_type_str,
+                    param_c_type(parameter_p),
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    key_header_str,
                     param_c_type(parameter_p),
                     parameter_list_entry_p->field_name_p,
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    key_field_str
+                    parameter_list_entry_p->field_name_p
                    );
             fprintf(f,
-                    "%s %s_GET_%s_%s_%s_TAG(mpl_bag_t *__bag_p, int __tag)\n"
+                    "%s *%s_GET_%s_%s_PTR_TAG(mpl_bag_t *__bag_p, int __tag)\n"
                     "{\n"
                     "    mpl_param_element_t *elem_p;\n"
                     "    %s *%s;\n"
                     "    elem_p = %s_GET_%s_%s_ELEMENT_PTR_TAG(__bag_p, __tag);\n"
                     "    assert(elem_p != NULL);\n"
                     "    %s = elem_p->value_p;\n"
-                    "    return %s->%s;\n"
+                    "    return %s;\n"
                     "}\n",
-                    key_type_str,
+                    param_c_type(parameter_p),
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
-                    key_header_str,
                     param_c_type(parameter_p),
                     parameter_list_entry_p->field_name_p,
                     snu,
                     name_p,
                     parameter_list_entry_p->field_name_p,
                     parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    key_field_str
-                   );
-            fprintf(f,
-                    "%s %s_GET_%s_%s_%s(mpl_bag_t *__bag_p)\n"
-                    "{\n"
-                    "    mpl_param_element_t *elem_p;\n"
-                    "    %s *%s;\n"
-                    "    elem_p = %s_GET_%s_%s_ELEMENT_PTR(__bag_p);\n"
-                    "    assert(elem_p != NULL);\n"
-                    "    %s = elem_p->value_p;\n"
-                    "    return %s->%s;\n"
-                    "}\n",
-                    val_type_str,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    val_header_str,
-                    param_c_type(parameter_p),
-                    parameter_list_entry_p->field_name_p,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    val_field_str
-                   );
-            fprintf(f,
-                    "%s %s_GET_%s_%s_%s_TAG(mpl_bag_t *__bag_p, int __tag)\n"
-                    "{\n"
-                    "    mpl_param_element_t *elem_p;\n"
-                    "    %s *%s;\n"
-                    "    elem_p = %s_GET_%s_%s_ELEMENT_PTR_TAG(__bag_p, __tag);\n"
-                    "    assert(elem_p != NULL);\n"
-                    "    %s = elem_p->value_p;\n"
-                    "    return %s->%s;\n"
-                    "}\n",
-                    val_type_str,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    val_header_str,
-                    param_c_type(parameter_p),
-                    parameter_list_entry_p->field_name_p,
-                    snu,
-                    name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    parameter_list_entry_p->field_name_p,
-                    val_field_str
+                    parameter_list_entry_p->field_name_p
                    );
         }
     }
@@ -4064,7 +3817,7 @@ bool bag_parameter::param_is_field_or_subfield(parameter *param_p)
             return true;
         }
 
-        if (parameter_p->is_bag()) {
+        if (parameter_p->is_bag() && (parameter_p != this)) {
             if (((bag_parameter*)parameter_p)->param_is_field_or_subfield(param_p)) {
                 DELETE_LISTABLE_LIST(&plist_p, object_container);
                 return true;
@@ -4224,7 +3977,7 @@ void tuple_parameter::cli_c_write_value_help(FILE *f)
             break;
         case 8: /* struint8_tuple */
             fprintf(f,
-                    "            sprintf(value_help, \"%s:key_string:value_uint8\");\n",
+                    "            sprintf(value_help, \"%s:key_string/value_uint8\");\n",
                     get_type()
                    );
             break;

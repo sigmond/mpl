@@ -70,7 +70,21 @@ parameter_set testprotocol {
         bool8 Bool8;
         # String types
         string String;
-        wstring Wstring;
+        wstring WString;
+        # Addr types:
+        addr Addr;
+        # Array types
+        uint8_array U8a;
+        uint16_array U16a;
+        uint32_array U32a;
+        string_tuple StringTup;
+        int_tuple IntTup;
+        strint_tuple StrintTup;
+        struint8_tuple Struint8Tup;
+        bag Bag {
+            Int i,
+            Bag *b
+        };
     };
 };
 
@@ -108,7 +122,18 @@ category testprot using testprotocol {
                     inout Bool8 *b8
                     );
         TestEchoString(inout String *s,
-                    inout Wstring *ws
+                    inout WString *ws
                     );
+        TestEchoAddr(inout Addr a);
+        TestEchoArray(inout U8a *u8a,
+                    inout U16a *u16a,
+                    inout U32a *u32a
+                    );
+        TestEchoTuple(inout StringTup *stringtup,
+                    inout IntTup *inttup,
+                    inout StrintTup *strinttup,
+                    inout Struint8Tup *struint8tup
+                    );
+        TestEchoBag(inout Bag b);
     };
 };

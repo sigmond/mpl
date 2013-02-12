@@ -25,6 +25,10 @@ static mpl_list_t *handle_TestEchoInt(mpl_bag_t *reqParams);
 static mpl_list_t *handle_TestEchoEnum(mpl_bag_t *reqParams);
 static mpl_list_t *handle_TestEchoBool(mpl_bag_t *reqParams);
 static mpl_list_t *handle_TestEchoString(mpl_bag_t *reqParams);
+static mpl_list_t *handle_TestEchoAddr(mpl_bag_t *reqParams);
+static mpl_list_t *handle_TestEchoArray(mpl_bag_t *reqParams);
+static mpl_list_t *handle_TestEchoTuple(mpl_bag_t *reqParams);
+static mpl_list_t *handle_TestEchoBag(mpl_bag_t *reqParams);
 
 mpl_list_t *handle_testprot(mpl_list_t *reqMsg)
 {
@@ -45,6 +49,14 @@ mpl_list_t *handle_testprot(mpl_list_t *reqMsg)
             return handle_TestEchoBool(reqParams);
         case TESTP_PARAM_ID(TestEchoString_Req):
             return handle_TestEchoString(reqParams);
+        case TESTP_PARAM_ID(TestEchoAddr_Req):
+            return handle_TestEchoAddr(reqParams);
+        case TESTP_PARAM_ID(TestEchoArray_Req):
+            return handle_TestEchoArray(reqParams);
+        case TESTP_PARAM_ID(TestEchoTuple_Req):
+            return handle_TestEchoTuple(reqParams);
+        case TESTP_PARAM_ID(TestEchoBag_Req):
+            return handle_TestEchoBag(reqParams);
         default:
             break;
     }
@@ -142,6 +154,68 @@ static mpl_list_t *handle_TestEchoString(mpl_bag_t *reqParams)
         TESTP_ADD_TestEchoString_Resp_ws(&respParams, TESTP_GET_TestEchoString_Req_ws_PTR(reqParams));
 
     TESTP_ADD_BAG(&respMsg,TestEchoString_Resp,respParams);
+    mpl_param_list_destroy(&respParams);
+    return respMsg;
+}
+
+static mpl_list_t *handle_TestEchoAddr(mpl_bag_t *reqParams)
+{
+    mpl_list_t *respMsg = NULL;
+    mpl_bag_t *respParams = NULL;
+
+    if (TESTP_TestEchoAddr_Req_a_EXISTS(reqParams))
+        TESTP_ADD_TestEchoAddr_Resp_a(&respParams, TESTP_GET_TestEchoAddr_Req_a(reqParams));
+
+    TESTP_ADD_BAG(&respMsg,TestEchoAddr_Resp,respParams);
+    mpl_param_list_destroy(&respParams);
+    return respMsg;
+}
+
+static mpl_list_t *handle_TestEchoArray(mpl_bag_t *reqParams)
+{
+    mpl_list_t *respMsg = NULL;
+    mpl_bag_t *respParams = NULL;
+
+    if (TESTP_TestEchoArray_Req_u8a_EXISTS(reqParams))
+        TESTP_ADD_TestEchoArray_Resp_u8a(&respParams, TESTP_GET_TestEchoArray_Req_u8a_PTR(reqParams));
+    if (TESTP_TestEchoArray_Req_u16a_EXISTS(reqParams))
+        TESTP_ADD_TestEchoArray_Resp_u16a(&respParams, TESTP_GET_TestEchoArray_Req_u16a_PTR(reqParams));
+    if (TESTP_TestEchoArray_Req_u32a_EXISTS(reqParams))
+        TESTP_ADD_TestEchoArray_Resp_u32a(&respParams, TESTP_GET_TestEchoArray_Req_u32a_PTR(reqParams));
+
+    TESTP_ADD_BAG(&respMsg,TestEchoArray_Resp,respParams);
+    mpl_param_list_destroy(&respParams);
+    return respMsg;
+}
+
+static mpl_list_t *handle_TestEchoTuple(mpl_bag_t *reqParams)
+{
+    mpl_list_t *respMsg = NULL;
+    mpl_bag_t *respParams = NULL;
+
+    if (TESTP_TestEchoTuple_Req_stringtup_EXISTS(reqParams))
+        TESTP_ADD_TestEchoTuple_Resp_stringtup(&respParams, TESTP_GET_TestEchoTuple_Req_stringtup_PTR(reqParams));
+    if (TESTP_TestEchoTuple_Req_inttup_EXISTS(reqParams))
+        TESTP_ADD_TestEchoTuple_Resp_inttup(&respParams, TESTP_GET_TestEchoTuple_Req_inttup_PTR(reqParams));
+    if (TESTP_TestEchoTuple_Req_strinttup_EXISTS(reqParams))
+        TESTP_ADD_TestEchoTuple_Resp_strinttup(&respParams, TESTP_GET_TestEchoTuple_Req_strinttup_PTR(reqParams));
+    if (TESTP_TestEchoTuple_Req_struint8tup_EXISTS(reqParams))
+        TESTP_ADD_TestEchoTuple_Resp_struint8tup(&respParams, TESTP_GET_TestEchoTuple_Req_struint8tup_PTR(reqParams));
+
+    TESTP_ADD_BAG(&respMsg,TestEchoTuple_Resp,respParams);
+    mpl_param_list_destroy(&respParams);
+    return respMsg;
+}
+
+static mpl_list_t *handle_TestEchoBag(mpl_bag_t *reqParams)
+{
+    mpl_list_t *respMsg = NULL;
+    mpl_bag_t *respParams = NULL;
+
+    if (TESTP_TestEchoBag_Req_b_EXISTS(reqParams))
+        TESTP_ADD_TestEchoBag_Resp_b(&respParams, TESTP_GET_TestEchoBag_Req_b_PTR(reqParams));
+
+    TESTP_ADD_BAG(&respMsg,TestEchoBag_Resp,respParams);
     mpl_param_list_destroy(&respParams);
     return respMsg;
 }

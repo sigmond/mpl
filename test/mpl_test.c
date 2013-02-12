@@ -10441,12 +10441,16 @@ static int tc_bag_fields(void)
     mpl_uint32_array_t u32_arr = {5, u32a};
     char *st_key = "my string tup key";
     char *st_val = "my string tup val";
+    mpl_string_tuple_t strtup = {st_key, st_val};
     int it_key = 50;
     int it_val = 60;
+    mpl_int_tuple_t ittup = {it_key, it_val};
     char *sit_key = "my strint tuple key";
     int sit_val = 70;
+    mpl_strint_tuple_t sittup = {sit_key, sit_val};
     char *s8t_key = "my struint8 tuple key";
     int s8t_val = 80;
+    mpl_struint8_tuple_t s8ttup = {s8t_key, s8t_val};
     mpl_list_t *result_list_p = NULL;
     int check_ret;
     int len;
@@ -10534,10 +10538,10 @@ static int tc_bag_fields(void)
     TLL_ADD_mynewbag_s_TAG(&bag_p,s1,1);
     TLL_ADD_mynewbag_s_TAG(&bag_p,s2,2);
     TLL_ADD_mynewbag_s_TAG(&bag_p,s3,3);
-    TLL_ADD_mynewbag_st(&bag_p, st_key, st_val);
-    TLL_ADD_mynewbag_it(&bag_p, it_key, it_val);
-    TLL_ADD_mynewbag_sit(&bag_p, sit_key, sit_val);
-    TLL_ADD_mynewbag_s8t(&bag_p, s8t_key, s8t_val);
+    TLL_ADD_mynewbag_st(&bag_p, &strtup);
+    TLL_ADD_mynewbag_it(&bag_p, &ittup);
+    TLL_ADD_mynewbag_sit(&bag_p, &sittup);
+    TLL_ADD_mynewbag_s8t(&bag_p, &s8ttup);
     TLL_ADD_mynewbag_a8(&bag_p, &u8_arr);
     TLL_ADD_mynewbag_a16(&bag_p, &u16_arr);
     TLL_ADD_mynewbag_a32(&bag_p, &u32_arr);
@@ -10621,39 +10625,39 @@ static int tc_bag_fields(void)
     }
 
     printf("st.key = %s, st.val = %s\n",
-           TLL_GET_mynewbag_st_KEY_PTR(bag_p),
-           TLL_GET_mynewbag_st_VALUE_PTR(bag_p)
+           TLL_GET_mynewbag_st_PTR(bag_p)->key_p,
+           TLL_GET_mynewbag_st_PTR(bag_p)->value_p
           );
-    if (strcmp(TLL_GET_mynewbag_st_KEY_PTR(bag_p), st_key))
+    if (strcmp(TLL_GET_mynewbag_st_PTR(bag_p)->key_p, st_key))
         return -1;
-    if (strcmp(TLL_GET_mynewbag_st_VALUE_PTR(bag_p), st_val))
+    if (strcmp(TLL_GET_mynewbag_st_PTR(bag_p)->value_p, st_val))
         return -1;
 
     printf("it.key = %d, it.val = %d\n",
-           TLL_GET_mynewbag_it_KEY(bag_p),
-           TLL_GET_mynewbag_it_VALUE(bag_p)
+           TLL_GET_mynewbag_it_PTR(bag_p)->key,
+           TLL_GET_mynewbag_it_PTR(bag_p)->value
           );
-    if (TLL_GET_mynewbag_it_KEY(bag_p) != it_key)
+    if (TLL_GET_mynewbag_it_PTR(bag_p)->key != it_key)
         return -1;
-    if (TLL_GET_mynewbag_it_VALUE(bag_p) != it_val)
+    if (TLL_GET_mynewbag_it_PTR(bag_p)->value != it_val)
         return -1;
 
     printf("sit.key = %s, sit.val = %d\n",
-           TLL_GET_mynewbag_sit_KEY_PTR(bag_p),
-           TLL_GET_mynewbag_sit_VALUE(bag_p)
+           TLL_GET_mynewbag_sit_PTR(bag_p)->key_p,
+           TLL_GET_mynewbag_sit_PTR(bag_p)->value
           );
-    if (strcmp(TLL_GET_mynewbag_sit_KEY_PTR(bag_p),sit_key))
+    if (strcmp(TLL_GET_mynewbag_sit_PTR(bag_p)->key_p,sit_key))
         return -1;
-    if (TLL_GET_mynewbag_sit_VALUE(bag_p) != sit_val)
+    if (TLL_GET_mynewbag_sit_PTR(bag_p)->value != sit_val)
         return -1;
 
     printf("s8t.key = %s, s8t.val = %d\n",
-           TLL_GET_mynewbag_s8t_KEY_PTR(bag_p),
-           TLL_GET_mynewbag_s8t_VALUE(bag_p)
+           TLL_GET_mynewbag_s8t_PTR(bag_p)->key_p,
+           TLL_GET_mynewbag_s8t_PTR(bag_p)->value
           );
-    if (strcmp(TLL_GET_mynewbag_s8t_KEY_PTR(bag_p),s8t_key))
+    if (strcmp(TLL_GET_mynewbag_s8t_PTR(bag_p)->key_p,s8t_key))
         return -1;
-    if (TLL_GET_mynewbag_s8t_VALUE(bag_p) != s8t_val)
+    if (TLL_GET_mynewbag_s8t_PTR(bag_p)->value != s8t_val)
         return -1;
 
     if (memcmp(TLL_GET_mynewbag_a8_PTR(bag_p)->arr_p,u8_arr.arr_p,u8_arr.len))
