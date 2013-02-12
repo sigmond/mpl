@@ -251,6 +251,7 @@ class string_parameter : public parameter {
     virtual void *get_property(const char *property_p);
     virtual void latex_options(FILE *f);
     virtual void cli_c_write_value_help(FILE *f);
+    virtual void help(ostream &os);
     virtual void deja(FILE *f);
     virtual void print(int level);
 };
@@ -495,7 +496,6 @@ class bag_parameter : public parameter {
     virtual void cli_h_help(FILE *f);
     virtual void cli_c_help(FILE *f);
     virtual void help(ostream &os);
-    
 
     virtual void api_hh(FILE* f, char *indent);
     virtual void api_cc(FILE* f, char *indent);

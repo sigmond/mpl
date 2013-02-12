@@ -15,7 +15,7 @@
  *
  *   Author: Per Sigmond <per@sigmond.no>
  *   Author: Harald Johansen <harald.johansen@stericsson.com>
- *   Author: Emil B. Viken <emil.b.viken@stericsson.com>
+ *   Author: Emil B. Viken <emil.b.viken@gmail.com>
  *
  */
 
@@ -1163,6 +1163,9 @@ typedef enum
 #define MPL_PARAMID_POSITION_VIRTUAL(virt) ((virt) << MPL_PARAMID_VIRTUAL_SHIFT)
 
 #define MPL_PARAMID_TO_PARAMSET(paramid) (((paramid) & MPL_PARAMID_PARAMSET_MASK) >> MPL_PARAMID_PARAMSET_SHIFT)
+/* for backward compatibility */
+#define MPL_PARAMID_TO_PARAM_SET_ID MPL_PARAMID_TO_PARAMSET
+
 #define MPL_PARAMID_TO_TYPE(paramid) (((paramid) & MPL_PARAMID_TYPE_MASK) >> MPL_PARAMID_TYPE_SHIFT)
 #define MPL_PARAMID_TO_VIRTUAL(paramid) (((paramid) & MPL_PARAMID_VIRTUAL_MASK) >> MPL_PARAMID_VIRTUAL_SHIFT)
 
@@ -1994,7 +1997,8 @@ int mpl_param_init(mpl_param_descr_set_t *param_descr_set_p);
  *
  **/
 void mpl_param_deinit(void);
-
+/* for backward compatibility */
+#define mpl_test_param_deinit mpl_param_deinit
 
 /**
  * @ingroup MPL_PARAM
@@ -4989,8 +4993,8 @@ void mpl_dbg_param_list_print(mpl_list_t *list_p);
 void unittest_force_mpl_init(void);
 void unittest_force_mpl_set(mpl_param_element_id_t param_id,
                             MPL_ErrorCode_t errno_code);
-boolean unittest_force_mpl_errno_response(mpl_param_element_id_t param_id,
-                                          MPL_ErrorCode_t *errno_code);
+bool unittest_force_mpl_errno_response(mpl_param_element_id_t param_id,
+                                       MPL_ErrorCode_t *errno_code);
 #endif
 
 #ifdef  __cplusplus

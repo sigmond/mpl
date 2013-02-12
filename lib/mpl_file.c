@@ -15,7 +15,7 @@
  *
  *   Author: Per Sigmond <per@sigmond.no>
  *   Author: Harald Johansen <harald.johansen@stericsson.com>
- *   Author: Emil B. Viken <emil.b.viken@stericsson.com>
+ *   Author: Emil B. Viken <emil.b.viken@gmail.com>
  *
  */
 

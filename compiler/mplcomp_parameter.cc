@@ -4580,13 +4580,13 @@ void int_parameter::help(ostream &os)
 
       mpl_list_t *tmp_p;
       MPL_LIST_FOR_EACH((mpl_list_t*)get_property("number_ranges"), tmp_p) {
-	number_range *number_range_p = LISTABLE_PTR(tmp_p, number_range);
-	mpl_list_t *tmp_p;
-	integer_range *integer_range_p;
-	MPL_LIST_FOR_EACH(number_range_p->range_list_p, tmp_p) {
-	  integer_range_p = LISTABLE_PTR(tmp_p, integer_range);
-	  os << rangesep << *integer_range_p->get_first_p() << ".." << *integer_range_p->get_last_p();
-	  rangesep = ",";
+          number_range *number_range_p = LISTABLE_PTR(tmp_p, number_range);
+          mpl_list_t *tmp_p;
+          integer_range *integer_range_p;
+          MPL_LIST_FOR_EACH(number_range_p->range_list_p, tmp_p) {
+              integer_range_p = LISTABLE_PTR(tmp_p, integer_range);
+              os << rangesep << *integer_range_p->get_first_p() << ".." << *integer_range_p->get_last_p();
+              rangesep = ",";
         }
       }
       os << ")" << "\\n";
@@ -4597,7 +4597,19 @@ void int_parameter::help(ostream &os)
     }
     else if (!get_property("number_ranges")) {
       os << "max=" << type_max() << "\\n";
-    }    
+    }
+}
+
+void string_parameter::help(ostream &os)
+{
+    parameter::help(os);
+    if (get_property("min")) {
+      os << "min length=" << (char*)get_property("min") << "\\n";
+    }
+
+    if (get_property("max")) {
+      os << "max length=" << (char*)get_property("max") << "\\n";
+    }
 }
 
 void enum_parameter::help(ostream &os)

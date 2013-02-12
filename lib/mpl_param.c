@@ -15,7 +15,7 @@
  *
  *   Author: Per Sigmond <per@sigmond.no>
  *   Author: Harald Johansen <harald.johansen@stericsson.com>
- *   Author: Emil B. Viken <emil.b.viken@stericsson.com>
+ *   Author: Emil B. Viken <emil.b.viken@gmail.com>
  *
  */
 
@@ -204,7 +204,7 @@ static char *mpl_strdup(const char *s);
 #endif
 
 #ifdef MPL_MODULE_TEST
-static void mpl_test_param_deinit(void);
+static void mpl_module_test_param_deinit(void);
 #endif
 
 /**
@@ -315,13 +315,13 @@ void mpl_param_deinit(void)
     free(pc_p);
     (void)mpl_mutex_unlock(mutex);
 #ifdef MPL_MODULE_TEST
-    mpl_test_param_deinit();
+    mpl_module_test_param_deinit();
 #endif
     return;
 }
 
 #ifdef MPL_MODULE_TEST
-static void mpl_test_param_deinit(void)
+static void mpl_module_test_param_deinit(void)
 {
     mpl_list_t *elem_p;
     mpl_list_t *tmp_p;
@@ -2050,13 +2050,13 @@ static mpl_unittest_response_t mpl_param_unittest;
 
 void unittest_force_mpl_init(void)
 {
-    mpl_param_unittest.param_test_active = FALSE;
+    mpl_param_unittest.param_test_active = false;
 }
 
 void unittest_force_mpl_set(mpl_param_element_id_t param_id,
                             MPL_ErrorCode_t errno_code)
 {
-    mpl_param_unittest.param_test_active = TRUE;
+    mpl_param_unittest.param_test_active = true;
     mpl_param_unittest.param_id = param_id;
     mpl_param_unittest.errno_code = errno_code;
 }
@@ -2065,12 +2065,12 @@ void unittest_force_mpl_set(mpl_param_element_id_t param_id,
 bool unittest_force_mpl_errno_response(mpl_param_element_id_t param_id,
                                        MPL_ErrorCode_t *errno_code)
 {
-    if (mpl_param_unittest.param_test_active == FALSE)
-        return FALSE;
+    if (mpl_param_unittest.param_test_active == false)
+        return false;
     if (param_id != mpl_param_unittest.param_id)
-        return FALSE;
+        return false;
     *errno_code = mpl_param_unittest.errno_code;
-    return TRUE;
+    return true;
 }
 #endif
 
@@ -7488,7 +7488,7 @@ int mpl_pack_param_value_bag(const void* param_value_p,
     MPL_IDENTIFIER_NOT_USED(descr_p);
 
     assert(NULL != param_value_p);
-    options.message_delimiter = ',';
+    options.message_delimiter = MESSAGE_DELIMITER;
 
     tmplen = mpl_param_list_pack_extended(l_p,
                                           NULL,

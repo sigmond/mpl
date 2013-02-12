@@ -3542,9 +3542,9 @@ void parameter_set::cli_h(FILE *f)
                     !compiler_p->bag_is_event((bag_parameter*)parameter_p))
                     parameter_p->cli_h_help(f);
             }
-	    else if (!parameter_p->is_virtual) {
-	      parameter_p->cli_h_help(f);
-	    }
+            else if (!parameter_p->is_virtual) {
+                parameter_p->cli_h_help(f);
+            }
             if (parameter_p->is_enum()) {
                 if (compiler_p->param_is_command_parameter(parameter_p))
                     ((enum_parameter*)parameter_p)->cli_h_completions(f);
@@ -4118,9 +4118,9 @@ void parameter_set::cli_c(FILE *f)
                     !compiler_p->bag_is_event((bag_parameter*)parameter_p))
                     parameter_p->cli_c_help(f);
             }
-	    else if (!parameter_p->is_virtual) {
-	      parameter_p->cli_c_help(f);
-	    }
+            else if (!parameter_p->is_virtual) {
+                parameter_p->cli_c_help(f);
+            }
             if (parameter_p->is_enum()) {
                 if (compiler_p->param_is_command_parameter(parameter_p))
                     ((enum_parameter*)parameter_p)->cli_c_completions(f);
@@ -4808,7 +4808,7 @@ void parameter_set::cli_call_parameter_help(FILE *f)
                         parameter_p->name_p
                        );
             }
-	    else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
+            else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
                 fprintf(f,
                         "    if (!strcmp(\"help %s\", line))\n"
                         "        return %s_%s_get_parameter_help(helptext);\n",
@@ -4816,7 +4816,7 @@ void parameter_set::cli_call_parameter_help(FILE *f)
                         get_short_name(),
                         parameter_p->name_p
                        );
-	    }
+            }
         }
     }
 }
@@ -4846,7 +4846,7 @@ void parameter_set::cli_parameter_help_completions(FILE *f)
                         parameter_p->name_p
                        );
             }
-	    else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
+            else if (!parameter_p->is_bag() && !parameter_p->is_virtual) {
                 fprintf(f,
                         "    if ((len > 4) && !strncmp(\"help %s\",line,len)) {\n"
                         "        completionStrings[numStrings++] = strdup(\"help %s\");\n"
@@ -4855,7 +4855,7 @@ void parameter_set::cli_parameter_help_completions(FILE *f)
                         parameter_p->name_p,
                         parameter_p->name_p
                        );
-	    }
+            }
         }
     }
 }

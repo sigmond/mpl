@@ -13,6 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  *
+ *   Author: Per Sigmond <per@sigmond.no>
+ *   Author: Harald Johansen <harald.johansen@stericsson.com>
+ *   Author: Emil B. Viken <emil.b.viken@gmail.com>
+ *
  */
 
 /*************************************************************************
