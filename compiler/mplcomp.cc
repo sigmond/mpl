@@ -2174,7 +2174,7 @@ void api_decode_parameter_list(FILE *f,
                         pn
                        );
                 fprintf(f,
-                        "%s            for (int i = 0; i < num_%s; i++)\n",
+                        "%s            for (int i = 0; i < num_%s; i++) {\n",
                         indent,
                         pn
                        );
