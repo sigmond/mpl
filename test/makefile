@@ -52,9 +52,11 @@ LOCAL_OBJS= mpl_test.o \
 
 TESTPROT_SERVER_OBJS=testprotocol.o testprot_handlers.o testprot_server.o
 
+TESTPROT_SERVER_CC_OBJS=testprotocol.o $(TESTPROT_API_O_GENERATED) testprot_handlers_cc.o testprot_server_cc.o
+
 TESTPROT_CLI_OBJS=testprotocol.o testprotocol_cli.o testprot_cli.o linenoise.o
 
-all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_api
+all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc testprot_api
 
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c
@@ -73,8 +75,11 @@ testprot_server: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(LOCAL_OBJS) $(TESTPROT_SERVER_O
 testprot_cli: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(TESTPROT_CLI_OBJS)
 	$(CC) -rdynamic -o testprot_cli $(MPL_OBJS) $(TESTPROT_CLI_OBJS) -lpthread -lapr-1
 
+testprot_server_cc: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(LOCAL_OBJS) $(TESTPROT_SERVER_CC_OBJS) $(TESTPROT_API_O_GENERATED) $(TESTPROT_API_OBJS)
+	$(CXX) -rdynamic -o testprot_server_cc $(MPL_OBJS) $(TESTPROT_SERVER_CC_OBJS) $(TESTROT_API_OBJS) $(TESTROT_API_O_GENERATED) -lpthread -lapr-1
+
 testprot_api: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(TESTPROT_API_O_GENERATED) $(TESTPROT_API_OBJS)
-	$(CC) -rdynamic -o testprot_api $(MPL_OBJS) $(TESTROT_API_OBJS) $(TESTROT_API_O_GENERATED) -lpthread -lapr-1
+	$(CXX) -rdynamic -o testprot_api $(MPL_OBJS) $(TESTPROT_API_OBJS) $(TESTROT_API_O_GENERATED) -lpthread -lapr-1
 
 .PHONY: force
 $(MPLCOMP): force
@@ -105,7 +110,8 @@ $(TESTPROT_API_CC_GENERATED):%.cc: testprotocol.mpl $(INCLUDED_MPL_FILES) $(MPLC
 	$(MPLCOMP) -m api $<
 
 clean:
-	rm -f mpl_test testprot_server testprot_cli testprot_api
+	rm -f mpl_test testprot_server testprot_server_cc testprot_cli testprot_api
 	rm -f *.o *.d
 	rm -f $(MPLCOMP_GENERATED) $(TESTPROT_CLI_H_GENERATED) $(TESTPROT_CLI_C_GENERATED)
 	rm -f $(TESTPROT_API_HH_GENERATED) $(TESTPROT_API_CC_GENERATED)
+	rm -f *~ core

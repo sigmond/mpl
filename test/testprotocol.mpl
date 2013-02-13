@@ -101,39 +101,70 @@ category testprot using testprotocol {
 
     commands {
         TestEchoInt(inout Int *i,
+                    inout Int *i_arr[],
                     inout Sint8 *s8,
+                    inout Sint8 *s8_arr[],
                     inout Sint16 *s16,
+                    inout Sint16 *s16_arr[],
                     inout Sint32 *s32,
+                    inout Sint32 *s32_arr[],
                     inout Sint64 *s64,
+                    inout Sint64 *s64_arr[],
                     inout Uint8 *u8,
+                    inout Uint8 *u8_arr[],
                     inout Uint16 *u16,
+                    inout Uint16 *u16_arr[],
                     inout Uint32 *u32,
-                    inout Uint64 *u64
+                    inout Uint32 *u32_arr[],
+                    inout Uint64 *u64,
+                    inout Uint64 *u64_arr[]
                     );
         TestEchoEnum(inout Se *se,
+                    inout Se *se_arr[],
                     inout Se8 *se8,
+                    inout Se8 *se8_arr[],
                     inout Se16 *se16,
+                    inout Se16 *se16_arr[],
                     inout Se32 *se32,
+                    inout Se32 *se32_arr[],
                     inout Ue8 *ue8,
+                    inout Ue8 *ue8_arr[],
                     inout Ue16 *ue16,
-                    inout Ue32 *ue32
+                    inout Ue16 *ue16_arr[],
+                    inout Ue32 *ue32,
+                    inout Ue32 *ue32_arr[]
                     );
         TestEchoBool(inout Bool *b,
-                    inout Bool8 *b8
+                    inout Bool *b_arr[],
+                    inout Bool8 *b8,
+                    inout Bool8 *b8_arr[]
                     );
         TestEchoString(inout String *s,
-                    inout WString *ws
+                    inout String *s_arr[],
+                    inout WString *ws,
+                    inout WString *ws_arr[]
                     );
-        TestEchoAddr(inout Addr a);
+        TestEchoAddr(inout Addr *a,
+                    inout Addr *a_arr[]
+                    );
         TestEchoArray(inout U8a *u8a,
+                    inout U8a *u8a_arr[],
                     inout U16a *u16a,
-                    inout U32a *u32a
+                    inout U16a *u16a_arr[],
+                    inout U32a *u32a,
+                    inout U32a *u32a_arr[]
                     );
         TestEchoTuple(inout StringTup *stringtup,
+                    inout StringTup *stringtup_arr[],    
                     inout IntTup *inttup,
+                    inout IntTup *inttup_arr[],
                     inout StrintTup *strinttup,
-                    inout Struint8Tup *struint8tup
+                    inout StrintTup *strinttup_arr[],
+                    inout Struint8Tup *struint8tup,
+                    inout Struint8Tup *struint8tup_arr[]
                     );
-        TestEchoBag(inout Bag b);
+        TestEchoBag(inout Bag *b,
+                    inout Bag *b_arr[]
+                    );
     };
 };

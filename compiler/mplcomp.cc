@@ -934,11 +934,14 @@ void api_cc_members_allocate_parameter_list(FILE *f,
             }
             else if (s) {
                     fprintf(f,
-                            "%s        char **__%s%s = (char**)calloc(this->num_%s, sizeof(char*));\n",
+                            "%s        %s *__%s%s = (%s*)calloc(this->num_%s, sizeof(%s));\n",
                             indent,
+                            ct,
                             fn ? PFX(fn) : "_",
                             fn ? fn : pn,
-                            fn ? fn : pn
+                            ct,
+                            fn ? fn : pn,
+                            ct
                            );
                     fprintf(f,
                             "%s        for (int i = 0; i < this->num_%s; i++) {\n",
@@ -1218,16 +1221,37 @@ void api_cc_copy_constructor_parameter_list(FILE *f,
                     indent,
                     indent
                    );
+            if (e) {
+                fprintf(f,
+                        "%s        this->%s%s = (%s_%s_t**)calloc(obj.num_%s, sizeof(%s_%s_t*));\n",
+                        indent,
+                        fn ? PFX(fn) : "_",
+                        fn ? fn : pn,
+                        parameter_list_entry_p->parameter_set_p->name_p,
+                        parameter_p->name_p,
+                        fn ? fn : pn,
+                        parameter_list_entry_p->parameter_set_p->name_p,
+                        parameter_p->name_p
+                       );
+            }
+            else {
+                fprintf(f,
+                        "%s        this->%s%s = (%s%s*)calloc(obj.num_%s, sizeof(%s%s));\n",
+                        indent,
+                        fn ? PFX(fn) : "_",
+                        fn ? fn : pn,
+                        b ? pn : ct,
+                        IS_PTR ? "*" : "",
+                        fn ? fn : pn,
+                        b ? pn : ct,
+                        IS_PTR ? "*" : ""
+                       );
+            }
             fprintf(f,
-                    "%s        this->%s%s = (%s%s*)calloc(obj.num_%s, sizeof(%s%s));\n",
+                    "%s        this->num_%s = obj.num_%s;\n",
                     indent,
-                    fn ? PFX(fn) : "_",
                     fn ? fn : pn,
-                    b ? pn : ct,
-                    IS_PTR ? "*" : "",
-                    fn ? fn : pn,
-                    b ? pn : ct,
-                    IS_PTR ? "*" : ""
+                    fn ? fn : pn
                    );
             fprintf(f,
                     "%s        for (int i = 0; i < obj.num_%s; i++) {\n",
@@ -1468,26 +1492,30 @@ void api_cc_encode_parameter_list(FILE *f,
                        );
                 if (t) {
                     fprintf(f,
-                            "%s        %s_ADD_%s_%s_TAG(&%s, &%s%s[i]->tuple, i+1);\n",
+                            "%s        %s_ADD_%s_%s_TAG(&%s, &%s%s[i]->tuple, i+1);\n"
+                            "%s    }\n",
                             indent,
                             snu,
                             bag_name_p,
                             fn,
                             bag_param_name_p,
                             PFX(fn),
-                            fn
+                            fn,
+                            indent
                            );
                 }
                 else if (a) {
                     fprintf(f,
-                            "%s        %s_ADD_%s_%s_TAG(&%s, &%s%s[i]->array, i+1);\n",
+                            "%s        %s_ADD_%s_%s_TAG(&%s, &%s%s[i]->array, i+1);\n"
+                            "%s    }\n",
                             indent,
                             snu,
                             bag_name_p,
                             fn,
                             bag_param_name_p,
                             PFX(fn),
-                            fn
+                            fn,
+                            indent
                            );
                 }
                 else if (b) {
@@ -1738,8 +1766,12 @@ void api_decode_parameter_list(FILE *f,
 
         if (m) {
             fprintf(f,
-                    "%s    num_%s = 0;\n",
+                    "%s    num_%s = 0;\n"
+                    "%s    %s%s = NULL;\n",
                     indent,
+                    fn ? fn : pn,
+                    indent,
+                    fn ? PFX(fn) : "_",
                     fn ? fn : pn
                    );
         }
@@ -1776,13 +1808,12 @@ void api_decode_parameter_list(FILE *f,
                     }
                     else {
                         fprintf(f,
-                                "%s        %s%s = (%s*)calloc(1, sizeof(%s%s));\n",
+                                "%s        %s%s = (%s*)calloc(1, sizeof(%s));\n",
                                 indent,
                                 PFX(fn),
                                 fn,
                                 b ? pn : ct,
-                                b ? pn : ct,
-                                IS_PTR ? "*" : ""
+                                b ? pn : ct
                                );
                     }
                     fprintf(f,
@@ -1874,17 +1905,32 @@ void api_decode_parameter_list(FILE *f,
                         fn,
                         bag_param_name_p
                        );
-                fprintf(f,
-                        "%s        %s%s = (%s%s*)calloc(num_%s, sizeof(%s%s));\n",
-                        indent,
-                        PFX(fn),
-                        fn,
-                        b ? pn : ct,
-                        IS_PTR ? "*" : "",
-                        fn,
-                        b ? pn : ct,
-                        IS_PTR ? "*" : ""
-                       );
+                if (e) {
+                    fprintf(f,
+                            "%s        %s%s = (%s_%s_t**)calloc(num_%s, sizeof(%s_%s_t*));\n",
+                            indent,
+                            PFX(fn),
+                            fn,
+                            parameter_list_entry_p->parameter_set_p->name_p,
+                            parameter_p->name_p,
+                            fn,
+                            parameter_list_entry_p->parameter_set_p->name_p,
+                            parameter_p->name_p
+                           );
+                }
+                else {
+                    fprintf(f,
+                            "%s        %s%s = (%s%s*)calloc(num_%s, sizeof(%s%s));\n",
+                            indent,
+                            PFX(fn),
+                            fn,
+                            b ? pn : ct,
+                            IS_PTR ? "*" : "",
+                            fn,
+                            b ? pn : ct,
+                            IS_PTR ? "*" : ""
+                           );
+                }
                 fprintf(f,
                         "%s        if (%s%s != NULL) {\n",
                         indent,
@@ -1892,7 +1938,7 @@ void api_decode_parameter_list(FILE *f,
                         fn
                        );
                 fprintf(f,
-                        "%s            for (int i = 0; i < num_%s; i++)\n",
+                        "%s            for (int i = 0; i < num_%s; i++) {\n",
                         indent,
                         fn
                        );
@@ -1936,8 +1982,36 @@ void api_decode_parameter_list(FILE *f,
                            );
                 }
                 else {
+                    if (e) {
+                        fprintf(f,
+                                "%s                %s%s[i] = (%s_%s_t*)calloc(1, sizeof(%s_%s_t));\n",
+                                indent,
+                                PFX(fn),
+                                fn,
+                                parameter_list_entry_p->parameter_set_p->name_p,
+                                parameter_p->name_p,
+                                parameter_list_entry_p->parameter_set_p->name_p,
+                                parameter_p->name_p
+                               );
+                    }
+                    else {
+                        fprintf(f,
+                                "%s                %s%s[i] = (%s*)calloc(1, sizeof(%s));\n",
+                                indent,
+                                PFX(fn),
+                                fn,
+                                b ? pn : ct,
+                                b ? pn : ct
+                               );
+                    }
                     fprintf(f,
-                            "%s                %s%s%s[i] = %s_GET_%s_%s%s_TAG(%s, i+1);\n",
+                            "%s                if (%s%s[i] != NULL)\n",
+                            indent,
+                            PFX(fn),
+                            fn
+                           );
+                    fprintf(f,
+                            "%s                    %s%s%s[i] = %s_GET_%s_%s%s_TAG(%s, i+1);\n",
                             indent,
                             parameter_p->is_basic() && !parameter_p->is_addr() ? "*" : "",
                             PFX(fn),
@@ -1950,7 +2024,9 @@ void api_decode_parameter_list(FILE *f,
                            );
                 }
                 fprintf(f,
+                        "%s            }\n"
                         "%s        }\n",
+                        indent,
                         indent
                        );
             }
@@ -1978,12 +2054,11 @@ void api_decode_parameter_list(FILE *f,
                     }
                     else {
                         fprintf(f,
-                                "%s        _%s = (%s*)calloc(1, sizeof(%s%s));\n",
+                                "%s        _%s = (%s*)calloc(1, sizeof(%s));\n",
                                 indent,
                                 pn,
                                 b ? pn : ct,
-                                b ? pn : ct,
-                                IS_PTR ? "*" : ""
+                                b ? pn : ct
                                );
                     }
                     fprintf(f,
@@ -2069,16 +2144,30 @@ void api_decode_parameter_list(FILE *f,
                         bag_param_name_p,
                         pn
                        );
-                fprintf(f,
-                        "%s        _%s = (%s%s*)calloc(num_%s, sizeof(%s%s));\n",
-                        indent,
-                        pn,
-                        b ? pn : ct,
-                        IS_PTR ? "*" : "",
-                        pn,
-                        b ? pn : ct,
-                        IS_PTR ? "*" : ""
-                       );
+                if (e) {
+                    fprintf(f,
+                            "%s        _%s = (%s_%s_t**)calloc(num_%s, sizeof(%s_%s_t*));\n",
+                            indent,
+                            pn,
+                            parameter_list_entry_p->parameter_set_p->name_p,
+                            parameter_p->name_p,
+                            pn,
+                            parameter_list_entry_p->parameter_set_p->name_p,
+                            parameter_p->name_p
+                           );
+                }
+                else {
+                    fprintf(f,
+                            "%s        _%s = (%s%s*)calloc(num_%s, sizeof(%s%s));\n",
+                            indent,
+                            pn,
+                            b ? pn : ct,
+                            IS_PTR ? "*" : "",
+                            pn,
+                            b ? pn : ct,
+                            IS_PTR ? "*" : ""
+                           );
+                }
                 fprintf(f,
                         "%s        if (_%s != NULL) {\n",
                         indent,
@@ -2126,8 +2215,33 @@ void api_decode_parameter_list(FILE *f,
                            );
                 }
                 else {
+                    if (e) {
+                        fprintf(f,
+                                "%s                _%s[i] = (%s_%s_t*)calloc(1, sizeof(%s_%s_t));\n",
+                                indent,
+                                pn,
+                                parameter_list_entry_p->parameter_set_p->name_p,
+                                parameter_p->name_p,
+                                parameter_list_entry_p->parameter_set_p->name_p,
+                                parameter_p->name_p
+                               );
+                    }
+                    else {
+                        fprintf(f,
+                                "%s                _%s[i] = (%s*)calloc(1, sizeof(%s));\n",
+                                indent,
+                                pn,
+                                b ? pn : ct,
+                                b ? pn : ct
+                               );
+                    }
                     fprintf(f,
-                            "%s                %s_%s[i] = %s_GET_%s%s_TAG(%s, %s, i+1);\n",
+                            "%s                if (_%s[i] != NULL)\n",
+                            indent,
+                            pn
+                           );
+                    fprintf(f,
+                            "%s                    %s_%s[i] = %s_GET_%s%s_TAG(%s, %s, i+1);\n",
                             indent,
                             parameter_p->is_basic() && !parameter_p->is_addr() ? "*" : "",
                             pn,
@@ -2139,7 +2253,9 @@ void api_decode_parameter_list(FILE *f,
                            );
                 }
                 fprintf(f,
+                        "%s            }\n"
                         "%s        }\n",
+                        indent,
                         indent
                        );
             }

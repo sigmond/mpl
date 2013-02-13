@@ -103,4 +103,5 @@ $(PERS_API_CC_GENERATED):%.cc: personnel.mpl $(INCLUDED_MPL_FILES) $(MPLCOMP)
 clean:
 	rm -f pers_server pers_cli
 	rm -f *.o *.d
-	rm -f $(MPLCOMP_GENERATED) $(PERS_CLI_C_GENERATED) $(PERS_CLI_H_GENERATED)
+	rm -f $(MPLCOMP_GENERATED) $(PERS_CLI_C_GENERATED) $(PERS_CLI_H_GENERATED) $(PERS_API_CC_GENERATED) $(PERS_API_HH_GENERATED)
+	rm -f *~ core

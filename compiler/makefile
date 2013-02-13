@@ -52,3 +52,4 @@ clean:
 	rm -f *.o *.d
 	rm -f lex.yy.*
 	rm -f mplcomp.tab.*
+	rm -f *~ core

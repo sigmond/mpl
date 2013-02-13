@@ -652,22 +652,12 @@ void category::api_hh(FILE *f, char *indent)
 
     if (parent_p == NULL) {
         fprintf(f,
-                "%s    int send(%s *command_p);\n",
-                indent,
-                get_command_bag()->name_p
-               );
-        fprintf(f,
-                "%s    int __send(%s *command_p);\n",
-                indent,
-                get_command_bag()->name_p
+                "%s    mpl_list_t *send(BAG *bag_p);\n",
+                indent
                );
         fprintf(f,
                 "%s    BAG *receive(mpl_list_t *inMsg);\n",
                 indent
-               );
-        fprintf(f,
-                "#define __SEND %s::__send\n",
-                name_p
                );
     }
     return;
@@ -680,52 +670,23 @@ void category::api_cc(FILE *f, char *indent)
     char *cnu = str_toupper(name_p);
 
     if (parent_p == NULL) {
-
-
         fprintf(f,
-                "%sint send(%s *command_p)\n"
-                "%s{\n"
-                "%s    return __SEND(command_p);\n"
-                "%s}\n",
-                indent,
-                get_command_bag()->name_p,
-                indent,
-                indent,
-                indent
-               );
-        fprintf(f,
-                "%sint __send(%s *command_p)\n"
+                "%smpl_list_t *send(BAG *bag_p)\n"
                 "%s{\n",
                 indent,
-                get_command_bag()->name_p,
                 indent
                );
 #define INDENT(str) fprintf(f, "%s%s", indent, str)
-        INDENT("    char *buf = NULL;\n");
-        INDENT("    int len;\n");
-        INDENT("    int ret = -1;\n");
-        INDENT("    mpl_list_t *outMsg;\n");
         INDENT("    mpl_param_element_t *__elem;\n");
-        INDENT("    __elem = mpl_param_element_create_empty(command_p->id());\n");
-        INDENT("    __elem->value_p = command_p->encode();\n");
-        INDENT("    outMsg = &__elem->list_entry;\n");
-        INDENT("    len = mpl_param_list_pack(outMsg, NULL, 0);\n");
-        INDENT("    if (len <= 0) {\n");
-        INDENT("        printf(\"!!! FAILED PACKING MESSAGE !!!\\n\");\n");
-        INDENT("        goto exit;\n");
+        INDENT("    __elem = mpl_param_element_create_empty(bag_p->id());\n");
+        INDENT("    if (__elem == NULL)\n");
+        INDENT("        return NULL;\n");
+        INDENT("    __elem->value_p = bag_p->encode();\n");
+        INDENT("    if (__elem->value_p == NULL) {\n");
+        INDENT("        mpl_param_element_destroy(__elem);\n");
+        INDENT("        return NULL;\n");
         INDENT("    }\n");
-        INDENT("    buf = (char*) malloc(len+1);\n");
-        INDENT("    len = mpl_param_list_pack(outMsg, buf, len+1);\n");
-        INDENT("    mpl_param_list_destroy(&outMsg);\n");
-        INDENT("    if (len <= 0) {\n");
-        INDENT("        printf(\"!!! FAILED PACKING MESSAGE !!!\\n\");\n");
-        INDENT("        goto exit;\n");
-        INDENT("    }\n");
-        INDENT("    printf(\"Message sent:'%s'\\n\", buf);\n");
-        INDENT("    ret = 0;\n");
-        INDENT("exit:\n");
-        INDENT("    free(buf);\n");
-        INDENT("    return ret;\n");
+        INDENT("    return &__elem->list_entry;\n");
         INDENT("}\n");
         fprintf(f,
                 "\n"
