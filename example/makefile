@@ -55,7 +55,7 @@ LOCAL_OBJS =  pers_server.o \
 
 PERS_CLI_OBJS = personnel.o personnel_cli.o pers_cli.o linenoise.o
 
-all: $(MPLCOMP) $(MPLCOMP_GENERATED) pers_server pers_cli pers_api
+all: $(MPLCOMP) $(MPLCOMP_GENERATED) pers_server pers_cli pers_api doc
 
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c
@@ -73,6 +73,13 @@ pers_cli: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(PERS_CLI_OBJS)
 
 pers_api: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(PERS_API_O_GENERATED) $(PERS_API_OBJS)
 	$(CC) -rdynamic -o pers_api $(MPL_OBJS) $(PERS_API_OBJS) $(PERS_API_O_GENERATED) -lpthread -lapr-1
+
+doc: $(MPLCOMP) $(MPLCOMP_C_GENERATED:.c=.mpl)
+	rm -rf personnel.tex
+	rm -rf personnel
+	$(MPLCOMP) -m latex $(MPLCOMP_C_GENERATED:.c=.mpl) > personnel.tex
+	latex personnel.tex > /dev/null
+	latex2html -show_section_numbers personnel.tex > /dev/null
 
 .PHONY: force
 $(MPLCOMP): force

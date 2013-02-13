@@ -4517,6 +4517,20 @@ void bag_parameter::api_hh(FILE *f, char *indent)
            );
 
     fprintf(f,
+            "%s        %s &operator=(const %s &rhs);\n",
+            indent,
+            name_p,
+            name_p
+           );
+
+    fprintf(f,
+            "%s        bool operator==(%s &other);\n",
+            indent,
+            name_p,
+            name_p
+           );
+
+    fprintf(f,
             "%s        virtual ~%s();\n",
             indent,
             name_p
@@ -4719,6 +4733,96 @@ void bag_parameter::api_cc(FILE *f, char *indent)
                                     parameter_set_p,
                                     direction_none);
 
+    fprintf(f,
+            "%s}\n",
+            indent
+           );
+
+    /* Assignment operator */
+    fprintf(f,
+            "%s%s &%s::operator=(const %s &obj)\n"
+            "%s{\n",
+            indent,
+            name_p,
+            name_p,
+            name_p,
+            indent
+           );
+    fprintf(f,
+            "%s    if (this == &obj)\n"
+            "%s        return *this;\n",
+            indent,
+            indent
+           );
+
+    if (parent_p) {
+        fprintf(f,
+                "%s    %s::operator=(obj);\n",
+                indent,
+                parent_p->name_p
+               );
+    }
+    else {
+        fprintf(f,
+                "%s    BAG::operator=(obj);\n",
+                indent
+               );
+    }
+
+    api_free_decoded_parameter_list(f,
+                                    indent,
+                                    bag_parameter_list_p,
+                                    parent_p ? ((bag_parameter*)parent_p)->bag_parameter_list_p : NULL,
+                                    parameter_set_p,
+                                    direction_none);
+
+    api_cc_copy_constructor_parameter_list(f,
+                                           indent,
+                                           bag_parameter_list_p,
+                                           parent_p ? ((bag_parameter*)parent_p)->bag_parameter_list_p : NULL,
+                                           parameter_set_p,
+                                           direction_none);
+
+    fprintf(f,
+            "%s    return *this;\n",
+            indent
+           );
+    fprintf(f,
+            "%s}\n",
+            indent
+           );
+
+    /* Comparison operator */
+    fprintf(f,
+            "%sbool %s::operator==(%s &other)\n"
+            "%s{\n",
+            indent,
+            name_p,
+            name_p,
+            indent
+           );
+
+    fprintf(f,
+            "%s    mpl_param_element_t *this_elem = mpl_param_element_create_empty(this->id());\n"
+            "%s    mpl_param_element_t *other_elem = mpl_param_element_create_empty(other.id());\n"
+            "%s    this_elem->value_p = this->encode();\n"
+            "%s    other_elem->value_p = other.encode();\n",
+            indent,
+            indent,
+            indent,
+            indent
+           );
+
+    fprintf(f,
+            "%s    int diff = mpl_param_element_compare(this_elem, other_elem);\n"
+            "%s    mpl_param_element_destroy(this_elem);\n"
+            "%s    mpl_param_element_destroy(other_elem);\n"
+            "%s    return (diff == 0);\n",
+            indent,
+            indent,
+            indent,
+            indent
+           );
     fprintf(f,
             "%s}\n",
             indent

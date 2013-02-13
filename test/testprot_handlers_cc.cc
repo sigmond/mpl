@@ -60,33 +60,73 @@ BAG *handle_testprot(BAG *reqObj)
 static BAG *handle_TestEchoInt(TestEchoInt_Req *reqObj)
 {
     TestEchoInt_Req *copy = new TestEchoInt_Req(*reqObj); // Test copy constructor
-    TestEchoInt_Resp *resp = new TestEchoInt_Resp(copy->i,
-                                                 copy->i_arr,
-                                                 copy->num_i_arr,
-                                                 copy->s8,
-                                                 copy->s8_arr,
-                                                 copy->num_s8_arr,
-                                                 copy->s16,
-                                                 copy->s16_arr,
-                                                 copy->num_s16_arr,
-                                                 copy->s32,
-                                                 copy->s32_arr,
-                                                 copy->num_s32_arr,
-                                                 copy->s64,
-                                                 copy->s64_arr,
-                                                 copy->num_s64_arr,
-                                                 copy->u8,
-                                                 copy->u8_arr,
-                                                 copy->num_u8_arr,
-                                                 copy->u16,
-                                                 copy->u16_arr,
-                                                 copy->num_u16_arr,
-                                                 copy->u32,
-                                                 copy->u32_arr,
-                                                 copy->num_u32_arr,
-                                                 copy->u64,
-                                                 copy->u64_arr,
-                                                 copy->num_u64_arr
+    TestEchoInt_Req copy2(NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0,
+                          NULL,
+                          NULL,
+                          0
+                         );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    free(copy->u64);
+    copy->u64 = (uint64_t*)calloc(1, sizeof(*copy->u64));
+    *copy->u64 = 987654;
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoInt_Resp *resp = new TestEchoInt_Resp(copy2.i,
+                                                 copy2.i_arr,
+                                                 copy2.num_i_arr,
+                                                 copy2.s8,
+                                                 copy2.s8_arr,
+                                                 copy2.num_s8_arr,
+                                                 copy2.s16,
+                                                 copy2.s16_arr,
+                                                 copy2.num_s16_arr,
+                                                 copy2.s32,
+                                                 copy2.s32_arr,
+                                                 copy2.num_s32_arr,
+                                                 copy2.s64,
+                                                 copy2.s64_arr,
+                                                 copy2.num_s64_arr,
+                                                 copy2.u8,
+                                                 copy2.u8_arr,
+                                                 copy2.num_u8_arr,
+                                                 copy2.u16,
+                                                 copy2.u16_arr,
+                                                 copy2.num_u16_arr,
+                                                 copy2.u32,
+                                                 copy2.u32_arr,
+                                                 copy2.num_u32_arr,
+                                                 copy2.u64,
+                                                 copy2.u64_arr,
+                                                 copy2.num_u64_arr
                                                 );
     delete copy;
     return resp;

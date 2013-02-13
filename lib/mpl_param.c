@@ -8300,12 +8300,12 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
     mpl_param_element_t* param_elem2_p;
 
     if ((NULL == list1_p) && (NULL != list2_p)) {
-        printf("list 1 has no params, but list 2 has\n");
+/*         printf("list 1 has no params, but list 2 has\n"); */
         return -1;
     }
 
     if ((NULL == list2_p) && (NULL != list1_p)) {
-        printf("list 2 has no params, but list 1 has\n");
+/*         printf("list 2 has no params, but list 1 has\n"); */
         return -1;
     }
 
@@ -8318,9 +8318,9 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
                                                param_elem1_p->id_in_context,
                                                param_elem1_p->tag,
                                                list2_p)) {
-                printf("param field %s present in list 1 but missing in list 2\n",
-                       mpl_param_get_bag_field_name(param_elem1_p->context,
-                                                    param_elem1_p->id_in_context));
+/*                 printf("param field %s present in list 1 but missing in list 2\n", */
+/*                        mpl_param_get_bag_field_name(param_elem1_p->context, */
+/*                                                     param_elem1_p->id_in_context)); */
                 return -1;
             }
             param_elem2_p = mpl_param_list_find_field_tag(param_elem1_p->context,
@@ -8330,7 +8330,7 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
         }
         else {
             if (!MPL_PARAM_PRESENT_IN_LIST(param_elem1_p->id, list2_p)) {
-                printf("param %d present in list 1 but missing in list 2\n", param_elem1_p->id);
+/*                 printf("param %d present in list 1 but missing in list 2\n", param_elem1_p->id); */
                 return -1;
             }
             param_elem2_p = mpl_param_list_find_tag(param_elem1_p->id, param_elem1_p->tag, list2_p);
@@ -8338,13 +8338,13 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
 
         if (0 != mpl_param_element_compare(param_elem1_p, param_elem2_p))
         {
-            printf("1: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n",
-                   mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id,
-                   param_elem1_p->tag,
-                   mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id,
-                   param_elem2_p->tag,
-                   mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p),
-                   mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p));
+/*             printf("1: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n", */
+/*                    mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id, */
+/*                    param_elem1_p->tag, */
+/*                    mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id, */
+/*                    param_elem2_p->tag, */
+/*                    mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p), */
+/*                    mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p)); */
             return -1;
         }
     }
@@ -8358,9 +8358,9 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
                                                param_elem2_p->id_in_context,
                                                param_elem2_p->tag,
                                                list1_p)) {
-                printf("param field %s present in list 2 but missing in list 1\n",
-                       mpl_param_get_bag_field_name(param_elem2_p->context,
-                                                    param_elem2_p->id_in_context));
+/*                 printf("param field %s present in list 2 but missing in list 1\n", */
+/*                        mpl_param_get_bag_field_name(param_elem2_p->context, */
+/*                                                     param_elem2_p->id_in_context)); */
                 return -1;
             }
             param_elem1_p = mpl_param_list_find_field_tag(param_elem2_p->context,
@@ -8370,7 +8370,7 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
         }
         else {
             if (!MPL_PARAM_PRESENT_IN_LIST(param_elem2_p->id, list1_p)) {
-                printf("param %d present in list 2 but missing in message 1\n", param_elem2_p->id);
+/*                 printf("param %d present in list 2 but missing in message 1\n", param_elem2_p->id); */
                 return -1;
             }
             param_elem1_p = mpl_param_list_find_tag(param_elem2_p->id, param_elem2_p->tag, list1_p);
@@ -8378,13 +8378,13 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
 
         if (0 != mpl_param_element_compare(param_elem2_p, param_elem1_p))
         {
-            printf("2: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n",
-                   mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id,
-                   param_elem2_p->tag,
-                   mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id,
-                   param_elem1_p->tag,
-                   mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p),
-                   mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p));
+/*             printf("2: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n", */
+/*                    mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id, */
+/*                    param_elem2_p->tag, */
+/*                    mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id, */
+/*                    param_elem1_p->tag, */
+/*                    mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p), */
+/*                    mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p)); */
             return -1;
         }
     }
