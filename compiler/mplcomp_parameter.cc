@@ -5830,6 +5830,7 @@ void bag_parameter::wrap_up_definition()
 
     MPL_LIST_FOR_EACH((mpl_list_t*)get_property("parameter_list"), tmp_p) {
         parameter_list_entry_p = LISTABLE_PTR(tmp_p, parameter_list_entry);
+        parameter *parameter_p = parameter_list_entry_p->parameter_set_p->find_parameter(parameter_list_entry_p->parameter_name_p);
         if (parameter_list_entry_p->field_name_p != NULL) {
             if (field_table_parameter_p == NULL) {
                 field_table_parameter_p = parameter_set_p->create_field_table_parameter(name_p);
@@ -5840,6 +5841,13 @@ void bag_parameter::wrap_up_definition()
                 field_table_parameter_p->add_enum_value(parameter_list_entry_p->field_name_p,
                                                        NULL);
             }
+        }
+        if ((parameter_p == this) && !parameter_list_entry_p->optional) {
+            fprintf(stderr, "%s:%d: recursive field '%s' must be optional\n",
+                    compiler_p->peek_filename(), compiler_p->lineno(),
+                    parameter_list_entry_p->field_name_p ? parameter_list_entry_p->field_name_p : name_p
+                   );
+            exit(-1);
         }
     }
     if (field_table_parameter_p != NULL)
