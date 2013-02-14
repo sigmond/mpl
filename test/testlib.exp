@@ -1,0 +1,296 @@
+set verbose 0
+set debug 0
+
+proc reset_passes_and_fails {} {
+    global passes
+    global fails
+    set passes 0
+    set fails 0
+}
+
+proc show_passes_and_fails {} {
+    global passes
+    global fails
+    send_user "PASSED: $passes, FAILED: $fails\n"
+}
+
+proc pass { msg } {
+    global passes
+    #send_user "PASS: $msg\n"
+    incr passes
+}
+
+proc fail { msg } {
+    global fails
+    #send_user "\nFAIL: $msg\n"
+    incr fails
+}
+
+proc checkRegexp_Generic { {invert} {reg} {response ""} } {
+    global test
+    global verbose
+    global progOutput
+    global matchedProgOutput
+    global unmatchedProgOutput
+
+    set matched ""
+    set unmatched ""
+    set expression "($reg)(.*)"
+
+    if { $response == "" } {
+        set setGlobals 1
+        set response $unmatchedProgOutput
+    } else {
+        set setGlobals 0
+    }
+
+    if { [regexp "$expression" "$response" dummy matched unmatched] } {
+        if { $invert == 0 } {
+            pass "$test"
+        } else {
+            fail "$test (match found)"
+        }
+        if { $setGlobals == 1 } {
+            set matchedProgOutput $matched
+            if { $invert == 0 } {
+                set unmatchedProgOutput $unmatched
+            }
+        }
+        if { $verbose > 0 } {
+            if { $invert == 0 } {
+                send_user "Pass: $test\n"
+            }
+            send_user "\tRegexp: \"$expression\"\n"
+            send_user "\tMatched output: \"$matched\"\n"
+        }
+    } else {
+        if { $invert == 0 } {
+            fail "$test (bad match)"
+            if { $verbose > 0 } {
+                send_user "Fail: $test\n"
+            }
+        } else {
+            pass "$test"
+            if { $verbose > 0 } {
+                send_user "Pass: $test\n"
+            }
+        }
+        if { $setGlobals == 1 } {
+            set matchedProgOutput ""
+        }
+        if { $verbose > 0 } {
+            send_user "\tRegexp: \"$expression\"\n"
+            send_user "\tUnmatched output: \"$response\"\n"
+        }
+    }
+}
+
+proc checkRegexp { {reg} {response ""} } {
+
+    checkRegexp_Generic 0 "$reg" "$response"
+
+}
+
+proc checkRegexpInv { {reg} {response ""} } {
+
+    checkRegexp_Generic 1 "$reg" "$response"
+
+}
+
+proc myEvalAndprint  { script unmatch_var match_var myregexp_var {pass_fail 1}} {
+    global test
+    global verbose
+
+    upvar 1 $unmatch_var unmatch
+    upvar 1 $match_var match
+    upvar 1 $myregexp_var myregexp
+    if { [uplevel 1 $script] } {
+        if {$pass_fail} {
+            pass "$test"
+
+            if { $verbose > 0 } {
+                send_user "Pass: $test\n"
+                send_user "\tMatched output: \"$match\"\n"
+            }
+        }
+    } else {
+        if {$pass_fail} {
+            fail "$test (bad match)"
+
+            if { $verbose > 0 } {
+                send_user "\tRegexp: \"$myregexp\"\n"
+                send_user "\tUnmatched output: \"$unmatch\"\n"
+            }
+        }
+    }
+}
+
+proc checkParamValue { param_name param_value msg {tag ""} } {
+    set tag_str ""
+    if {$tag != ""} {
+        set tag_str "(\\\[$tag\\\])"
+    } else {
+        set tag_str "(\\\[\[0-9\]+\\\])?"
+    }
+    if {$param_value != ""} {
+        if { [regexp "$param_name$tag_str=0x" $msg] } {
+            checkRegexp "$param_name$tag_str=0x[format %x $param_value]\[,\}'\]|$param_name$tag_str=0x[format %x $param_value]$" $msg
+        } else {
+            checkRegexp "$param_name$tag_str=$param_value\[,\}'\]|$param_name$tag_str=$param_value$" $msg
+        }
+    }
+    return [getParamValue $param_name $msg $tag]
+}
+
+proc checkParamValueInv { param_name param_value msg {tag ""} } {
+
+    set tag_str ""
+    if {$tag != ""} {
+        set tag_str "(\\\[$tag\\\])"
+    } else {
+        set tag_str "(\\\[\[0-9\]+\\\])?"
+    }
+
+    if {$param_value == ""} {
+        checkRegexpInv "$param_name$tag_str=" $msg
+    } else {
+        checkRegexpInv "$param_name$tag_str=$param_value" $msg
+        if {[isinteger $param_value]} {
+            checkRegexpInv "$param_name$tag_str=0x[format %x $param_value]" $msg
+        }
+    }
+}
+
+proc getBracketIndex { bstr {b "\{"} } {
+    set pos [string first $b $bstr]
+    if {$pos == -1} {
+        return -1
+    }
+    return $pos
+}
+
+proc getFirstStringInMatchingBrackets { bstr {lb "\{"} {rb "\}"} } {
+    set startPos [getBracketIndex $bstr $lb]
+    if {$startPos == -1} {
+        return $bstr
+    }
+    set pos $startPos
+    set endPos [string length $bstr]
+    set bcounter 1
+
+    if {[getBracketIndex $bstr $rb] != -1} {
+        while {true} {
+            set pos [getNextBracketIndex $bstr $pos]
+            if {$pos == -1} {
+                break
+            }
+            if {[charAtPos $bstr $pos] == $lb} {
+                incr bcounter
+            } elseif {[charAtPos $bstr $pos] == $rb} {
+                set bcounter [expr $bcounter - 1]
+            } else {
+                break
+            }
+            if {$bcounter == 0} {
+                set endPos $pos
+                break
+            }
+        }
+    }
+
+    return [string range $bstr [expr $startPos + 1] [expr $endPos - 1]]
+}
+
+proc getParamValue { param_name msg {tag ""} {fail 0} {compound 0}} {
+    set value ""
+    set tag_str ""
+    if {$tag != ""} {
+        set tag_str "(\\\[$tag\\\])"
+    } else {
+        set tag_str "(\\\[\[0-9\]+\\\])?"
+    }
+    if {$compound} {
+        set myregexp "$param_name$tag_str=(\[^'\]*)"
+    } else {
+        set myregexp "$param_name$tag_str=(\[^,^\}'\]*)"
+    }
+    myEvalAndprint {regexp $myregexp $msg match tag value} msg match myregexp $fail
+    if {$compound} {
+        set value [getFirstStringInMatchingBrackets $value]
+    }
+    return $value
+}
+
+## Glue layer:
+proc send_Cmd {request} {
+    global spawn_id
+    catch { send "$request\n" } tmp
+    if [string match "*invalid spawn id*" $tmp] {
+        send_user "ERROR: testprogram crashed? ('$tmp')\n"
+        exit 1
+    }
+}
+
+proc sync_Cmd {{syncpattern ""}} {
+    global spawn_id
+    global progOutput
+    global matchedProgOutput
+    global unmatchedProgOutput
+    global prompt
+
+    if { $syncpattern == "" } {
+        set syncpattern "$prompt"
+    }
+
+    expect {
+        -re "$syncpattern" {
+        }
+        timeout {
+            send_user "ERROR: sync: timeout waiting for '$syncpattern'\n"
+            exit 1
+        }
+    }
+
+    set progOutput $expect_out(buffer)
+    set unmatchedProgOutput $progOutput
+    set matchedProgOutput ""
+}
+
+proc get_Msg { name } {
+    global unmatchedProgOutput
+    global matchedProgOutput
+    global debug
+
+    set msg ""
+    set unmatched ""
+    set myregexp "($name\[^\n\]*)(.*)"
+
+    myEvalAndprint {regexp $myregexp \
+                        $unmatchedProgOutput dummy msg unmatched } unmatchedProgOutput msg myregexp 0
+    if {$debug} {
+        send_user "*** $myregexp\n"
+        send_user "*** matchedProgOutput: $matchedProgOutput\n"
+        send_user "*** unmatchedProgOutput: $unmatchedProgOutput\n"
+    }
+    return $msg
+}
+
+proc check_Value { name value msg {tag ""} } {
+    return [checkParamValue $name $value $msg $tag]
+}
+
+proc get_Value { name msg {tag ""} } {
+    return [getParamValue $name $msg $tag]
+}
+
+proc get_CompoundValue { name msg {tag ""} } {
+    return [getParamValue $name $msg $tag 0 1]
+}
+
+proc get_uint8_array { name msg {tag ""} } {
+    return [getParamValue $name $msg $tag]
+}
+
+proc check_uint8_array { name value msg {tag ""} } {
+    return [checkParamValue $name $value $msg $tag]
+}

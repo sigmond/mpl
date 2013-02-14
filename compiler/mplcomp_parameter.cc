@@ -6033,8 +6033,9 @@ void parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6085,8 +6086,9 @@ void parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6149,8 +6151,9 @@ void string_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     if (is_string) {
@@ -6213,8 +6216,9 @@ void string_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             name_p
            );
     if (is_string) {
@@ -6287,8 +6291,9 @@ void bool_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6344,8 +6349,9 @@ void bool_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6413,8 +6419,9 @@ void array_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6468,8 +6475,9 @@ void array_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6560,12 +6568,13 @@ void enum_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
-            "            if { [regexp \"^\\[0-9\\]+$|^0\\[xX+]\\[0-9a-fA-F\\]+$\" $value] } {\n"
+            "            if { [regexp \"^-?\\[0-9\\]+$|^0\\[xX+]\\[0-9a-fA-F\\]+$\" $value] } {\n"
            );
     int show_psn = (compiler_p->num_parameter_sets() > 1);
     fprintf(f,
@@ -6626,8 +6635,9 @@ void enum_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -6636,7 +6646,7 @@ void enum_parameter::deja(FILE *f)
             "            }\n"
            );
     fprintf(f,
-            "            if { [regexp \"^\\[0-9\\]+$|^0\\[xX+]\\[0-9a-fA-F\\]+$\" $value] } {\n"
+            "            if { [regexp \"^-?\\[0-9\\]+$|^0\\[xX+]\\[0-9a-fA-F\\]+$\" $value] } {\n"
            );
     show_psn = (compiler_p->num_parameter_sets() > 1);
     fprintf(f,
@@ -6741,8 +6751,9 @@ void bag_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
 
@@ -6909,8 +6920,9 @@ void bag_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,
@@ -7024,8 +7036,9 @@ void tuple_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     if (!strcmp(get_type(), "string_tuple") ||
@@ -7111,8 +7124,9 @@ void tuple_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\"\n"
+            "                set name \"%s\\.%s\"\n"
             "            }\n",
+            parameter_set_p->prefix_p->value_p,
             tcl_param_id()
            );
     fprintf(f,

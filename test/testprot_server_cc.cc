@@ -79,9 +79,6 @@ int main(int argc, char *argv[])
             if (fprintf(fo, "%s\n", buf) <= 0) {
                 fprintf(stderr, "!!! FAILED SENDING MESSAGE !!!\n");
             }
-            else {
-                printf("%s\n", buf);
-            }
             fflush(fo);
         }
         else {
