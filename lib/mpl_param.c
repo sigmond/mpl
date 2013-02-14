@@ -147,7 +147,7 @@ static char *strchr_escape(char *s, char c, char escape);
 static int snprintf_escape(char delimiter, char escape,
                            char *str, size_t size, const char *format, ...);
 static int fill_escape(char *str, int size, char delimiter, char escape);
-static char *remove_escape(const char *src, char delimiter, char escape);
+static char *remove_escape(const char *src, char escape);
 
 static char *get_matching_close_bracket(char open_bracket, char close_bracket, char *str_p, char escape);
 static char *get_bracket_contents(const char *str,
@@ -3405,7 +3405,7 @@ int
 
 
     if (strchr(value_str, '\\')) {
-        temp_str = remove_escape(value_str, options_p->message_delimiter, '\\');
+        temp_str = remove_escape(value_str, '\\');
         if (temp_str == NULL) {
             MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
                                 ("Failed allocating memory\n"));
@@ -6457,7 +6457,7 @@ int
     MPL_IDENTIFIER_NOT_USED(unpack_context);
 
     if (strchr(value_str, '\\')) {
-        temp_str = remove_escape(value_str, options_p->message_delimiter, '\\');
+        temp_str = remove_escape(value_str, '\\');
         if (temp_str == NULL) {
             MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
                                 ("Failed allocating memory\n"));
@@ -6990,7 +6990,7 @@ int
     MPL_IDENTIFIER_NOT_USED(unpack_context);
 
     if (strchr(value_str, '\\')) {
-        temp_str = remove_escape(value_str, options_p->message_delimiter, '\\');
+        temp_str = remove_escape(value_str, '\\');
         if (temp_str == NULL) {
             MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
                                 ("Failed allocating memory\n"));
@@ -7244,7 +7244,7 @@ int
     MPL_IDENTIFIER_NOT_USED(unpack_context);
 
     if (strchr(value_str, '\\')) {
-        temp_str = remove_escape(value_str, options_p->message_delimiter, '\\');
+        temp_str = remove_escape(value_str, '\\');
         if (temp_str == NULL) {
             MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
                                 ("Failed allocating memory\n"));
@@ -8918,7 +8918,7 @@ static int fill_escape(char *str, int size, char delimiter, char escape)
     return (d - str);
 }
 
-static char *remove_escape(const char *src, char delimiter, char escape)
+static char *remove_escape(const char *src, char escape)
 {
     char *s;
     char *d;

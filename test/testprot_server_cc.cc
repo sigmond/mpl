@@ -87,8 +87,14 @@ int main(int argc, char *argv[])
         else {
             fprintf(stderr, "!!! INVALID REQUEST !!!\n");
         }
+        mpl_param_list_destroy(&req);
     }
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
+    mpl_param_deinit();
     fprintf(stderr, "testprot cc-api server QUITS\n");
     return 0;
 }

@@ -93,9 +93,8 @@ static BAG *handle_TestEchoInt(TestEchoInt_Req *reqObj)
         printf("Equal (correct)\n");
     else
         printf("Not equal (ERROR)\n");
-    free(copy->u64);
-    copy->u64 = (uint64_t*)calloc(1, sizeof(*copy->u64));
-    *copy->u64 = 987654;
+    delete copy->u64;
+    copy->u64 = new uint64_t(987654);
     if (copy2 == *copy)
         printf("Equal (ERROR)\n");
     else
@@ -135,27 +134,60 @@ static BAG *handle_TestEchoInt(TestEchoInt_Req *reqObj)
 static BAG *handle_TestEchoEnum(TestEchoEnum_Req *reqObj)
 {
     TestEchoEnum_Req *copy = new TestEchoEnum_Req(*reqObj); // Test copy constructor
-    TestEchoEnum_Resp *resp = new TestEchoEnum_Resp(copy->se,
-                                                    copy->se_arr,
-                                                    copy->num_se_arr,
-                                                    copy->se8,
-                                                    copy->se8_arr,
-                                                    copy->num_se8_arr,
-                                                    copy->se16,
-                                                    copy->se16_arr,
-                                                    copy->num_se16_arr,
-                                                    copy->se32,
-                                                    copy->se32_arr,
-                                                    copy->num_se32_arr,
-                                                    copy->ue8,
-                                                    copy->ue8_arr,
-                                                    copy->num_ue8_arr,
-                                                    copy->ue16,
-                                                    copy->ue16_arr,
-                                                    copy->num_ue16_arr,
-                                                    copy->ue32,
-                                                    copy->ue32_arr,
-                                                    copy->num_ue32_arr
+    TestEchoEnum_Req copy2(NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0
+                          );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete copy->ue32;
+    copy->ue32 = new testprotocol_Ue32_t(1);
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoEnum_Resp *resp = new TestEchoEnum_Resp(copy2.se,
+                                                    copy2.se_arr,
+                                                    copy2.num_se_arr,
+                                                    copy2.se8,
+                                                    copy2.se8_arr,
+                                                    copy2.num_se8_arr,
+                                                    copy2.se16,
+                                                    copy2.se16_arr,
+                                                    copy2.num_se16_arr,
+                                                    copy2.se32,
+                                                    copy2.se32_arr,
+                                                    copy2.num_se32_arr,
+                                                    copy2.ue8,
+                                                    copy2.ue8_arr,
+                                                    copy2.num_ue8_arr,
+                                                    copy2.ue16,
+                                                    copy2.ue16_arr,
+                                                    copy2.num_ue16_arr,
+                                                    copy2.ue32,
+                                                    copy2.ue32_arr,
+                                                    copy2.num_ue32_arr
                                                    );
     delete copy;
     return resp;
@@ -163,24 +195,64 @@ static BAG *handle_TestEchoEnum(TestEchoEnum_Req *reqObj)
 
 static BAG *handle_TestEchoBool(TestEchoBool_Req *reqObj)
 {
-    return new TestEchoBool_Resp(reqObj->b,
-                                 reqObj->b_arr,
-                                 reqObj->num_b_arr,
-                                 reqObj->b8,
-                                 reqObj->b8_arr,
-                                 reqObj->num_b8_arr
-                                );
+    TestEchoBool_Req *copy = new TestEchoBool_Req(*reqObj); // Test copy constructor
+    TestEchoBool_Req copy2(NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0
+                          );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete copy->b8;
+    copy->b8 = new uint8_t(1);
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoBool_Resp *resp = new TestEchoBool_Resp(copy2.b,
+                                                    copy2.b_arr,
+                                                    copy2.num_b_arr,
+                                                    copy2.b8,
+                                                    copy2.b8_arr,
+                                                    copy2.num_b8_arr
+                                                   );
+    delete copy;
+    return resp;
 }
 
 static BAG *handle_TestEchoString(TestEchoString_Req *reqObj)
 {
     TestEchoString_Req *copy = new TestEchoString_Req(*reqObj); // Test copy constructor
-    TestEchoString_Resp *resp = new TestEchoString_Resp(copy->s,
-                                                        copy->s_arr,
-                                                        copy->num_s_arr,
-                                                        copy->ws,
-                                                        copy->ws_arr,
-                                                        copy->num_ws_arr
+    TestEchoString_Req copy2(NULL,
+                           NULL,
+                           0,
+                           NULL,
+                           NULL,
+                           0
+                          );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete[] copy->s;
+    copy->s = new char[strlen("hei")+1];
+    strcpy(copy->s,"hei");
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoString_Resp *resp = new TestEchoString_Resp(copy2.s,
+                                                        copy2.s_arr,
+                                                        copy2.num_s_arr,
+                                                        copy2.ws,
+                                                        copy2.ws_arr,
+                                                        copy2.num_ws_arr
                                                        );
     delete copy;
     return resp;
@@ -189,9 +261,23 @@ static BAG *handle_TestEchoString(TestEchoString_Req *reqObj)
 static BAG *handle_TestEchoAddr(TestEchoAddr_Req *reqObj)
 {
     TestEchoAddr_Req *copy = new TestEchoAddr_Req(*reqObj); // Test copy constructor
-    TestEchoAddr_Resp *resp = new TestEchoAddr_Resp(copy->a,
-                                                    copy->a_arr,
-                                                    copy->num_a_arr
+    TestEchoAddr_Req copy2(NULL,
+                           NULL,
+                           0
+                          );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    copy->a = (void*)0xabcd;
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoAddr_Resp *resp = new TestEchoAddr_Resp(copy2.a,
+                                                    copy2.a_arr,
+                                                    copy2.num_a_arr
                                                    );
     delete copy;
     return resp;
@@ -200,15 +286,37 @@ static BAG *handle_TestEchoAddr(TestEchoAddr_Req *reqObj)
 static BAG *handle_TestEchoArray(TestEchoArray_Req *reqObj)
 {
     TestEchoArray_Req *copy = new TestEchoArray_Req(*reqObj); // Test copy constructor
-    TestEchoArray_Resp *resp = new TestEchoArray_Resp(copy->u8a,
-                                                      copy->u8a_arr,
-                                                      copy->num_u8a_arr,
-                                                      copy->u16a,
-                                                      copy->u16a_arr,
-                                                      copy->num_u16a_arr,
-                                                      copy->u32a,
-                                                      copy->u32a_arr,
-                                                      copy->num_u32a_arr
+    TestEchoArray_Req copy2(NULL,
+                            NULL,
+                            0,
+                            NULL,
+                            NULL,
+                            0,
+                            NULL,
+                            NULL,
+                            0
+                           );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete copy->u32a;
+    uint32_t arr[2] = {0xab, 0xcd};
+    copy->u32a = new uint32_array(arr,2);
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoArray_Resp *resp = new TestEchoArray_Resp(copy2.u8a,
+                                                      copy2.u8a_arr,
+                                                      copy2.num_u8a_arr,
+                                                      copy2.u16a,
+                                                      copy2.u16a_arr,
+                                                      copy2.num_u16a_arr,
+                                                      copy2.u32a,
+                                                      copy2.u32a_arr,
+                                                      copy2.num_u32a_arr
                                                      );
     delete copy;
     return resp;
@@ -217,18 +325,42 @@ static BAG *handle_TestEchoArray(TestEchoArray_Req *reqObj)
 static BAG *handle_TestEchoTuple(TestEchoTuple_Req *reqObj)
 {
     TestEchoTuple_Req *copy = new TestEchoTuple_Req(*reqObj); // Test copy constructor
-    TestEchoTuple_Resp *resp = new TestEchoTuple_Resp(copy->stringtup,
-                                                      copy->stringtup_arr,
-                                                      copy->num_stringtup_arr,
-                                                      copy->inttup,
-                                                      copy->inttup_arr,
-                                                      copy->num_inttup_arr,
-                                                      copy->strinttup,
-                                                      copy->strinttup_arr,
-                                                      copy->num_strinttup_arr,
-                                                      copy->struint8tup,
-                                                      copy->struint8tup_arr,
-                                                      copy->num_struint8tup_arr
+    TestEchoTuple_Req copy2(NULL,
+                            NULL,
+                            0,
+                            NULL,
+                            NULL,
+                            0,
+                            NULL,
+                            NULL,
+                            0,
+                            NULL,
+                            NULL,
+                            0
+                           );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete copy->stringtup;
+    copy->stringtup = new string_tuple((char*)"hei",(char*)"hopp");
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoTuple_Resp *resp = new TestEchoTuple_Resp(copy2.stringtup,
+                                                      copy2.stringtup_arr,
+                                                      copy2.num_stringtup_arr,
+                                                      copy2.inttup,
+                                                      copy2.inttup_arr,
+                                                      copy2.num_inttup_arr,
+                                                      copy2.strinttup,
+                                                      copy2.strinttup_arr,
+                                                      copy2.num_strinttup_arr,
+                                                      copy2.struint8tup,
+                                                      copy2.struint8tup_arr,
+                                                      copy2.num_struint8tup_arr
                                                      );
     delete copy;
     return resp;
@@ -237,9 +369,24 @@ static BAG *handle_TestEchoTuple(TestEchoTuple_Req *reqObj)
 static BAG *handle_TestEchoBag(TestEchoBag_Req *reqObj)
 {
     TestEchoBag_Req *copy = new TestEchoBag_Req(*reqObj); // Test copy constructor
-    TestEchoBag_Resp *resp = new TestEchoBag_Resp(copy->b,
-                                                  copy->b_arr,
-                                                  copy->num_b_arr
+    TestEchoBag_Req copy2(NULL,
+                          NULL,
+                          0
+                         );
+    copy2 = *copy; // Test assignment operator
+    if (copy2 == *copy) // Test comparison operator
+        printf("Equal (correct)\n");
+    else
+        printf("Not equal (ERROR)\n");
+    delete copy->b;
+    copy->b = new Bag(100,NULL);
+    if (copy2 == *copy)
+        printf("Equal (ERROR)\n");
+    else
+        printf("Not equal (correct)\n");
+    TestEchoBag_Resp *resp = new TestEchoBag_Resp(copy2.b,
+                                                  copy2.b_arr,
+                                                  copy2.num_b_arr
                                                  );
     delete copy;
     return resp;

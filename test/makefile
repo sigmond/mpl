@@ -56,7 +56,10 @@ TESTPROT_SERVER_CC_OBJS=testprotocol.o $(TESTPROT_API_O_GENERATED) testprot_hand
 
 TESTPROT_CLI_OBJS=testprotocol.o testprotocol_cli.o testprot_cli.o linenoise.o
 
-all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc testprot_api
+all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc #testprot_api
+
+check: all
+	$(MPLCOMP) -m dejagnu testprotocol.mpl > testprotocol.exp
 
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c
