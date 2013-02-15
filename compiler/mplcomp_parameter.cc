@@ -5991,6 +5991,8 @@ const char *parameter::tcl_param_id()
     return tcl_param_id_p;
 }
 
+#define DEJA_NO_PFX (compiler_p->flags_p && strstr(compiler_p->flags_p,"no_prefix"))
+
 void parameter::deja(FILE *f)
 {
     fprintf(f, "    # %s parameter %s\n",
@@ -6033,9 +6035,10 @@ void parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     fprintf(f,
@@ -6086,9 +6089,10 @@ void parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,
@@ -6151,9 +6155,10 @@ void string_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     if (is_string) {
@@ -6216,9 +6221,10 @@ void string_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             name_p
            );
     if (is_string) {
@@ -6291,9 +6297,10 @@ void bool_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     fprintf(f,
@@ -6349,9 +6356,10 @@ void bool_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,
@@ -6419,9 +6427,10 @@ void array_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     fprintf(f,
@@ -6475,9 +6484,10 @@ void array_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,
@@ -6568,9 +6578,10 @@ void enum_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     fprintf(f,
@@ -6635,9 +6646,10 @@ void enum_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,
@@ -6751,9 +6763,10 @@ void bag_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
 
@@ -6920,9 +6933,10 @@ void bag_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,
@@ -7036,9 +7050,10 @@ void tuple_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : ".",
             tcl_param_id()
            );
     if (!strcmp(get_type(), "string_tuple") ||
@@ -7124,9 +7139,10 @@ void tuple_parameter::deja(FILE *f)
             "            if {$field != \"\"} {\n"
             "                set name \"$field\"\n"
             "            } else {\n"
-            "                set name \"%s\\.%s\"\n"
+            "                set name \"%s%s%s\"\n"
             "            }\n",
-            parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : parameter_set_p->prefix_p->value_p,
+            DEJA_NO_PFX ? "" : "\\.",
             tcl_param_id()
            );
     fprintf(f,

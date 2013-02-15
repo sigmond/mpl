@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     char *mode_p;
     char *mpl_filename_p;
     char *out_name_p = NULL;
+    char *flags = NULL;
     char *suffix_p;
     char prefix[255];
     char *out_dir_name_p;
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    while ((opt = getopt(argc, argv, "m:o:d:i:D:e")) != -1) {
+    while ((opt = getopt(argc, argv, "m:f:o:d:i:D:e")) != -1) {
         switch (opt) {
             case 'm':
                 free(mode_p);
@@ -121,6 +122,9 @@ int main(int argc, char *argv[])
                 break;
             case 'e':
                 experimental = 1;
+                break;
+            case 'f':
+                flags = strdup(optarg);
                 break;
             default:
                 usage(argv[0]);
@@ -188,7 +192,7 @@ int main(int argc, char *argv[])
         compiler_p->latex(stdout);
     }
     else if (!strcmp(mode_p, "dejagnu")) {
-        compiler_p->dejagnu(stdout);
+        compiler_p->dejagnu(stdout, flags);
     }
     else { /* codegen */
         if (codegen_mode == codegen_mode_mpl) {
@@ -228,6 +232,8 @@ int main(int argc, char *argv[])
         free(mode_p);
     if (out_dir_name_p)
         free(out_dir_name_p);
+    if (flags)
+        free(flags);
     return 0;
 }
 
@@ -2218,7 +2224,7 @@ void api_decode_parameter_list(FILE *f,
                     fprintf(f,
                             "%s                {\n"
                             "%s                    %s_%s[i] = %s_GET_%s%s_TAG(%s, %s, i+1);\n"
-                            "%s                {\n",
+                            "%s                }\n",
                             indent,
                             indent,
                             parameter_p->is_basic() && !parameter_p->is_addr() ? "*" : "",

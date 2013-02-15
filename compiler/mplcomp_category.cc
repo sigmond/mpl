@@ -703,6 +703,11 @@ void category::api_cc(FILE *f, char *indent)
             indent
            );
     fprintf(f,
+            "    /* supress not-used warning: */\n"
+            "    (void) strdup_new;\n"
+            "    (void) wcsdup_new;\n"
+           );
+    fprintf(f,
             "%s    if (%s_IS_COMMAND(inMsg)) {\n"
             "%s        mpl_bag_t *params_p = %s_GET_COMMAND_PARAMS_PTR(inMsg);\n"
             "%s        switch (%s_GET_COMMAND_ID(inMsg)) {\n",

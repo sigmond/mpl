@@ -47,6 +47,8 @@ mpl_compiler::~mpl_compiler()
     if (include_dir_name_p)
         free(include_dir_name_p);
     DELETE_LISTABLE_LIST(&groups_p, group_entry);
+    if (flags_p)
+        free(flags_p);
 }
 
 int mpl_compiler::check_if_condition_internal(char *if_condition_text_p)
@@ -1518,7 +1520,6 @@ void mpl_compiler::cli_c_common(FILE *f)
             "    const char *p;\n"
             "    const char *s;\n"
             "    char *cmd = calloc(1, strlen(line) * 2);\n"
-            "    char *result;\n"
             "    int fnutts;\n"
             "    p = strchr(line, ' ');\n"
             "    if (p) {\n"

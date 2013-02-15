@@ -1957,7 +1957,8 @@ class mpl_compiler {
         current_if_condition(this, NULL, if_operator_none, NULL),
         current_parameter_list_tmp_p(NULL),
         parser_mode(parser_mode_normal),
-        groups_p(NULL)
+        groups_p(NULL),
+        flags_p(NULL)
     {
         reset_current_parameter_list();
     }
@@ -1995,6 +1996,7 @@ class mpl_compiler {
     mpl_list_t *current_parameter_list_tmp_p;
     parser_mode_t parser_mode;
     mpl_list_t *groups_p;
+    char *flags_p;
 
     void parse()
     {
@@ -2056,8 +2058,10 @@ class mpl_compiler {
                );
     }
 
-    void dejagnu(FILE *expect_file_p)
+    void dejagnu(FILE *expect_file_p, char *flags)
     {
+        if (flags != NULL)
+            this->flags_p = strdup(flags);
         deja_common(expect_file_p);
         deja_parameter_sets(expect_file_p);
         deja_categories(expect_file_p);
