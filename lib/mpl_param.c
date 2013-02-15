@@ -26,16 +26,6 @@
  * Description: MPL parameter system implementation
  *
  **************************************************************************/
-//lint -e818 Ignore Info about const decleration
-//lint -e774 Boolean within if ok
-//lint -e740 Use of Ptr ok
-//lint -e794 Use of Ptr ok
-//lint -e713 Ignore Loss of precision info
-//lint -e732 Ignore Loss of sign info
-//lint -e737 Ignore Loss of sign info
-
-//lint -e750 Macro not referenced, Ignored
-#define IP_DEBUG_UNIT DEFINE_IP_DEBUG_UNIT(mpl_param)
 
 /********************************************************************************
  *
@@ -1045,7 +1035,7 @@ const char *
         return "<Error: no scratch string available>";
     }
 
-    len = mpl_param_pack_no_prefix(tmp_elem_p,
+    (void)mpl_param_pack_no_prefix(tmp_elem_p,
                                    id_get_string,
                                    len + 1);
     mpl_param_element_destroy(tmp_elem_p);
@@ -8300,12 +8290,10 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
     mpl_param_element_t* param_elem2_p;
 
     if ((NULL == list1_p) && (NULL != list2_p)) {
-/*         printf("list 1 has no params, but list 2 has\n"); */
         return -1;
     }
 
     if ((NULL == list2_p) && (NULL != list1_p)) {
-/*         printf("list 2 has no params, but list 1 has\n"); */
         return -1;
     }
 
@@ -8318,9 +8306,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
                                                param_elem1_p->id_in_context,
                                                param_elem1_p->tag,
                                                list2_p)) {
-/*                 printf("param field %s present in list 1 but missing in list 2\n", */
-/*                        mpl_param_get_bag_field_name(param_elem1_p->context, */
-/*                                                     param_elem1_p->id_in_context)); */
                 return -1;
             }
             param_elem2_p = mpl_param_list_find_field_tag(param_elem1_p->context,
@@ -8330,7 +8315,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
         }
         else {
             if (!MPL_PARAM_PRESENT_IN_LIST(param_elem1_p->id, list2_p)) {
-/*                 printf("param %d present in list 1 but missing in list 2\n", param_elem1_p->id); */
                 return -1;
             }
             param_elem2_p = mpl_param_list_find_tag(param_elem1_p->id, param_elem1_p->tag, list2_p);
@@ -8338,13 +8322,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
 
         if (0 != mpl_param_element_compare(param_elem1_p, param_elem2_p))
         {
-/*             printf("1: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n", */
-/*                    mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id, */
-/*                    param_elem1_p->tag, */
-/*                    mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id, */
-/*                    param_elem2_p->tag, */
-/*                    mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p), */
-/*                    mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p)); */
             return -1;
         }
     }
@@ -8358,9 +8335,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
                                                param_elem2_p->id_in_context,
                                                param_elem2_p->tag,
                                                list1_p)) {
-/*                 printf("param field %s present in list 2 but missing in list 1\n", */
-/*                        mpl_param_get_bag_field_name(param_elem2_p->context, */
-/*                                                     param_elem2_p->id_in_context)); */
                 return -1;
             }
             param_elem1_p = mpl_param_list_find_field_tag(param_elem2_p->context,
@@ -8370,7 +8344,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
         }
         else {
             if (!MPL_PARAM_PRESENT_IN_LIST(param_elem2_p->id, list1_p)) {
-/*                 printf("param %d present in list 2 but missing in message 1\n", param_elem2_p->id); */
                 return -1;
             }
             param_elem1_p = mpl_param_list_find_tag(param_elem2_p->id, param_elem2_p->tag, list1_p);
@@ -8378,13 +8351,6 @@ int mpl_compare_param_lists(mpl_list_t *list1_p, mpl_list_t *list2_p)
 
         if (0 != mpl_param_element_compare(param_elem2_p, param_elem1_p))
         {
-/*             printf("2: param %s[%d] (%x) <-> %s[%d] (%x) value mismatch: %s <-> %s\n", */
-/*                    mpl_param_id_get_string(param_elem2_p->id), param_elem2_p->id, */
-/*                    param_elem2_p->tag, */
-/*                    mpl_param_id_get_string(param_elem1_p->id), param_elem1_p->id, */
-/*                    param_elem1_p->tag, */
-/*                    mpl_param_value_get_string(param_elem2_p->id, param_elem2_p->value_p), */
-/*                    mpl_param_value_get_string(param_elem1_p->id, param_elem1_p->value_p)); */
             return -1;
         }
     }
@@ -8626,7 +8592,7 @@ static mpl_pc_t* get_pc(void)
             MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
                                 ("Failed allocating memory\n"));
             /* free previously allocated scratch strings */
-            for(;i>=0;i--)
+            for(;i>=0;i--)/*lint !e445 reuse of i is ok */
                 free(pc_p->scratch_string[i]);
             free(pc_p);
             return NULL;

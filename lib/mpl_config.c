@@ -28,8 +28,6 @@
  **************************************************************************/
 //lint -e818 Ignore Info about const decleration
 
-//lint -e750 Macro not referenced, Ignored
-#define IP_DEBUG_UNIT DEFINE_IP_DEBUG_UNIT(mpl_config)
 
 /*****************************************************************************
  *

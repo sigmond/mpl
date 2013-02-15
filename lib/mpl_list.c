@@ -26,8 +26,6 @@
  * Description: MPL list implementation
  *
  **************************************************************************/
-//lint -e750 Macro not referenced, Ignored
-#define IP_DEBUG_UNIT DEFINE_IP_DEBUG_UNIT(mpl_list)
 /*****************************************************************************
  *
  * Include files
