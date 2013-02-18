@@ -14,7 +14,7 @@
  *   limitations under the License.
  *
  *   Author: Per Sigmond <per@sigmond.no>
- *   Author: Harald Johansen <harald.johansen@stericsson.com>
+ *   Author: Harald Johansen <hajohans1@gmail.com>
  *   Author: Emil B. Viken <emil.b.viken@gmail.com>
  *
  */
