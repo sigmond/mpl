@@ -3413,7 +3413,13 @@ void bag_parameter::gc_c_bag(FILE *f)
                );
         if (ellipsis_p == NULL) {
             fprintf(f,
-                    "    mpl_bag_t *bag_p = bag_elem_p->value_p;\n"
+                    "    mpl_bag_t *bag_p;\n"
+                   );
+            fprintf(f,
+                    "    assert(bag_elem_p);\n"
+                   );
+            fprintf(f,
+                    "    bag_p = bag_elem_p->value_p;\n"
                    );
         }
     }
