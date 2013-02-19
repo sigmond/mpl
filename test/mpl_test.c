@@ -11309,7 +11309,10 @@ int main(int argc, char **argv)
   }
 
   mpl_test(test_start, test_stop);
-  return 0;
+  if (failed != 0)
+      return -1;
+  else
+      return 0;
 }
 #endif
 

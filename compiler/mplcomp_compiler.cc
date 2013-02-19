@@ -2071,8 +2071,6 @@ void mpl_compiler::deja_common(FILE *f)
             "#   check_Value { name value msg {tag \"\"} } { ... }\n"
             "#   get_Value { name msg {tag \"\"} } { ... }\n"
             "#   get_CompoundValue { name msg {tag \"\"} } { ... }\n"
-            "#   get_uint8_array { name msg {tag \"\"} } { ... }\n"
-            "#   check_uint8_array { name value msg {tag \"\"} } { ... }\n"
             "#\n"
            );
 
@@ -2136,6 +2134,53 @@ void mpl_compiler::deja_common(FILE *f)
             "}\n"
            );
 
+    fprintf(f,
+            "proc pack_uint8_array { value } {\n"
+            "    return $value\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc pack_uint16_array { value } {\n"
+            "    return $value\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc pack_uint32_array { value } {\n"
+            "    return $value\n"
+            "}\n"
+           );
+
+    fprintf(f,
+            "proc get_uint8_array { name msg {tag \"\"} } {\n"
+            "    return [get_Value $name $msg $tag]\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc get_uint16_array { name msg {tag \"\"} } {\n"
+            "    return [get_Value $name $msg $tag]\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc get_uint32_array { name msg {tag \"\"} } {\n"
+            "    return [get_Value $name $msg $tag]\n"
+            "}\n"
+           );
+
+    fprintf(f,
+            "proc check_uint8_array { name value msg {tag \"\"} } {\n"
+            "    return [check_Value $name $value $msg $tag]\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc check_uint16_array { name value msg {tag \"\"} } {\n"
+            "    return [check_Value $name $value $msg $tag]\n"
+            "}\n"
+           );
+    fprintf(f,
+            "proc check_uint32_array { name value msg {tag \"\"} } {\n"
+            "    return [check_Value $name $value $msg $tag]\n"
+            "}\n"
+           );
 }
 
 void mpl_compiler::deja_parameter_sets(FILE *expect_file_p)

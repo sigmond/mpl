@@ -171,7 +171,7 @@ class int_parameter : public parameter {
 
     virtual const char *get_type() { return type_p; }
     virtual const char *get_c_type();
-    virtual const char *get_macro_type() { return "INT"; }
+    virtual const char *get_macro_type();
 
     virtual void print_type_description(FILE *f);
 
@@ -236,7 +236,7 @@ class string_parameter : public parameter {
 
     virtual const char *get_type() { return type_p; }
     virtual const char *get_c_type();
-    virtual const char *get_macro_type() { return "STRING"; }
+    virtual const char *get_macro_type();
 
     virtual void print_type_description(FILE *f);
     virtual int is_string() { return 1; }
@@ -277,7 +277,7 @@ class bool_parameter : public parameter {
 
     virtual const char *get_type() { return type_p; }
     virtual const char *get_c_type();
-    virtual const char *get_macro_type() { return "BOOL"; }
+    virtual const char *get_macro_type();
 
     virtual void print_type_description(FILE *f);
     virtual int is_bool() { return 1; }
@@ -387,7 +387,7 @@ class enum_parameter : public parameter {
 
     virtual const char *get_type() { return type_p; }
     virtual const char *get_c_type();
-    virtual const char *get_macro_type() { return "ENUM"; }
+    virtual const char *get_macro_type();
 
     virtual void print_type_description(FILE *f);
     virtual int is_enum() { return 1; }

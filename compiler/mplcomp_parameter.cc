@@ -237,6 +237,59 @@ const char *bag_parameter::get_c_type()
     return "mpl_bag_t *";
 }
 
+const char *int_parameter::get_macro_type()
+{
+    switch(get_type_of_int(get_type())) {
+        case 1:
+            return "INT";
+        case 8:
+            return "UINT8";
+        case 16:
+            return "UINT16";
+        case 32:
+            return "UINT32";
+        case 64:
+            return "UINT64";
+        case -8:
+            return "SINT8";
+        case -16:
+            return "SINT16";
+        case -32:
+            return "SINT32";
+        case -64:
+            return "SINT64";
+        default:
+            assert(0);
+    }
+    return NULL;
+}
+
+const char *string_parameter::get_macro_type()
+{
+    switch(get_type_of_string(get_type())) {
+        case 1:
+            return "STRING";
+        case 2:
+            return "WSTRING";
+        default:
+            assert(0);
+    }
+    return NULL;
+}
+
+const char *bool_parameter::get_macro_type()
+{
+    switch(get_type_of_bool(get_type())) {
+        case 1:
+            return "BOOL";
+        case 8:
+            return "BOOL8";
+        default:
+            assert(0);
+    }
+    return NULL;
+}
+
 const char *array_parameter::get_macro_type()
 {
     switch(get_type_of_array(get_type())) {
@@ -246,6 +299,29 @@ const char *array_parameter::get_macro_type()
             return "UINT16_ARRAY";
         case 32:
             return "UINT32_ARRAY";
+        default:
+            assert(0);
+    }
+    return NULL;
+}
+
+const char *enum_parameter::get_macro_type()
+{
+    switch(get_type_of_enum(get_type())) {
+        case 1:
+            return "ENUM";
+        case 8:
+            return "ENUM8";
+        case 16:
+            return "ENUM16";
+        case 32:
+            return "ENUM32";
+        case -8:
+            return "SIGNED_ENUM8";
+        case -16:
+            return "SIGNED_ENUM16";
+        case -32:
+            return "SIGNED_ENUM32";
         default:
             assert(0);
     }
@@ -3823,7 +3899,7 @@ bool bag_parameter::param_is_field_or_subfield(parameter *param_p)
             return true;
         }
 
-        if (parameter_p->is_bag() && (parameter_p != this)) {
+        if (parameter_p->is_bag() && (parameter_p != this) && !is_parent(parameter_p)) {
             if (((bag_parameter*)parameter_p)->param_is_field_or_subfield(param_p)) {
                 DELETE_LISTABLE_LIST(&plist_p, object_container);
                 return true;

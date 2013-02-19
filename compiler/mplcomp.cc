@@ -1626,7 +1626,7 @@ void api_cc_encode_parameter_list(FILE *f,
                        );
                 if (t) {
                     fprintf(f,
-                            "%s            %s_ADD_%s_TAG(&%s, %s, _%s[i]->tuple, i+1);\n"
+                            "%s            %s_ADD_%s_TAG(&%s, %s, &_%s[i]->tuple, i+1);\n"
                             "%s        }\n",
                             indent,
                             snu,

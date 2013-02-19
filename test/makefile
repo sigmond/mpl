@@ -58,8 +58,16 @@ TESTPROT_CLI_OBJS=testprotocol.o testprotocol_cli.o testprot_cli.o linenoise.o
 
 all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc #testprot_api
 
+memcheck: all
+	rm -rf memcheck
+	mkdir memcheck
+	make VALGRIND="/usr/bin/valgrind --leak-check=full --show-reachable=yes --log-file=memcheck/valgrind-%p.log" check
+
 check: all
+	$(VALGRIND) ./mpl_test
 	$(MPLCOMP) -m dejagnu testprotocol.mpl > testprotocol.exp
+	expect -f testprot_server.exp
+	expect -f testprot_server.exp cc
 
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c

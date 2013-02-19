@@ -676,6 +676,7 @@ class inheritable_object : public listable_object {
     virtual void add_child(inheritable_object *child_p);
     virtual mpl_list_t *get_flat_child_list();
     virtual mpl_list_t *get_parent_list();
+    virtual bool is_parent(inheritable_object *obj);
     virtual inheritable_object *get_topmost_parent();
     virtual void *get_property(const char *property_p)
     {

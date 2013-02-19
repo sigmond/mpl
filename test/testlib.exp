@@ -26,6 +26,113 @@ proc fail { msg } {
     incr fails
 }
 
+# convert integer to ascii char
+proc asc i {
+    if { $i<0 || $i>255 } { error "asc:Integer out of range 0-255" }
+    return [format %c $i ]
+}
+
+proc chr c {
+    if {[string length $c] > 1 } { error "chr: arg should be a single char"}
+#   set c [ string range $c 0 0]
+    set v 0;
+    scan $c %c v; return $v
+}
+
+
+proc convert_decimal_to_string {decimal_value} {
+  set hex_el [format %.8x [expr {$decimal_value & 0xFFFFFFFF}]]
+  set reversed_hex_el [string reverse $hex_el]
+  set amended_reversed_hex_el_byte1 [string reverse [string replace $reversed_hex_el 2 7]]
+  set amended_reversed_hex_el_byte2 [string reverse [string replace [string replace $reversed_hex_el 0 1] 2 5]]
+  set amended_reversed_hex_el_byte3 [string reverse [string replace [string replace $reversed_hex_el 0 3] 2 3]]
+  set amended_reversed_hex_el_byte4 [string reverse [string replace $reversed_hex_el 0 5]]
+  return $amended_reversed_hex_el_byte1$amended_reversed_hex_el_byte2$amended_reversed_hex_el_byte3$amended_reversed_hex_el_byte4
+}
+
+
+proc convert_decimal_string_to_ascii {decimal_string} {
+  # string is handled as halfword in Parcel, as ASCII code is byte, thus needs to add a suffix here
+  set suffix 00
+  # in Parcel, string read handling is byte alignment
+  if {[string length $decimal_string]%2 == 0} {
+    set pad 00000000
+  } else {
+    set pad 0000
+  }
+  # convert input string param from decimal to ASCII format and concat them into a single string
+  set remaining_string $decimal_string
+  set response_string ""
+  while {[string length $remaining_string] > 0} {
+    set handling_string [string replace $remaining_string 1 [string length $remaining_string]]
+    set response_string $response_string[format %.2x [scan $handling_string %c]]$suffix
+    set remaining_string [string replace $remaining_string 0 0]
+  }
+  return $response_string$pad
+}
+
+proc hexNum2Dec { hex } {
+    scan $hex %x v
+    return $v
+}
+
+proc createUint8Array { hex_str_val } {
+    return "[format %.8x [expr [string length $hex_str_val] / 2]]$hex_str_val"
+}
+
+proc createUint16Array { hex_str_val } {
+    return "[format %.8x [expr [string length $hex_str_val] / 4]]$hex_str_val"
+}
+
+proc createUint32Array { hex_str_val } {
+    return "[format %.8x [expr [string length $hex_str_val] / 8]]$hex_str_val"
+}
+
+proc getUint8Array { array } {
+    set len_hex [string range $array 0 7]
+    set len [hexNum2Dec $len_hex]
+    set arrlen [expr [string length $array] - 8]
+    if {[expr $arrlen % 2] != 0} {
+        send_user "ERROR: uint8_array length mismatch (hex string length not even: $arrlen)\n"
+        exit 1
+    }
+    if {$len != [expr $arrlen / 2]} {
+        send_user "ERROR: uint8_array length mismatch ($len != [expr $arrlen / 2])\n"
+        exit 1
+    }
+    return "[string range $array 8 [string length $array]]"
+}
+
+proc ascii_to_uint32_array { ascii_str } {
+    set hex_str ""
+    for {set i 0} {$i < [string length $ascii_str]} {incr i} {
+        set hex_str "$hex_str[format %.8x [chr [string range $ascii_str $i $i]]]"
+    }
+    set hex_str "$hex_str[format %.8x 0]"
+    return [createUint32Array $hex_str]
+}
+
+proc ascii2hex { ascii_str } {
+    set hex_str ""
+    for {set i 0} {$i < [string length $ascii_str]} {incr i} {
+        set hex_str "$hex_str[format %.2x [chr [string range $ascii_str $i $i]]]"
+    }
+    return $hex_str
+}
+
+proc hex2ascii { hex_str } {
+    set ascii_str ""
+    #send_user "$hex_str\n"
+    for {set i 0} {$i < [string length $hex_str]} {incr i; incr i} {
+        set dec [hexNum2Dec [string range $hex_str $i [expr $i + 1]]]
+        if {$dec == 0} {
+            break
+        }
+        set ascii_str "$ascii_str[asc $dec]"
+    }
+    return $ascii_str
+}
+
 proc checkRegexp_Generic { {invert} {reg} {response ""} } {
     global test
     global verbose
@@ -169,6 +276,29 @@ proc getBracketIndex { bstr {b "\{"} } {
     return $pos
 }
 
+proc getNextBracketIndex {bstr pos {lb "\{"} {rb "\}"} } {
+    set lpos [string first $lb [string range $bstr [expr $pos + 1] [string length $bstr]]]
+    set rpos [string first $rb [string range $bstr [expr $pos + 1] [string length $bstr]]]
+
+    if {$lpos == -1} {
+        return [expr $pos + $rpos + 1]
+    }
+
+    if {$rpos == -1} {
+        return [expr $pos + $lpos + 1]
+    }
+
+    if {$lpos < $rpos} {
+        return [expr $pos + $lpos + 1]
+    } else {
+        return [expr $pos + $rpos + 1]
+    }
+}
+
+proc charAtPos {str pos} {
+    return [string range $str $pos $pos]
+}
+
 proc getFirstStringInMatchingBrackets { bstr {lb "\{"} {rb "\}"} } {
     set startPos [getBracketIndex $bstr $lb]
     if {$startPos == -1} {
@@ -287,10 +417,3 @@ proc get_CompoundValue { name msg {tag ""} } {
     return [getParamValue $name $msg $tag 0 1]
 }
 
-proc get_uint8_array { name msg {tag ""} } {
-    return [getParamValue $name $msg $tag]
-}
-
-proc check_uint8_array { name value msg {tag ""} } {
-    return [checkParamValue $name $value $msg $tag]
-}

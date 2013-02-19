@@ -7,7 +7,26 @@ set debug 0
 set verbose 0
 set prompt "_Resp.*"
 
-spawn ./testprot_server
+
+if {[lindex $argv 0] == "cc"} {
+    set cctest true
+    if {[info exists ::env(VALGRIND)]} {
+        set cmdLine "$::env(VALGRIND) ./testprot_server_cc"
+    } else {
+        set cmdLine "./testprot_server_cc"
+    }
+    set spawnCmd [linsert $cmdLine 0 spawn]
+    eval $spawnCmd
+} else {
+    set cctest false
+    if {[info exists ::env(VALGRIND)]} {
+        set cmdLine "$::env(VALGRIND) ./testprot_server"
+    } else {
+        set cmdLine "./testprot_server"
+    }
+    set spawnCmd [linsert $cmdLine 0 spawn]
+    eval $spawnCmd
+}
 
 reset_passes_and_fails
 
@@ -52,7 +71,155 @@ dict set inParams u64_arr 3 103
 set checkParams $inParams
 
 TestEchoInt $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
 show_passes_and_fails
+
+if {$cctest} {
+    set test "EchoInt"
+    set inParams [dict create]
+    dict set inParams i 100
+    dict set inParams i_arr 1 101
+    dict set inParams i_arr 2 -102
+    dict set inParams i_arr 3 103
+    dict set inParams s8 -100
+    dict set inParams s8_arr 1 101
+    dict set inParams s8_arr 2 -102
+    dict set inParams s8_arr 3 103
+    dict set inParams s16 100
+    dict set inParams s16_arr 1 101
+    dict set inParams s16_arr 2 -102
+    dict set inParams s16_arr 3 103
+    dict set inParams s32 -100
+    dict set inParams s32_arr 1 101
+    dict set inParams s32_arr 2 -102
+    dict set inParams s32_arr 3 103
+    dict set inParams s64 100
+    dict set inParams s64_arr 1 101
+    dict set inParams s64_arr 2 -102
+    dict set inParams s64_arr 3 103
+    dict set inParams u8 100
+    dict set inParams u8_arr 1 101
+    dict set inParams u8_arr 2 102
+    dict set inParams u8_arr 3 103
+    dict set inParams u16 100
+    dict set inParams u16_arr 1 101
+    dict set inParams u16_arr 2 102
+    dict set inParams u16_arr 3 103
+    dict set inParams u32 100
+    dict set inParams u32_arr 1 101
+    dict set inParams u32_arr 2 102
+    dict set inParams u32_arr 3 103
+    dict set inParams u64 987654
+    dict set inParams u64_arr 1 101
+    dict set inParams u64_arr 2 102
+    dict set inParams u64_arr 3 103
+    set checkParams $inParams
+    
+    TestEchoInt $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoIntPN"
+set inParams [dict create]
+dict set inParams Int 100
+dict set inParams IntArr 1 101
+dict set inParams IntArr 2 -102
+dict set inParams IntArr 3 103
+dict set inParams Sint8 -100
+dict set inParams Sint8Arr 1 101
+dict set inParams Sint8Arr 2 -102
+dict set inParams Sint8Arr 3 103
+dict set inParams Sint16 100
+dict set inParams Sint16Arr 1 101
+dict set inParams Sint16Arr 2 -102
+dict set inParams Sint16Arr 3 103
+dict set inParams Sint32 -100
+dict set inParams Sint32Arr 1 101
+dict set inParams Sint32Arr 2 -102
+dict set inParams Sint32Arr 3 103
+dict set inParams Sint64 100
+dict set inParams Sint64Arr 1 101
+dict set inParams Sint64Arr 2 -102
+dict set inParams Sint64Arr 3 103
+dict set inParams Uint8 100
+dict set inParams Uint8Arr 1 101
+dict set inParams Uint8Arr 2 102
+dict set inParams Uint8Arr 3 103
+dict set inParams Uint16 100
+dict set inParams Uint16Arr 1 101
+dict set inParams Uint16Arr 2 102
+dict set inParams Uint16Arr 3 103
+dict set inParams Uint32 100
+dict set inParams Uint32Arr 1 101
+dict set inParams Uint32Arr 2 102
+dict set inParams Uint32Arr 3 103
+dict set inParams Uint64 100
+dict set inParams Uint64Arr 1 101
+dict set inParams Uint64Arr 2 102
+dict set inParams Uint64Arr 3 103
+set checkParams $inParams
+
+TestEchoIntPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams Int 100
+    dict set inParams IntArr 1 101
+    dict set inParams IntArr 2 -102
+    dict set inParams IntArr 3 103
+    dict set inParams Sint8 -100
+    dict set inParams Sint8Arr 1 101
+    dict set inParams Sint8Arr 2 -102
+    dict set inParams Sint8Arr 3 103
+    dict set inParams Sint16 100
+    dict set inParams Sint16Arr 1 101
+    dict set inParams Sint16Arr 2 -102
+    dict set inParams Sint16Arr 3 103
+    dict set inParams Sint32 -100
+    dict set inParams Sint32Arr 1 101
+    dict set inParams Sint32Arr 2 -102
+    dict set inParams Sint32Arr 3 103
+    dict set inParams Sint64 100
+    dict set inParams Sint64Arr 1 101
+    dict set inParams Sint64Arr 2 -102
+    dict set inParams Sint64Arr 3 103
+    dict set inParams Uint8 100
+    dict set inParams Uint8Arr 1 101
+    dict set inParams Uint8Arr 2 102
+    dict set inParams Uint8Arr 3 103
+    dict set inParams Uint16 100
+    dict set inParams Uint16Arr 1 101
+    dict set inParams Uint16Arr 2 102
+    dict set inParams Uint16Arr 3 103
+    dict set inParams Uint32 100
+    dict set inParams Uint32Arr 1 101
+    dict set inParams Uint32Arr 2 102
+    dict set inParams Uint32Arr 3 103
+    dict set inParams Uint64 987654
+    dict set inParams Uint64Arr 1 101
+    dict set inParams Uint64Arr 2 102
+    dict set inParams Uint64Arr 3 103
+    set checkParams $inParams
+
+    TestEchoIntPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
 
 set test "EchoEnum"
 set inParams [dict create]
@@ -84,4 +251,593 @@ dict set inParams ue32_arr 2 1
 set checkParams $inParams
 
 TestEchoEnum $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
 show_passes_and_fails
+
+if {$cctest} {
+    set test "EchoEnum"
+    set inParams [dict create]
+    dict set inParams se -1
+    dict set inParams se_arr 1 -1
+    dict set inParams se_arr 2 0
+    dict set inParams se_arr 3 1
+    dict set inParams se8 0
+    dict set inParams se8_arr 1 -1
+    dict set inParams se8_arr 2 0
+    dict set inParams se8_arr 3 1
+    dict set inParams se16 1
+    dict set inParams se16_arr 1 -1
+    dict set inParams se16_arr 2 0
+    dict set inParams se16_arr 3 1
+    dict set inParams se32 -1
+    dict set inParams se32_arr 1 -1
+    dict set inParams se32_arr 2 0
+    dict set inParams se32_arr 3 1
+    dict set inParams ue8 0
+    dict set inParams ue8_arr 1 0
+    dict set inParams ue8_arr 2 1
+    dict set inParams ue16 1
+    dict set inParams ue16_arr 1 0
+    dict set inParams ue16_arr 2 1
+    dict set inParams ue32 1
+    dict set inParams ue32_arr 1 0
+    dict set inParams ue32_arr 2 1
+    set checkParams $inParams
+
+    TestEchoEnum $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+dict set inParams Se -1
+dict set inParams SeArr 1 -1
+dict set inParams SeArr 2 0
+dict set inParams SeArr 3 1
+dict set inParams Se8 0
+dict set inParams Se8Arr 1 -1
+dict set inParams Se8Arr 2 0
+dict set inParams Se8Arr 3 1
+dict set inParams Se16 1
+dict set inParams Se16Arr 1 -1
+dict set inParams Se16Arr 2 0
+dict set inParams Se16Arr 3 1
+dict set inParams Se32 -1
+dict set inParams Se32Arr 1 -1
+dict set inParams Se32Arr 2 0
+dict set inParams Se32Arr 3 1
+dict set inParams Ue8 0
+dict set inParams Ue8Arr 1 0
+dict set inParams Ue8Arr 2 1
+dict set inParams Ue16 1
+dict set inParams Ue16Arr 1 0
+dict set inParams Ue16Arr 2 1
+dict set inParams Ue32 0
+dict set inParams Ue32Arr 1 0
+dict set inParams Ue32Arr 2 1
+set checkParams $inParams
+
+TestEchoEnumPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams Se -1
+    dict set inParams SeArr 1 -1
+    dict set inParams SeArr 2 0
+    dict set inParams SeArr 3 1
+    dict set inParams Se8 0
+    dict set inParams Se8Arr 1 -1
+    dict set inParams Se8Arr 2 0
+    dict set inParams Se8Arr 3 1
+    dict set inParams Se16 1
+    dict set inParams Se16Arr 1 -1
+    dict set inParams Se16Arr 2 0
+    dict set inParams Se16Arr 3 1
+    dict set inParams Se32 -1
+    dict set inParams Se32Arr 1 -1
+    dict set inParams Se32Arr 2 0
+    dict set inParams Se32Arr 3 1
+    dict set inParams Ue8 0
+    dict set inParams Ue8Arr 1 0
+    dict set inParams Ue8Arr 2 1
+    dict set inParams Ue16 1
+    dict set inParams Ue16Arr 1 0
+    dict set inParams Ue16Arr 2 1
+    dict set inParams Ue32 1
+    dict set inParams Ue32Arr 1 0
+    dict set inParams Ue32Arr 2 1
+    set checkParams $inParams
+
+    TestEchoEnumPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoBool"
+set inParams [dict create]
+dict set inParams b true
+dict set inParams b_arr 1 true
+dict set inParams b_arr 2 false
+dict set inParams b8 false
+dict set inParams b8_arr 1 true
+dict set inParams b8_arr 2 false
+set checkParams $inParams
+
+TestEchoBool $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams b true
+    dict set inParams b_arr 1 true
+    dict set inParams b_arr 2 false
+    dict set inParams b8 true
+    dict set inParams b8_arr 1 true
+    dict set inParams b8_arr 2 false
+    set checkParams $inParams
+
+    TestEchoBool $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+dict set inParams MyBool true
+dict set inParams BoolArr 1 true
+dict set inParams BoolArr 2 false
+dict set inParams Bool8 false
+dict set inParams Bool8Arr 1 true
+dict set inParams Bool8Arr 2 false
+set checkParams $inParams
+
+TestEchoBoolPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams MyBool true
+    dict set inParams BoolArr 1 true
+    dict set inParams BoolArr 2 false
+    dict set inParams Bool8 true
+    dict set inParams Bool8Arr 1 true
+    dict set inParams Bool8Arr 2 false
+    set checkParams $inParams
+
+    TestEchoBoolPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoString"
+set inParams [dict create]
+dict set inParams s "en"
+dict set inParams s_arr 1 "to"
+dict set inParams s_arr 2 "tre"
+dict set inParams ws [ascii_to_uint32_array "en"]
+dict set inParams ws_arr 1 [ascii_to_uint32_array "to"]
+dict set inParams ws_arr 2 [ascii_to_uint32_array "tre"]
+set checkParams $inParams
+
+TestEchoString $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams s "hei"
+    dict set inParams s_arr 1 "to"
+    dict set inParams s_arr 2 "tre"
+    dict set inParams ws [ascii_to_uint32_array "en"]
+    dict set inParams ws_arr 1 [ascii_to_uint32_array "to"]
+    dict set inParams ws_arr 2 [ascii_to_uint32_array "tre"]
+    set checkParams $inParams
+
+    TestEchoString $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoStringPN"
+set inParams [dict create]
+dict set inParams String "en"
+dict set inParams StringArr 1 "to"
+dict set inParams StringArr 2 "tre"
+dict set inParams WString [ascii_to_uint32_array "en"]
+dict set inParams WStringArr 1 [ascii_to_uint32_array "to"]
+dict set inParams WStringArr 2 [ascii_to_uint32_array "tre"]
+set checkParams $inParams
+
+TestEchoStringPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams String "hei"
+    dict set inParams StringArr 1 "to"
+    dict set inParams StringArr 2 "tre"
+    dict set inParams WString [ascii_to_uint32_array "en"]
+    dict set inParams WStringArr 1 [ascii_to_uint32_array "to"]
+    dict set inParams WStringArr 2 [ascii_to_uint32_array "tre"]
+    set checkParams $inParams
+
+    TestEchoStringPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+
+
+set test "EchoAddr"
+set inParams [dict create]
+dict set inParams a 0x1234
+dict set inParams a_arr 1 0x5678
+dict set inParams a_arr 2 0x90ab
+set checkParams $inParams
+
+TestEchoAddr $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams a 0xabcd
+    dict set inParams a_arr 1 0x5678
+    dict set inParams a_arr 2 0x90ab
+    set checkParams $inParams
+
+    TestEchoAddr $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+dict set inParams Addr 0x1234
+dict set inParams AddrArr 1 0x5678
+dict set inParams AddrArr 2 0x90ab
+set checkParams $inParams
+
+TestEchoAddrPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams Addr 0xabcd
+    dict set inParams AddrArr 1 0x5678
+    dict set inParams AddrArr 2 0x90ab
+    set checkParams $inParams
+
+    TestEchoAddrPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoArray"
+set inParams [dict create]
+dict set inParams u8a [createUint8Array "0102"]
+dict set inParams u8a_arr 1 [createUint8Array "0304"]
+dict set inParams u8a_arr 2 [createUint8Array "0506"]
+dict set inParams u16a [createUint16Array "00010002"]
+dict set inParams u16a_arr 1 [createUint16Array "00030004"]
+dict set inParams u16a_arr 2 [createUint16Array "00050006"]
+dict set inParams u32a [createUint32Array "0000000100000002"]
+dict set inParams u32a_arr 1 [createUint32Array "0000000300000004"]
+dict set inParams u32a_arr 2 [createUint32Array "0000000500000006"]
+set checkParams $inParams
+
+TestEchoArray $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams u8a [createUint8Array "0102"]
+    dict set inParams u8a_arr 1 [createUint8Array "0304"]
+    dict set inParams u8a_arr 2 [createUint8Array "0506"]
+    dict set inParams u16a [createUint16Array "00010002"]
+    dict set inParams u16a_arr 1 [createUint16Array "00030004"]
+    dict set inParams u16a_arr 2 [createUint16Array "00050006"]
+    dict set inParams u32a [createUint32Array "000000ab000000cd"]
+    dict set inParams u32a_arr 1 [createUint32Array "0000000300000004"]
+    dict set inParams u32a_arr 2 [createUint32Array "0000000500000006"]
+    set checkParams $inParams
+
+    TestEchoArray $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+dict set inParams U8a [createUint8Array "0102"]
+dict set inParams U8aArr 1 [createUint8Array "0304"]
+dict set inParams U8aArr 2 [createUint8Array "0506"]
+dict set inParams U16a [createUint16Array "00010002"]
+dict set inParams U16aArr 1 [createUint16Array "00030004"]
+dict set inParams U16aArr 2 [createUint16Array "00050006"]
+dict set inParams U32a [createUint32Array "0000000100000002"]
+dict set inParams U32aArr 1 [createUint32Array "0000000300000004"]
+dict set inParams U32aArr 2 [createUint32Array "0000000500000006"]
+set checkParams $inParams
+
+TestEchoArrayPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams U8a [createUint8Array "0102"]
+    dict set inParams U8aArr 1 [createUint8Array "0304"]
+    dict set inParams U8aArr 2 [createUint8Array "0506"]
+    dict set inParams U16a [createUint16Array "00010002"]
+    dict set inParams U16aArr 1 [createUint16Array "00030004"]
+    dict set inParams U16aArr 2 [createUint16Array "00050006"]
+    dict set inParams U32a [createUint32Array "000000ab000000cd"]
+    dict set inParams U32aArr 1 [createUint32Array "0000000300000004"]
+    dict set inParams U32aArr 2 [createUint32Array "0000000500000006"]
+    set checkParams $inParams
+
+    TestEchoArrayPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoTuple"
+set inParams [dict create]
+dict set inParams stringtup [list "en" "to"]
+dict set inParams stringtup_arr 1 [list "tre" "fire"]
+dict set inParams stringtup_arr 2 [list "fem" "seks"]
+dict set inParams inttup [list 1 2]
+dict set inParams inttup_arr 1 [list 3 4]
+dict set inParams inttup_arr 2 [list 5 6]
+dict set inParams strinttup [list "elleve" 12]
+dict set inParams strinttup_arr 1 [list "tretten" 14]
+dict set inParams strinttup_arr 2 [list "femten" 16]
+dict set inParams struint8tup [list "sytten" 18]
+dict set inParams struint8tup_arr 1 [list "nitten" 20]
+dict set inParams struint8tup_arr 2 [list "tjueen" 22]
+set checkParams $inParams
+
+TestEchoTuple $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams stringtup [list "hei" "hopp"]
+    dict set inParams stringtup_arr 1 [list "tre" "fire"]
+    dict set inParams stringtup_arr 2 [list "fem" "seks"]
+    dict set inParams inttup [list 1 2]
+    dict set inParams inttup_arr 1 [list 3 4]
+    dict set inParams inttup_arr 2 [list 5 6]
+    dict set inParams strinttup [list "elleve" 12]
+    dict set inParams strinttup_arr 1 [list "tretten" 14]
+    dict set inParams strinttup_arr 2 [list "femten" 16]
+    dict set inParams struint8tup [list "sytten" 18]
+    dict set inParams struint8tup_arr 1 [list "nitten" 20]
+    dict set inParams struint8tup_arr 2 [list "tjueen" 22]
+    set checkParams $inParams
+
+    TestEchoTuple $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+dict set inParams StringTup [list "en" "to"]
+dict set inParams StringTupArr 1 [list "tre" "fire"]
+dict set inParams StringTupArr 2 [list "fem" "seks"]
+dict set inParams IntTup [list 1 2]
+dict set inParams IntTupArr 1 [list 3 4]
+dict set inParams IntTupArr 2 [list 5 6]
+dict set inParams StrintTup [list "elleve" 12]
+dict set inParams StrintTupArr 1 [list "tretten" 14]
+dict set inParams StrintTupArr 2 [list "femten" 16]
+dict set inParams Struint8Tup [list "sytten" 18]
+dict set inParams Struint8TupArr 1 [list "nitten" 20]
+dict set inParams Struint8TupArr 2 [list "tjueen" 22]
+set checkParams $inParams
+
+TestEchoTuplePN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    dict set inParams StringTup [list "hei" "hopp"]
+    dict set inParams StringTupArr 1 [list "tre" "fire"]
+    dict set inParams StringTupArr 2 [list "fem" "seks"]
+    dict set inParams IntTup [list 1 2]
+    dict set inParams IntTupArr 1 [list 3 4]
+    dict set inParams IntTupArr 2 [list 5 6]
+    dict set inParams StrintTup [list "elleve" 12]
+    dict set inParams StrintTupArr 1 [list "tretten" 14]
+    dict set inParams StrintTupArr 2 [list "femten" 16]
+    dict set inParams Struint8Tup [list "sytten" 18]
+    dict set inParams Struint8TupArr 1 [list "nitten" 20]
+    dict set inParams Struint8TupArr 2 [list "tjueen" 22]
+    set checkParams $inParams
+
+    TestEchoTuplePN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set test "EchoBag"
+set inParams [dict create]
+set bag3 [dict create]
+dict set bag3 i 3
+set bag2 [dict create]
+dict set bag2 i 2
+dict set bag2 b $bag3
+set bag1 [dict create]
+dict set bag1 i 1
+dict set bag1 b $bag2
+dict set inParams b $bag1
+dict set inParams b_arr 1 $bag2
+dict set inParams b_arr 2 $bag3
+set checkParams $inParams
+
+TestEchoBag $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    set bag3 [dict create]
+    dict set bag3 i 3
+    set bag2 [dict create]
+    dict set bag2 i 2
+    dict set bag2 b $bag3
+    set bag1 [dict create]
+    dict set bag1 i 100
+    dict set inParams b $bag1
+    dict set inParams b_arr 1 $bag2
+    dict set inParams b_arr 2 $bag3
+    set checkParams $inParams
+
+    TestEchoBag $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+set inParams [dict create]
+set bag3 [dict create]
+dict set bag3 i 3
+set bag2 [dict create]
+dict set bag2 i 2
+dict set bag2 b $bag3
+set bag1 [dict create]
+dict set bag1 i 1
+dict set bag1 b $bag2
+set bag5 [dict create]
+dict set bag5 Int 3
+set bag4 [dict create]
+dict set bag4 Int 2
+dict set bag4 Bag $bag3
+dict set inParams Bag $bag1
+dict set inParams BagArr 1 $bag4
+dict set inParams BagArr 2 $bag5
+set checkParams $inParams
+
+TestEchoBagPN $inParams $checkParams
+if {$cctest} {
+    checkRegexp "Equal .correct."
+    checkRegexp "Not equal .correct."
+}
+show_passes_and_fails
+
+if {$cctest} {
+    set inParams [dict create]
+    set bag3 [dict create]
+    dict set bag3 i 3
+    set bag2 [dict create]
+    dict set bag2 i 2
+    dict set bag2 b $bag3
+    set bag1 [dict create]
+    dict set bag1 i 100
+    set bag5 [dict create]
+    dict set bag5 Int 3
+    set bag4 [dict create]
+    dict set bag4 Int 2
+    dict set bag4 Bag $bag3
+    dict set inParams Bag $bag1
+    dict set inParams BagArr 1 $bag4
+    dict set inParams BagArr 2 $bag5
+    set checkParams $inParams
+
+    TestEchoBagPN $inParams $checkParams
+    if {$cctest} {
+        checkRegexp "Equal .correct."
+        checkRegexp "Equal .ERROR."
+    }
+    show_passes_and_fails
+}
+
+if {$fails != 0 || $passes == 0} {
+    exit -1
+} else {
+    exit 0
+}

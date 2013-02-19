@@ -4651,9 +4651,7 @@ bool _mpl_assert_typesize(size_t typesize, mpl_param_element_id_t param_id);
  *
  */
 #define MPL_GET_VALUE_FROM_PARAM_ELEMENT(type,param_element_p) \
-    (_mpl_assert_typesize(sizeof(type), param_element_p->id) ? \
-     *((type*)(param_element_p)->value_p) :                    \
-     *((type*)(param_element_p)->value_p))
+    (*((type*)(param_element_p)->value_p))
 
 /**
  * @ingroup MPL_PARAM

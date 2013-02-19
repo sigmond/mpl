@@ -541,6 +541,7 @@ void parameter_set::gc_h_macros(FILE *f)
         "sint32",
         "sint64",
         "bool",
+        "bool8",
         NULL
     };
 
@@ -556,6 +557,7 @@ void parameter_set::gc_h_macros(FILE *f)
         "SINT32",
         "SINT64",
         "BOOL",
+        "BOOL8",
         NULL
     };
 
@@ -571,6 +573,7 @@ void parameter_set::gc_h_macros(FILE *f)
         "sint32_t",
         "int64_t",
         "bool",
+        "uint8_t",
         NULL
     };
 
@@ -1365,6 +1368,403 @@ void parameter_set::gc_h_macros(FILE *f)
            );
 
 
+    /* ADD ENUM8 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum8 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum8)\n"
+            "  * @param var (in) The numeric enum8 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM8_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum8); \\\n"
+            "        if (mpl_param_list_add_enum8(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum8\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD ENUM8 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum8 to the command list giving the *numeric* enum8 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum8)\n"
+            "  * @param var (in) The numeric enum8 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM8_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum8); \\\n"
+            "        if (mpl_param_list_add_enum8_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum8\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD ENUM16 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum16 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum16)\n"
+            "  * @param var (in) The numeric enum16 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM16_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum16); \\\n"
+            "        if (mpl_param_list_add_enum16(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum16\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD ENUM16 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum16 to the command list giving the *numeric* enum16 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum16)\n"
+            "  * @param var (in) The numeric enum16 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM16_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum16); \\\n"
+            "        if (mpl_param_list_add_enum16_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum16\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD ENUM32 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum32 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum32)\n"
+            "  * @param var (in) The numeric enum32 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM32_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum32); \\\n"
+            "        if (mpl_param_list_add_enum32(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum32\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD ENUM32 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an enum32 to the command list giving the *numeric* enum32 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type enum32)\n"
+            "  * @param var (in) The numeric enum32 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_ENUM32_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_enum32); \\\n"
+            "        if (mpl_param_list_add_enum32_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_enum32\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM8 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum8 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum8)\n"
+            "  * @param var (in) The numeric signed_enum8 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM8_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum8); \\\n"
+            "        if (mpl_param_list_add_signed_enum8(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum8\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM8 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum8 to the command list giving the *numeric* signed_enum8 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum8)\n"
+            "  * @param var (in) The numeric signed_enum8 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM8_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum8); \\\n"
+            "        if (mpl_param_list_add_signed_enum8_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum8\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM16 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum16 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum16)\n"
+            "  * @param var (in) The numeric signed_enum16 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM16_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum16); \\\n"
+            "        if (mpl_param_list_add_signed_enum16(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum16\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM16 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum16 to the command list giving the *numeric* signed_enum16 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum16)\n"
+            "  * @param var (in) The numeric signed_enum16 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM16_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum16); \\\n"
+            "        if (mpl_param_list_add_signed_enum16_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum16\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM32 FROM VAR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum32 to the command list giving the *numeric* enum value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum32)\n"
+            "  * @param var (in) The numeric signed_enum32 value to add (value or variable)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM32_FROM_VAR(listPtr, name, var) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum32); \\\n"
+            "        if (mpl_param_list_add_signed_enum32(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum32\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD SIGNED_ENUM32 FROM VAR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add an signed_enum32 to the command list giving the *numeric* signed_enum32 value\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be type signed_enum32)\n"
+            "  * @param var (in) The numeric signed_enum32 value to add (value or variable)\n"
+            "  * @param tag (in) tag to use\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_ADD_SIGNED_ENUM32_FROM_VAR_TAG(listPtr, name, var, tag) \\\n"
+            "    do { \\\n"
+            "        assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_signed_enum32); \\\n"
+            "        if (mpl_param_list_add_signed_enum32_tag(listPtr, \\\n"
+            "                                      %s_PARAM_ID(name), \\\n"
+            "                                      tag, \\\n"
+            "                                      var) < 0) {\\\n"
+            "           if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "               %s_MEMORY_EXCEPTION_HANDLER(\"mpl_param_list_add_signed_enum32\"); \\\n"
+            "           } \\\n"
+            "       } \\\n"
+            "    } while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+
     /* ADD FROM STRING */
     fprintf(f,
             "/**\n"
@@ -1592,6 +1992,79 @@ void parameter_set::gc_h_macros(FILE *f)
             snu,
             snu
            );
+
+    /* ADD WSTRING */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add a wide string type parameter to the command list\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be wstring type)\n"
+            "  * @param src (in) The parameter value formatted as a wide string\n"
+            "  * @remark This macro will NOT perform length check\n"
+            "  * of the provided string\n"
+            "  */\n",
+            group
+           );
+
+    fprintf(f,
+            "#define %s_ADD_WSTRING(listPtr, name, src) \\\n"
+            "do { \\\n"
+            "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_wstring); \\\n"
+            "    if (mpl_add_param_to_list(listPtr, \\\n"
+            "                             %s_PARAM_ID(name), \\\n"
+            "                             src) < 0) {\\\n"
+            "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
+            "       } \\\n"
+            "    } \\\n"
+            "} while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
+    /* ADD WSTRING TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Add a wide string type parameter to the command list\n"
+            "  *\n"
+            "  * Allocates list memory.\n"
+            "  *\n"
+            "  * @param listPtr (in/out) The list to add to\n"
+            "  * @param name (in) the name of the parameter (must be wstring type)\n"
+            "  * @param src (in) The parameter value formatted as a wide string\n"
+            "  * @param tag (in) The tag (integer 0-99) to mark the parameter with\n"
+            "  * @remark This macro will NOT perform length check\n"
+            "  * of the provided string\n"
+            "  */\n",
+            group
+           );
+
+    fprintf(f,
+            "#define %s_ADD_WSTRING_TAG(listPtr, name, src, tag) \\\n"
+            "do { \\\n"
+            "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_wstring); \\\n"
+            "    if (mpl_add_param_to_list_tag(listPtr, \\\n"
+            "                                  %s_PARAM_ID(name), \\\n"
+            "                                  tag, \\\n"
+            "                                  src) < 0) {\\\n"
+            "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
+            "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
+            "       } \\\n"
+            "    } \\\n"
+            "} while(0)\n",
+            snu,
+            snu,
+            snu,
+            snu
+           );
+
 
     /* ADD BAG */
     fprintf(f,
@@ -2007,15 +2480,15 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_string_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_string_tuple_t *)\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRING_TUPLE(listPtr, name, tup) \\\n"
+            "#define %s_ADD_STRING_TUPLE(listPtr, name, tupPtr) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_string_tuple); \\\n"
-            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2037,16 +2510,16 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_string_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_string_tuple_t *)\n"
             "  * @param tag (in) The tag to use\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRING_TUPLE_TAG(listPtr, name, tup, tag) \\\n"
+            "#define %s_ADD_STRING_TUPLE_TAG(listPtr, name, tupPtr, tag) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_string_tuple); \\\n"
-            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2068,15 +2541,15 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_int_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_int_tuple_t *)\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_INT_TUPLE(listPtr, name, tup) \\\n"
+            "#define %s_ADD_INT_TUPLE(listPtr, name, tupPtr) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_int_tuple); \\\n"
-            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2098,16 +2571,16 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_int_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_int_tuple_t *)\n"
             "  * @param tag (in) The tag to use\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_INT_TUPLE_TAG(listPtr, name, tup, tag) \\\n"
+            "#define %s_ADD_INT_TUPLE_TAG(listPtr, name, tupPtr, tag) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_int_tuple); \\\n"
-            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2129,15 +2602,15 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_strint_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_strint_tuple_t *)\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRINT_TUPLE(listPtr, name, tup) \\\n"
+            "#define %s_ADD_STRINT_TUPLE(listPtr, name, tupPtr) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_strint_tuple); \\\n"
-            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2159,16 +2632,16 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_strint_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_strint_tuple_t *)\n"
             "  * @param tag (in) The tag to use\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRINT_TUPLE_TAG(listPtr, name, tup, tag) \\\n"
+            "#define %s_ADD_STRINT_TUPLE_TAG(listPtr, name, tupPtr, tag) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_strint_tuple); \\\n"
-            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2190,15 +2663,15 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_struint8_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_struint8_tuple_t *)\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRUINT8_TUPLE(listPtr, name, tup) \\\n"
+            "#define %s_ADD_STRUINT8_TUPLE(listPtr, name, tupPtr) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_struint8_tuple); \\\n"
-            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list(listPtr, %s_PARAM_ID(name), tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2220,16 +2693,16 @@ void parameter_set::gc_h_macros(FILE *f)
             "  *\n"
             "  * @param listPtr (in/out) The list to add to\n"
             "  * @param name (in) the name of the parameter\n"
-            "  * @param tup (in) The tuple (mpl_struint8_tuple_t *)\n"
+            "  * @param tupPtr (in) The tuple (mpl_struint8_tuple_t *)\n"
             "  * @param tag (in) The tag to use\n"
             "  */\n",
             group
            );
     fprintf(f,
-            "#define %s_ADD_STRUINT8_TUPLE_TAG(listPtr, name, tup, tag) \\\n"
+            "#define %s_ADD_STRUINT8_TUPLE_TAG(listPtr, name, tupPtr, tag) \\\n"
             "do { \\\n"
             "    assert(mpl_param_id_get_type(%s_PARAM_ID(name)) == mpl_type_struint8_tuple); \\\n"
-            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, &tup) < 0) { \\\n"
+            "    if (mpl_add_param_to_list_tag(listPtr, %s_PARAM_ID(name), tag, tupPtr) < 0) { \\\n"
             "       if (mpl_get_errno() == E_MPL_FAILED_ALLOCATING_MEMORY) { \\\n"
             "           %s_MEMORY_EXCEPTION_HANDLER(\"mpl_add_param_to_list\"); \\\n"
             "       } \\\n"
@@ -2549,7 +3022,283 @@ void parameter_set::gc_h_macros(FILE *f)
            );
     fprintf(f,
             "#define %s_GET_ENUM_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM8 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum8 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The enum8 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM8(list, name) \\\n"
             "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM8 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum8 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The enum8 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM8_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM16 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum16 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The enum16 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM16(list, name) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM16 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum16 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The enum16 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM16_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM32 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum32 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The enum32 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM32(list, name) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET ENUM32 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an enum32 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The enum32 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_ENUM32_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM8 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum8 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The signed_enum8 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM8(list, name) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM8 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum8 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The signed_enum8 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM8_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM16 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum16 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The signed_enum16 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM16(list, name) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM16 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum16 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The signed_enum16 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM16_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              tag, \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM32 */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum32 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return The signed_enum32 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM32(list, name) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST(%s_ENUM_TYPE(name), \\\n"
+            "                              %s_PARAM_ID(name), \\\n"
+            "                              list)\n",
+            snu,
+            snu,
+            snu
+           );
+
+    /* GET SIGNED_ENUM32 TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of an signed_enum32 parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the tag to search for\n"
+            "  * @return The signed_enum32 value\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_SIGNED_ENUM32_TAG(list, name, tag) \\\n"
+            "MPL_GET_PARAM_VALUE_FROM_LIST_TAG(%s_ENUM_TYPE(name), \\\n"
             "                              %s_PARAM_ID(name), \\\n"
             "                              tag, \\\n"
             "                              list)\n",
@@ -2599,6 +3348,52 @@ void parameter_set::gc_h_macros(FILE *f)
             "#define %s_GET_STRING_PTR_TAG(list, name, tag)                         \\\n"
             "MPL_GET_PARAM_VALUE_PTR_FROM_LIST_TAG(char*,                \\\n"
             "                                      %s_PARAM_ID(name),   \\\n"
+            "                                      tag,                  \\\n"
+            "                                      list)\n",
+            snu,
+            snu
+           );
+
+    /* GET WSTRING PTR */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of a wide string parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @return Pointer to the wstring (wchar_t*)\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  * @note The returned string is NOT a copy (must not be freed or overwritten)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_WSTRING_PTR(list, name)                             \\\n"
+            "MPL_GET_PARAM_VALUE_PTR_FROM_LIST(wchar_t*,               \\\n"
+            "                                  %s_PARAM_ID(name),  \\\n"
+            "                                  list)\n",
+            snu,
+            snu
+           );
+
+    /* GET WSTRING PTR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Return the value of a wide string parameter from a command list\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) the parameter must match this tag (an integer)\n"
+            "  * @return Pointer to the wstring (wchar_t*)\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  * @note The returned string is NOT a copy (must not be freed or overwritten)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_WSTRING_PTR_TAG(list, name, tag)           \\\n"
+            "MPL_GET_PARAM_VALUE_PTR_FROM_LIST_TAG(wchar_t*,               \\\n"
+            "                                      %s_PARAM_ID(name),  \\\n"
             "                                      tag,                  \\\n"
             "                                      list)\n",
             snu,
@@ -3171,6 +3966,28 @@ void parameter_set::gc_h_macros(FILE *f)
             snu
            );
 
+    /* GET STRING TUPLE PTR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Get the reference of a string tuple type parameter from a command list\n"
+            "  * and deliver as a pointer to mpl_string_tuple_t (*not* a copy).\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) tag to use \n"
+            "  * @return reference to the tuple\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_STRING_TUPLE_PTR_TAG(list, name, tag) \\\n"
+            "  (mpl_string_tuple_t *)MPL_GET_PARAM_VALUE_PTR_FROM_LIST_TAG \\\n"
+            "   (mpl_string_tuple_t*, %s_PARAM_ID(name), tag, list)\n",
+            snu,
+            snu
+           );
+
     /* GET INT TUPLE PTR */
     fprintf(f,
             "/**\n"
@@ -3192,6 +4009,28 @@ void parameter_set::gc_h_macros(FILE *f)
             snu
            );
 
+    /* GET INT TUPLE PTR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Get the reference of an int tuple type parameter from a command list\n"
+            "  * and deliver as a pointer to mpl_int_tuple_t (*not* a copy).\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) tag to use \n"
+            "  * @return reference to the tuple\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_INT_TUPLE_PTR_TAG(list, name, tag) \\\n"
+            "  (mpl_int_tuple_t *)MPL_GET_PARAM_VALUE_PTR_FROM_LIST_TAG \\\n"
+            "   (mpl_int_tuple_t*, %s_PARAM_ID(name), tag, list)\n",
+            snu,
+            snu
+           );
+
     /* GET STRINT TUPLE PTR */
     fprintf(f,
             "/**\n"
@@ -3209,6 +4048,28 @@ void parameter_set::gc_h_macros(FILE *f)
             "#define %s_GET_STRINT_TUPLE_PTR(list, name) \\\n"
             "  (mpl_strint_tuple_t *)MPL_GET_PARAM_VALUE_PTR_FROM_LIST \\\n"
             "   (mpl_strint_tuple_t*, %s_PARAM_ID(name), list)\n",
+            snu,
+            snu
+           );
+
+    /* GET STRINT TUPLE PTR TAG */
+    fprintf(f,
+            "/**\n"
+            "  * @ingroup %s\n"
+            "  * Get the reference of a strint tuple type parameter from a command list\n"
+            "  * and deliver as a pointer to mpl_strint_tuple_t (*not* a copy).\n"
+            "  * @param list (in) The list to extract the value from\n"
+            "  * @param name (in) the name of the parameter\n"
+            "  * @param tag (in) tag to use \n"
+            "  * @return reference to the tuple\n"
+            "  * @note The parameter must exist on the list (otherwise the call may crash)\n"
+            "  */\n",
+            group
+           );
+    fprintf(f,
+            "#define %s_GET_STRINT_TUPLE_PTR_TAG(list, name, tag) \\\n"
+            "  (mpl_strint_tuple_t *)MPL_GET_PARAM_VALUE_PTR_FROM_LIST_TAG \\\n"
+            "   (mpl_strint_tuple_t*, %s_PARAM_ID(name), tag, list)\n",
             snu,
             snu
            );

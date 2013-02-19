@@ -2144,6 +2144,18 @@ mpl_list_t *inheritable_object::get_flat_child_list()
     return cl_p;
 }
 
+bool inheritable_object::is_parent(inheritable_object *obj)
+{
+    inheritable_object *top_p = this;
+
+    while (top_p->parent_p) {
+        if (obj == top_p->parent_p)
+            return true;
+        top_p = top_p->parent_p;
+    }
+    return false;
+}
+
 mpl_list_t *inheritable_object::get_parent_list()
 {
     mpl_list_t *pl_p = NULL;

@@ -69,12 +69,18 @@ int main(int argc, char *argv[])
             else {
                 fprintf(stderr, "!!! INVALID RESPONSE !!!\n");
             }
+            mpl_param_list_destroy(&req);
         }
         else {
             fprintf(stderr, "!!! INVALID REQUEST !!!\n");
         }
     }
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
+    mpl_param_deinit();
     fprintf(stderr, "testprot server QUITS\n");
     return 0;
 }
