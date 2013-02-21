@@ -191,6 +191,10 @@ int main(int argc, char **argv)
     /* Loop reading stdin */
     readlines();
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
 
     printf("Halting the CLI\n");
 

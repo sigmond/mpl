@@ -201,6 +201,10 @@ int main(int argc, char **argv)
     /* Loop reading stdin */
     readlines();
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
 
     printf("Halting the CLI\n");
 
@@ -244,6 +248,7 @@ static int checkCommand(mpl_list_t *cmdMsg)
         else {
             printf("%smemory error\n", prompt);
         }
+        mpl_param_list_destroy(&check_result_list_p);
         return -1;
     }
     return 0;

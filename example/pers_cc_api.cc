@@ -322,6 +322,11 @@ int main(int argc, char **argv)
     // DELETE #2 end
     ////////
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
+
     printf("Halting the CC API DEMO\n");
 
     mpl_param_system_deinit();

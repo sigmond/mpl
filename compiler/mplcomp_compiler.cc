@@ -1517,7 +1517,7 @@ void mpl_compiler::cli_c_common(FILE *f)
             "{\n"
             "    const char *p;\n"
             "    const char *s;\n"
-            "    char *cmd = calloc(1, strlen(line) * 2);\n"
+            "    char *cmd = calloc(1, 10 + (strlen(line) * 2));\n"
             "    p = strchr(line, ' ');\n"
             "    if (p) {\n"
             "        strncpy(cmd, line, p - line);\n"
