@@ -1,4 +1,4 @@
-DIRS=compiler lib test example doc
+DIRS=compiler test example doc
 
 .PHONY: force
 
@@ -20,6 +20,11 @@ check: force
 memcheck: force
 	for dir in $(DIRS) ; do \
 		(cd $$dir; make memcheck) \
+	done
+
+analyze_memcheck: force
+	for dir in $(DIRS) ; do \
+		(cd $$dir; make analyze_memcheck) \
 	done
 
 clean: force

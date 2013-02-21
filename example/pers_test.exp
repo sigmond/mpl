@@ -18,7 +18,7 @@ set spawnCmd [linsert $cmdLine 0 spawn]
 eval $spawnCmd
 
 reset_passes_and_fails
-exec rm personnel.db
+exec rm -f personnel.db
 
 set test "Add \#1 succeeds"
 set name [dict create first Per last Sigmond]

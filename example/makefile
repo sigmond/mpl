@@ -66,6 +66,33 @@ memcheck: all
 	mkdir memcheck
 	make VALGRIND="/usr/bin/valgrind --leak-check=full --show-reachable=yes --log-file=memcheck/valgrind-%p.log" check
 
+.PHONY: memcheck
+memcheck:
+	rm -rf memcheck
+	mkdir memcheck
+	make check VALGRIND="/usr/bin/valgrind --leak-check=full --show-reachable=yes --log-file=memcheck/valgrind-%p.log"
+
+memcheck/%.logd: memcheck/%.log
+	@echo "* Analyzing $^"
+	@grep "ERROR SUMMARY: 0 errors" $^ > /dev/null
+	@if grep "All heap blocks were freed -- no leaks are possible" $^ > /dev/null; then echo -n ; else \
+	grep "LEAK SUMMARY:" $^ > /dev/null && \
+	grep "definitely lost: 0 bytes" $^ > /dev/null && \
+	grep "indirectly lost: 0 bytes" $^ > /dev/null && \
+	grep "possibly lost: 0 bytes" $^ > /dev/null && \
+	grep "still reachable: 0 bytes" $^ > /dev/null; \
+	fi
+
+VALGRIND_FILES = $(shell echo memcheck/*.log)
+
+.PHONY: analyze_memcheck
+analyze_memcheck: $(VALGRIND_FILES:memcheck/%.log=memcheck/%.logd)
+	@echo "***"
+	@echo "*"
+	@echo "* No Valgrind errors found!"
+	@echo "*"
+	@echo "***"
+
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c
 		$(CC) -c -o $@ $(CFLAGS) $<

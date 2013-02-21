@@ -26,6 +26,12 @@ DEPS = $(MPLCOMP_CCFILES:.cc=.d) $(MPLCOMP_CFILES:.c=.d)
 
 all: mplcomp
 
+check:
+
+memcheck:
+
+analyze_memcheck:
+
 -include $(DEPS)
 
 mplcomp.o: mplcomp.cc mplcomp.hh
@@ -53,3 +59,5 @@ clean:
 	rm -f lex.yy.*
 	rm -f mplcomp.tab.*
 	rm -f *~ core
+
+distclean: clean

@@ -10,7 +10,15 @@ doc: clean
 	cp $(MPL_DIR)/mpl_config.h .
 	doxygen Doxyfile
 
+check:
+
+memcheck:
+
+analyze_memcheck:
+
 clean:
 	rm -f mpl_list.h mpl_param.h mpl_file.h mpl_config.h
 	rm -rf html
+	rm -f *~
 
+distclean: clean
