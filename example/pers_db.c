@@ -27,6 +27,7 @@ PERS_ENUM_TYPE(Error) persdb_Add(mpl_bag_t *employee, uint16_t *number)
 {
     mpl_list_t *tmp;
     mpl_list_t *dblist = NULL;
+    mpl_bag_t *employee_copy;
     uint16_t new_number = EMPLOYEE_NUMBER_BASE;
     uint16_t max_number = EMPLOYEE_NUMBER_UNDEFINED;
     int ret;
@@ -59,12 +60,15 @@ PERS_ENUM_TYPE(Error) persdb_Add(mpl_bag_t *employee, uint16_t *number)
     if (max_number != EMPLOYEE_NUMBER_UNDEFINED){
         new_number = max_number + 1;
     }
-    PERS_REMOVE_FIELD(employee, Employee, number);
-    PERS_ADD_Employee_number(&employee, new_number);
+
+    employee_copy = mpl_param_list_clone(employee);
+    PERS_REMOVE_FIELD(employee_copy, Employee, number);
+    PERS_ADD_Employee_number(&employee_copy, new_number);
     mpl_add_param_to_list(&dblist,
                           PERS_PARAM_ID(Employee),
-                          employee
+                          employee_copy
                          );
+    mpl_param_list_destroy(&employee_copy);
     dbfile = fopen(PERSDB_FILENAME, "w");
     if (!dbfile || mpl_file_write_params_no_prefix(dbfile, dblist)) {
         error = PERS_ENUM_VALUE(Error, general);
@@ -75,6 +79,7 @@ PERS_ENUM_TYPE(Error) persdb_Add(mpl_bag_t *employee, uint16_t *number)
     *number = new_number;
 
 finish:
+    mpl_param_list_destroy(&dblist);
     return error;
 }
 
@@ -118,6 +123,7 @@ PERS_ENUM_TYPE(Error) persdb_Get(uint16_t number, mpl_bag_t **employee)
     }
 
 finish:
+    mpl_param_list_destroy(&dblist);
     return error;
 }
 
@@ -149,23 +155,29 @@ PERS_ENUM_TYPE(Error) persdb_Delete(uint16_t number)
     }
     MPL_LIST_FOR_EACH_SAFE(dblist, tmp, tmp2) {
         uint16_t tmpnum;
-        mpl_bag_t *tmpempl =
-            MPL_LIST_CONTAINER(tmp, mpl_param_element_t, list_entry)->value_p;
+        mpl_bag_t *tmpempl;
+        mpl_param_element_t *elem = MPL_LIST_CONTAINER(tmp, mpl_param_element_t, list_entry);
+        tmpempl = elem->value_p;
         if (PERS_GET_Employee_number(tmpempl) == number){
             mpl_list_remove(&dblist, tmp);
+            mpl_param_element_destroy(elem);
             error = PERS_ENUM_VALUE(Error, success);
             break;
         }
     }
 
     dbfile = fopen(PERSDB_FILENAME, "w");
-    if (!dbfile || mpl_file_write_params_no_prefix(dbfile, dblist)) {
+    if (!dbfile) {
         error = PERS_ENUM_VALUE(Error, general);
         goto finish;
+    }
+    if (dblist && mpl_file_write_params_no_prefix(dbfile, dblist)) {
+        error = PERS_ENUM_VALUE(Error, general);
     }
     fclose(dbfile);
 
 finish:
+    mpl_param_list_destroy(&dblist);
     return error;
 }
 
@@ -216,11 +228,12 @@ PERS_ENUM_TYPE(Error) persdb_Find(char *first,
                 continue;
         mpl_add_param_to_list(employees,
                               PERS_PARAM_ID(Employee),
-                              mpl_param_list_clone(tmpempl)
+                              tmpempl
                              );
     }
 
 finish:
+    mpl_param_list_destroy(&dblist);
     return error;
 }
 

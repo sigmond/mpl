@@ -29,14 +29,19 @@ parameter_set personnel {
     parameters {
         /** A name */
         string NameString max 50;
+
         /** Calendar year */
         int Year min 1900;
+
         /** Month number in year (january = 1) */
         int Month range(1..12);
+
         /** Day of month */
         int Day range(1..31);
+
         /** Unique number that identifies an employee */
         uint16 EmployeeNumber;
+
         /** Data type to hold binary data for a picture */
         uint8_array PictureData;
 
@@ -101,6 +106,7 @@ parameter_set personnel {
         };
         /** Holds a string with extended error info (if applicable) */
         string ErrorInfo;
+
         /** Reason for server shutdown */
         enum8 ShutdownReason {
             unknown = 1, /**< Reason is unknown */

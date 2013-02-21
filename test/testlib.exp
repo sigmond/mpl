@@ -22,7 +22,7 @@ proc pass { msg } {
 
 proc fail { msg } {
     global fails
-    #send_user "\nFAIL: $msg\n"
+    send_user "\nFAIL: $msg\n"
     incr fails
 }
 
@@ -202,6 +202,24 @@ proc checkRegexpInv { {reg} {response ""} } {
 
     checkRegexp_Generic 1 "$reg" "$response"
 
+}
+
+proc checkTrue { boolean } {
+    global test
+    if { $boolean } {
+        pass "$test"
+    } else {
+        fail "$test"
+    }
+}
+
+proc checkFalse { boolean } {
+    global test
+    if { $boolean } {
+        fail "$test"
+    } else {
+        pass "$test"
+    }
 }
 
 proc myEvalAndprint  { script unmatch_var match_var myregexp_var {pass_fail 1}} {

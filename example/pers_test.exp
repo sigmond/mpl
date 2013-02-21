@@ -1,0 +1,158 @@
+source "../test/testlib.exp"
+source "personnel.exp"
+
+namespace import personnel::*
+namespace import persfile::*
+
+set debug 0
+set verbose 0
+set prompt "_Resp.*"
+
+
+if {[info exists ::env(VALGRIND)]} {
+    set cmdLine "$::env(VALGRIND) ./pers_server -i - -o -"
+} else {
+    set cmdLine "./pers_server -i - -o -"
+}
+set spawnCmd [linsert $cmdLine 0 spawn]
+eval $spawnCmd
+
+reset_passes_and_fails
+exec rm personnel.db
+
+set test "Add \#1 succeeds"
+set name [dict create first Per last Sigmond]
+set employee [dict create name $name]
+set born [dict create year 1961 month 3 day 5]
+dict set employee born $born
+dict set employee gender male
+set hired [dict create year 2005 month 1 day 15]
+dict set employee hired $hired
+dict set employee number 0 
+set inParams [dict create employee $employee]
+set checkParams [dict create number "" error success]
+set response [Add $inParams $checkParams]
+set number [dict get $response number]
+checkTrue [expr $number > 0]
+send_user "Resulting employee number: [dict get $response number]\n"
+show_passes_and_fails
+
+set test "Add \#2 succeeds"
+set name [dict create first Ola last Nordmann]
+set employee [dict create name $name]
+set born [dict create year 1971 month 4 day 6]
+dict set employee born $born
+dict set employee gender male
+set hired [dict create year 2006 month 2 day 16]
+dict set employee hired $hired
+dict set employee number 0 
+set inParams [dict create employee $employee]
+set checkParams [dict create number "" error success]
+set response [Add $inParams $checkParams]
+set number2 [dict get $response number]
+checkTrue [expr $number2 > 0]
+send_user "Resulting employee number: [dict get $response number]\n"
+show_passes_and_fails
+
+set test "Add fails"
+set name [dict create first Per last Sigmond]
+set employee [dict create name $name]
+set born [dict create year 1961 month 3 day 5]
+dict set employee born $born
+dict set employee gender male
+set hired [dict create year 2005 month 1 day 15]
+dict set employee hired $hired
+dict set employee number 100 
+set inParams [dict create employee $employee]
+set checkParams [dict create error parameter]
+Add $inParams $checkParams
+show_passes_and_fails
+
+set test "Get \#1 succeeds"
+set name [dict create first Per last Sigmond]
+set employee [dict create name $name]
+set born [dict create year 1961 month 3 day 5]
+dict set employee born $born
+dict set employee gender male
+set hired [dict create year 2005 month 1 day 15]
+dict set employee hired $hired
+dict set employee number $number
+set inParams [dict create number $number]
+set checkParams [dict create employee $employee error success]
+Get $inParams $checkParams
+show_passes_and_fails
+
+set test "Get fails"
+set inParams [dict create number 65535]
+set checkParams [dict create error not_found]
+set response [Get $inParams $checkParams]
+show_passes_and_fails
+
+set test "Find \#1 succeeds"
+set name [dict create first Per last Sigmond]
+set employee1 [dict create name $name]
+set born [dict create year 1961 month 3 day 5]
+dict set employee1 born $born
+dict set employee1 gender male
+set hired [dict create year 2005 month 1 day 15]
+dict set employee1 hired $hired
+dict set employee1 number $number
+set employees [dict create -1 $employee1]
+set inParams [dict create first Per]
+set checkParams [dict create error success employees $employees]
+Find $inParams $checkParams
+show_passes_and_fails
+
+set test "Find \#1 and \#2 succeeds"
+set name [dict create first Per last Sigmond]
+set employee1 [dict create name $name]
+set born [dict create year 1961 month 3 day 5]
+dict set employee1 born $born
+dict set employee1 gender male
+set hired [dict create year 2005 month 1 day 15]
+dict set employee1 hired $hired
+dict set employee1 number $number
+set name [dict create first Ola last Nordmann]
+set employee2 [dict create name $name]
+set born [dict create year 1971 month 4 day 6]
+dict set employee2 born $born
+dict set employee2 gender male
+set hired [dict create year 2006 month 2 day 16]
+dict set employee2 hired $hired
+dict set employee2 number $number2
+set employees [dict create -1 $employee1 -2 $employee2]
+set inParams [dict create]
+set checkParams [dict create error success employees $employees]
+Find $inParams $checkParams
+show_passes_and_fails
+
+set test "Delete fails"
+set inParams [dict create number 65535]
+set checkParams [dict create error not_found]
+set response [Delete $inParams $checkParams]
+show_passes_and_fails
+
+set test "Delete \#1 succeeds"
+set inParams [dict create number $number]
+set checkParams [dict create error success]
+set response [Delete $inParams $checkParams]
+show_passes_and_fails
+
+set test "Delete \#2 succeeds"
+set inParams [dict create number $number2]
+set checkParams [dict create error success]
+set response [Delete $inParams $checkParams]
+show_passes_and_fails
+
+set test "Find empty succeeds"
+set inParams [dict create]
+set checkParams [dict create error success employees ""]
+set response [Find $inParams $checkParams]
+checkTrue [expr [string length [dict get $response employees]] == 0]
+show_passes_and_fails
+
+if {$fails != 0 || $passes == 0} {
+    exit -1
+} else {
+    exit 0
+}

@@ -126,12 +126,25 @@ static int readlines(void) {
     return 0;
 }
 
+void usage() 
+{
+    printf("Usage: pers_cli <options>\n");
+    printf("    -h Show command usage\n");
+    printf("    -i input pipe\n");
+    printf("    -o output pipe\n");
+}
+
 int main(int argc, char **argv)
 {
     int i;
     int opt;
     char *pi = NULL;
     char *po = NULL;
+
+    if (argc < 2) {
+        usage();
+        exit(-1);
+    }
 
     printf("PERS CLI started with arguments:");
     for (i = 0 ; i < argc; i++)
@@ -140,10 +153,7 @@ int main(int argc, char **argv)
     while (-1 != (opt = getopt(argc, argv, "i:o:h"))) {
         switch (opt) {
         case 'h':
-            printf("Usage: pers_cli <options>\n");
-            printf("    -h Show command usage\n");
-            printf("    -i input pipe\n");
-            printf("    -o output pipe\n");
+            usage();
             return 0;
         case 'i':
             pi = optarg;
@@ -157,26 +167,26 @@ int main(int argc, char **argv)
         }
     }
 
-    if (po) {
-        fo = fopen(po, "w");
-        if (!fo) {
-            fprintf(stderr, "Error opening file '%s' for writing\n", po);
-            exit(-1);
-        }
+    if (!pi) {
+        fprintf(stderr, "Input pipe not specified\n");
+        exit(-1);
     }
-    else {
-        fo = stdout;
+    
+    if (!po) {
+        fprintf(stderr, "Output pipe not specified\n");
+        exit(-1);
+    }
+    
+    fo = fopen(po, "w");
+    if (!fo) {
+        fprintf(stderr, "Error opening file '%s' for writing\n", po);
+        exit(-1);
     }
 
-    if (pi) {
-        fi = fopen(pi, "r");
-        if (!fi) {
-            fprintf(stderr, "Error opening file '%s' for reading\n", pi);
-            exit(-1);
-        }
-    }
-    else {
-        fi = stdin;
+    fi = fopen(pi, "r");
+    if (!fi) {
+        fprintf(stderr, "Error opening file '%s' for reading\n", pi);
+        exit(-1);
     }
 
     if (personnel_param_init())
@@ -195,7 +205,7 @@ int main(int argc, char **argv)
     printf("Halting the CLI\n");
 
 exit:
-    mpl_param_deinit();
+    mpl_param_system_deinit();
 
     printf("DONE\n");
     return 0;

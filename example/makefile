@@ -39,8 +39,8 @@ PERS_API_HH_GENERATED=$(PERS_API_CC_GENERATED:.cc=.hh)
 
 PERS_API_O_GENERATED=$(PERS_API_CC_GENERATED:.cc=_api.o)
 
-PERS_API_SRCS=pers_api.cc
-PERS_API_OBJS=$(PERS_API_SRCS:.cc=.o)
+PERS_API_SRCS=pers_cc_api.cc
+PERS_API_OBJS=$(PERS_API_SRCS:.cc=.o) personnel.o
 
 INCLUDED_MPL_FILES=
 
@@ -55,7 +55,16 @@ LOCAL_OBJS =  pers_server.o \
 
 PERS_CLI_OBJS = personnel.o personnel_cli.o pers_cli.o linenoise.o
 
-all: $(MPLCOMP) $(MPLCOMP_GENERATED) pers_server pers_cli pers_api doc
+all: $(MPLCOMP) $(MPLCOMP_GENERATED) pers_server pers_cli pers_cc_api
+
+check: all
+	$(MPLCOMP) -m dejagnu personnel.mpl > personnel.exp
+	expect -f pers_test.exp
+
+memcheck: all
+	rm -rf memcheck
+	mkdir memcheck
+	make VALGRIND="/usr/bin/valgrind --leak-check=full --show-reachable=yes --log-file=memcheck/valgrind-%p.log" check
 
 -include $(MPL_OBJS:%.o=%.d)
 $(MPL_OBJS):%.o: $(MPL_DIR)/%.c
@@ -71,8 +80,8 @@ pers_server: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(LOCAL_OBJS:%.o=%.o)
 pers_cli: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(PERS_CLI_OBJS)
 	$(CC) -rdynamic -o pers_cli $(MPL_OBJS) $(PERS_CLI_OBJS) -lpthread -lapr-1
 
-pers_api: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(PERS_API_O_GENERATED) $(PERS_API_OBJS)
-	$(CC) -rdynamic -o pers_api $(MPL_OBJS) $(PERS_API_OBJS) $(PERS_API_O_GENERATED) -lpthread -lapr-1
+pers_cc_api: $(MPL_OBJS:$(MPL_DIR)%.c=%.o) $(PERS_API_O_GENERATED) $(PERS_API_OBJS)
+	$(CXX) -rdynamic -o pers_cc_api $(MPL_OBJS) $(PERS_API_OBJS) $(PERS_API_O_GENERATED) -lpthread -lapr-1
 
 doc: $(MPLCOMP) $(MPLCOMP_C_GENERATED:.c=.mpl)
 	rm -rf personnel.tex
@@ -108,7 +117,15 @@ $(PERS_API_CC_GENERATED):%.cc: personnel.mpl $(INCLUDED_MPL_FILES) $(MPLCOMP)
 
 
 clean:
-	rm -f pers_server pers_cli
+	rm -f pers_server pers_cli pers_cc_api
 	rm -f *.o *.d
 	rm -f $(MPLCOMP_GENERATED) $(PERS_CLI_C_GENERATED) $(PERS_CLI_H_GENERATED) $(PERS_API_CC_GENERATED) $(PERS_API_HH_GENERATED)
 	rm -f *~ core
+	rm -f personnel.exp
+	rm -rf memcheck
+	rm -rf personnel
+	rm -rf *.aux *.dvi *.log *.tex *.toc
+
+distclean: clean
+	rm -f history.txt
+	rm -f personnel.db

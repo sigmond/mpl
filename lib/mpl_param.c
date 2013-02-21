@@ -310,8 +310,7 @@ void mpl_param_deinit(void)
     return;
 }
 
-#ifdef MPL_MODULE_TEST
-static void mpl_module_test_param_deinit(void)
+void mpl_param_system_deinit(void)
 {
     mpl_list_t *elem_p;
     mpl_list_t *tmp_p;
@@ -351,6 +350,12 @@ static void mpl_module_test_param_deinit(void)
     (void)mpl_mutex_destroy(mutex);
     mpl_threads_deinit();
     return;
+}
+
+#ifdef MPL_MODULE_TEST
+static void mpl_module_test_param_deinit(void)
+{
+    mpl_param_system_deinit();
 }
 #endif
 

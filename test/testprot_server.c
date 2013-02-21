@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         fclose(fi);
     if ((fo != stdout) && (fo != stderr))
         fclose(fo);
-    mpl_param_deinit();
+    mpl_param_system_deinit();
     fprintf(stderr, "testprot server QUITS\n");
     return 0;
 }

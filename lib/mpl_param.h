@@ -1992,13 +1992,21 @@ int mpl_param_init(mpl_param_descr_set_t *param_descr_set_p);
 
 /**
  * @ingroup MPL_PARAM
- * mpl_param_deinit - Deinitiate library
+ * mpl_param_deinit - Deinitiate library for this thread
  *
  *
  **/
 void mpl_param_deinit(void);
 /* for backward compatibility */
 #define mpl_test_param_deinit mpl_param_deinit
+
+/**
+ * @ingroup MPL_PARAM
+ * mpl_param_system_deinit - Deinitiate library for all threads
+ *
+ *
+ **/
+void mpl_param_system_deinit(void);
 
 /**
  * @ingroup MPL_PARAM

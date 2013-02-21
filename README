@@ -17,26 +17,32 @@ MPL concepts:
     - Parameters can be represented using a local format or a transfer
       format
         - The local format is binary (the "unpacked" format). The exact
-	  representation is cpu/compiler dependant and is thus not suitable
-	  for exchanging data with other systems.
+	      representation is cpu/compiler dependant and is thus not suitable
+	      for exchanging data with other systems.
         - The transfer format is (currently) text (the "packed" format).
-	- This format is common to all systems using MPL, and is thus
-	  suitable for exchanging data. Because it is text-based it is also
-	  convenient for the human observer (e.g. for logging and debugging
-	  purposes). Other non-text transfer formats may be defined in the
-	  future.
+	      This format is common to all systems using MPL, and is thus
+	      suitable for exchanging data. Because it is text-based it is also
+	      convenient for the human observer (e.g. for logging and debugging
+	      purposes). Other transfer formats may be defined in the future.
         - Functions are provided for conversion between local format and
-	  transfer format. These operations are often called marshalling
-	  or serialization.
+	      transfer format. These operations are often called marshalling
+	      or serialization.
 
 The MPL Parameter Definition Language:
 
     This is a formal language (suitable for parsing by a compiler)
-        - This language is used to define parameter sets and parameters.
+        - This language is used to define parameter sets and parameters
+          supporting things like inheritance and inline documentation.
         - It can also be used to define RPC (Remote Procedure Call) 
           protocols based on MPL parameters.
         - A utility (MPL Compiler) exists that can generate code and 
           documentation.
+          - Currently, API-support code can be generated for languages
+            C, C++ and TCL (Expect).
+          - Command Line Interface (CLI) support code can be generated
+            for language C.
+          - Documentation of the protocol can be generated in TeX format
+            (this format can be converted to a number of other formats).
 
 The MPL Parameter API
     - provides the means to manipulate parameters and parameter lists.
@@ -96,7 +102,7 @@ MPL data types:
                signedness)
         enum8 - unsigned enumerated integer (1 byte)
         enum16 - unsigned enumerated integer (2 bytes)
-        enum32 - unsigned enumerated integer (5 bytes)
+        enum32 - unsigned enumerated integer (4 bytes)
         signed_enum8 - signed enumerated integer (1 byte)
         signed_enum16 - signed enumerated integer (2 bytes)
         signed_enum32 - signed enumerated integer (4 bytes)

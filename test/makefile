@@ -56,7 +56,7 @@ TESTPROT_SERVER_CC_OBJS=testprotocol.o $(TESTPROT_API_O_GENERATED) testprot_hand
 
 TESTPROT_CLI_OBJS=testprotocol.o testprotocol_cli.o testprot_cli.o linenoise.o
 
-all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc #testprot_api
+all: $(MPLCOMP) $(MPLCOMP_GENERATED) mpl_test testprot_cli testprot_server testprot_server_cc
 
 memcheck: all
 	rm -rf memcheck
@@ -126,3 +126,10 @@ clean:
 	rm -f $(MPLCOMP_GENERATED) $(TESTPROT_CLI_H_GENERATED) $(TESTPROT_CLI_C_GENERATED)
 	rm -f $(TESTPROT_API_HH_GENERATED) $(TESTPROT_API_CC_GENERATED)
 	rm -f *~ core
+	rm -rf testprotocol.exp
+	rm -rf memcheck
+	rm -rf *.aux *.dvi *.log *.tex *.toc
+
+distclean: clean
+	rm -f history.txt
+	rm -f personnel.db

@@ -18,31 +18,85 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "personnel.h"
 #include "pers_handlers.h"
 #include <assert.h>
 
+void usage() 
+{
+    printf("Usage: pers_server options\n");
+    printf("    -h Show command usage\n");
+    printf("    -i input pipe\n");
+    printf("    -o output pipe\n");
+}
+
 int main(int argc, char *argv[])
 {
     char buf[1024];
+    int opt;
+    char *pi = NULL;
+    char *po = NULL;
     FILE *fi;
     FILE *fo;
+    int i;
 
-    if (argc > 2) {
-        fi = fopen(argv[1], "r");
-        if (!fi) {
-            fprintf(stderr, "Error opening file '%s' for reading\n", argv[1]);
-            exit(-1);
+    if (argc < 2) {
+        usage();
+        exit(-1);
+    }
+
+    printf("PERS SERVER started with arguments:");
+    for (i = 0 ; i < argc; i++)
+        printf(" %s", argv[i]);
+    printf("\n");
+    while (-1 != (opt = getopt(argc, argv, "i:o:h"))) {
+        switch (opt) {
+            case 'h':
+                usage();
+                exit(-1);
+            case 'i':
+                pi = optarg;
+                break;
+            case 'o':
+                po = optarg;
+                break;
+            default:
+                printf("unsupported option received\n");
+                exit(-1);
         }
-        fo = fopen(argv[2], "w");
-        if (!fo) {
-            fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+    }
+
+    if (!pi) {
+        fprintf(stderr, "Input pipe not specified\n");
+        exit(-1);
+    }
+    
+    if (!po) {
+        fprintf(stderr, "Output pipe not specified\n");
+        exit(-1);
+    }
+
+    if (!strcmp(pi, "-")) {
+        fi = stdin;
+    }
+    else {
+        fi = fopen(pi, "r");
+        if (!fi) {
+            fprintf(stderr, "Error opening file '%s' for reading\n", pi);
             exit(-1);
         }
     }
-    else {
-        fi = stdin;
+
+    if (!strcmp(po, "-")) {
         fo = stdout;
+    }
+    else {
+        fo = fopen(po, "w");
+        if (!fo) {
+            fprintf(stderr, "Error opening file '%s' for writing\n", po);
+            exit(-1);
+        }
     }
 
     fprintf(stderr, "persfile server STARTS\n");
@@ -64,20 +118,24 @@ int main(int argc, char *argv[])
                 if (fprintf(fo, "%s\n", buf) <= 0) {
                     fprintf(stderr, "!!! FAILED SENDING MESSAGE !!!\n");
                 }
-                else {
-                    printf("%s\n", buf);
-                }
                 fflush(fo);
             }
             else {
                 fprintf(stderr, "!!! INVALID RESPONSE !!!\n");
             }
+            mpl_param_list_destroy(&req);
+
         }
         else {
             fprintf(stderr, "!!! INVALID REQUEST !!!\n");
         }
     }
 
+    if (fi != stdin)
+        fclose(fi);
+    if ((fo != stdout) && (fo != stderr))
+        fclose(fo);
+    mpl_param_system_deinit();
     fprintf(stderr, "persfile server QUITS\n");
     return 0;
 }
