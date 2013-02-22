@@ -10994,22 +10994,22 @@ static int tc_long_tagged_list(void)
     int myint2;
     mpl_list_t *param_list_p = NULL;
     mpl_param_element_t *param_elem_p;
-    const int tag_max = 10000;
 
-    for (i = 1; i <= tag_max; i++) {
+    for (i = 0; i <= MPL_MAX_ARGS; i++) {
         myint2 = i;
         (void) mpl_add_param_to_list_tag(&param_list_p, test_paramid_myint2, i, &myint2);
     }
-    if (mpl_list_len(param_list_p) == tag_max) {
+    printf("len = %d\n", mpl_list_len(param_list_p));
+    if (mpl_list_len(param_list_p) != MPL_MAX_ARGS) {
         return -1;
     }
     mpl_param_list_destroy(&param_list_p);
     
-    for (i = 1; i < tag_max; i++) {
+    for (i = 0; i < MPL_MAX_ARGS; i++) {
         myint2 = i;
         (void) mpl_add_param_to_list_tag(&param_list_p, test_paramid_myint2, i, &myint2);
     }
-    if (mpl_list_len(param_list_p) != (tag_max - 1)) {
+    if (mpl_list_len(param_list_p) != MPL_MAX_ARGS) {
         return -1;
     }
     param_elem_p = mpl_param_element_create(test_paramid_mylist1, param_list_p);
