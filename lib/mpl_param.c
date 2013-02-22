@@ -223,6 +223,8 @@ static int paramset_add(mpl_param_descr_set_t* paramset_p);
 
 /* MPL version upgrade */
 static int upgrade_param_descr_set(mpl_param_descr_set_t *param_descr_p);
+
+
 /****************************************************************************
  *
  * Public Functions
@@ -525,7 +527,7 @@ int
         return (-1);
     }
 
-    if ((element_p->tag < 0) || (element_p->tag > 99))
+    if ((element_p->tag < 0) || (element_p->tag >= MPL_MAX_ARGS))
     {
         MPL_DBG_TRACE_ERROR(E_MPL_INVALID_PARAMETER,("Illegal element tag: %d\n",
                                                      element_p->tag));
@@ -867,7 +869,7 @@ int
             return (-1);
         }
 
-        if ((tag < 0) || (tag > 99))
+        if ((tag < 0) || (tag >= MPL_MAX_ARGS))
         {
             MPL_DBG_TRACE_ERROR(E_MPL_INVALID_PARAMETER,
                                 ("Invalid tag number value: %d\n", tag));
@@ -1645,7 +1647,7 @@ mpl_param_element_t*
         return (NULL);
     }
 
-    if ((tag < 0) || (tag > 99))
+    if ((tag < 0) || (tag >= MPL_MAX_ARGS))
     {
         MPL_DBG_TRACE_ERROR(E_MPL_INVALID_PARAMETER,
                             ("Illegal tag value: %d\n", tag));
@@ -2201,7 +2203,7 @@ mpl_param_element_t*
 int
     mpl_param_element_set_tag(mpl_param_element_t* element_p, int tag)
 {
-    if ((tag < 0) || (tag > 99))
+    if ((tag < 0) || (tag >= MPL_MAX_ARGS))
     {
         MPL_DBG_TRACE_ERROR(E_MPL_INVALID_PARAMETER,
                             ("Illegal tag value: %d\n", tag));
@@ -2586,7 +2588,7 @@ mpl_list_t *mpl_param_list_unpack_internal(char *buf_p,
     mpl_param_element_t *param_elem_p;
     mpl_list_t *param_list_p=NULL;
     int numargs;
-    mpl_arg_t *args_p;
+    mpl_arg_t *args_p = NULL;
     char *tmp_buf_p;
 
     if (NULL == buf_p)
@@ -2597,18 +2599,6 @@ mpl_list_t *mpl_param_list_unpack_internal(char *buf_p,
             *has_error_p = true;
         return NULL;
     }
-
-    args_p = malloc(sizeof(mpl_arg_t)*MPL_MAX_ARGS);
-    if (NULL == args_p)
-    {
-        MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
-                            ("failed allocating memory\n"));
-        set_errno(E_MPL_FAILED_ALLOCATING_MEMORY);
-        if (has_error_p != NULL)
-            *has_error_p = true;
-        return NULL;
-    }
-    memset(args_p,0,sizeof(mpl_arg_t)*MPL_MAX_ARGS);
 
     tmp_buf_p = malloc(strlen(buf_p) + 1);
     if (NULL == tmp_buf_p)
@@ -2624,12 +2614,20 @@ mpl_list_t *mpl_param_list_unpack_internal(char *buf_p,
     strcpy(tmp_buf_p, buf_p);
 
     /* Split buffer into array of key, value string pointers */
-    numargs = mpl_get_args(args_p,
-                           MPL_MAX_ARGS,
-                           tmp_buf_p,
-                           '=',
-                           options_p->message_delimiter,
-                           '\\');
+    numargs = mpl_get_args_2(&args_p,
+                             0,
+                             tmp_buf_p,
+                             '=',
+                             options_p->message_delimiter,
+                             '\\');
+
+    if (numargs < 0) {
+        if (has_error_p != NULL)
+            *has_error_p = true;
+        free(args_p);
+        free(tmp_buf_p);
+        return NULL;
+    }
 
     /* Loop over arguments and make list of parameter elements */
     for (i = 0; i < numargs; i++)
@@ -7791,11 +7789,6 @@ size_t mpl_sizeof_param_value_addr(const mpl_param_descr2_t *descr_p)
 }
 
 
-
-
-
-
-
 /**
  * mpl_get_args()
  **/
@@ -7806,13 +7799,48 @@ int mpl_get_args(mpl_arg_t *args,
                  char delimiter,
                  char escape)
 {
+    assert(NULL != args);
+    return mpl_get_args_2(&args,
+                          args_len,
+                          buf,
+                          equal,
+                          delimiter,
+                          escape);
+}
+
+int mpl_get_args_2(mpl_arg_t **args_pp,
+                   int args_len,
+                   char *buf,
+                   char equal,
+                   char delimiter,
+                   char escape)
+{
     char *p;
     char *kp;
     char *vp;
     int i = 0;
     int buflen;
+    mpl_arg_t *args_p = NULL;
+    int externally_allocated = 0;
 
-    assert(NULL != args);
+    assert(args_pp);
+    if (args_len == 0) {
+        args_p = malloc(sizeof(mpl_arg_t)*100);
+        if (NULL == args_p)
+        {
+            MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
+                                ("failed allocating memory\n"));
+            set_errno(E_MPL_FAILED_ALLOCATING_MEMORY);
+            return -1;
+        }
+        memset(args_p,0,sizeof(mpl_arg_t)*100);
+        args_len = 100;
+    }
+    else {
+        assert(*args_pp != NULL);
+        args_p = *args_pp;
+        externally_allocated = 1;
+    }
 
     p = mpl_trimstring(buf, escape);
 
@@ -7842,7 +7870,7 @@ int mpl_get_args(mpl_arg_t *args,
         {
             *mid = '\0';
             kp = mpl_trimstring(p, escape);
-            args[i].key_p = kp;
+            args_p[i].key_p = kp;
             vp = mpl_trimstring(mid + 1, escape);
             if (*vp == '{')
             {
@@ -7854,12 +7882,12 @@ int mpl_get_args(mpl_arg_t *args,
                     end++;
                 *end = '\0';
             }
-            args[i].value_p = vp;
+            args_p[i].value_p = vp;
         }
         else
         {
-            args[i].key_p = mpl_trimstring(p, escape);
-            args[i].value_p = NULL;
+            args_p[i].key_p = mpl_trimstring(p, escape);
+            args_p[i].value_p = NULL;
         }
 
         while ((((end+1) - buf) < buflen) &&
@@ -7868,14 +7896,32 @@ int mpl_get_args(mpl_arg_t *args,
 
         p = end + 1;
         i++;
+
+        if ((i >= args_len) && !externally_allocated) {
+            args_p = realloc(args_p, sizeof(mpl_arg_t)*(args_len+100));
+            if (NULL == args_p)
+            {
+                MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
+                                    ("failed allocating memory\n"));
+                set_errno(E_MPL_FAILED_ALLOCATING_MEMORY);
+                return -1;
+            }
+            memset(args_p+args_len,0,sizeof(mpl_arg_t)*100);
+            args_len += 100;
+        }
     }
 
-    if ((p - buf) < buflen)
-        return -1;
-    else
-        return i;
-}
 
+    if ((p - buf) < buflen) {
+        free(args_p);
+        return -1;
+    }
+
+    if (!externally_allocated)
+        *args_pp = args_p;
+
+    return i;
+}
 
 /**
  * mpl_add_param_to_list_n_tag - add parameter to param list
@@ -8382,6 +8428,7 @@ void mpl_set_errno(int error_value)
  * Private Functions
  *
  ****************************************************************************/
+
 
 static void *allocate_and_copy_max(mpl_type_t mpl_type, uint64_t max)
 {

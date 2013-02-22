@@ -90,7 +90,7 @@ int mpl_file_read_params_bl(FILE* fp,
   char *file_pos_p;
   char *buf;
   int line = 0,numargs,i;
-  mpl_arg_t *args_p;
+  mpl_arg_t *args_p = NULL;
   mpl_param_element_t* unpackparam = NULL;
   int res;
 
@@ -117,17 +117,6 @@ int mpl_file_read_params_bl(FILE* fp,
     return 0;
   }
 
-  args_p = malloc(sizeof(mpl_arg_t)*MPL_MAX_ARGS);
-  if(NULL == args_p)
-  {
-    MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
-                        ("failed allocating memory!\n"));
-    mpl_set_errno(E_MPL_FAILED_ALLOCATING_MEMORY);
-    free(file_buf_p);
-    return -1;
-  }
-  memset(args_p,0,sizeof(mpl_arg_t)*MPL_MAX_ARGS);
-
   buf = malloc(MPL_FILE_MAXLINE);
   if(NULL == buf)
   {
@@ -145,7 +134,16 @@ int mpl_file_read_params_bl(FILE* fp,
                                     &file_pos_p,
                                     &line)) > 0)
   {
-    numargs = mpl_get_args(args_p, MPL_MAX_ARGS, buf, '=', ';', '\\');
+    numargs = mpl_get_args_2(&args_p, 0, buf, '=', ';', '\\');
+    if (numargs < 0) {
+        MPL_DBG_TRACE_ERROR(E_MPL_FAILED_ALLOCATING_MEMORY,
+                            ("mpl_get_args failed\n"));
+        mpl_set_errno(E_MPL_FAILED_OPERATION);
+        free(file_buf_p);
+        free(args_p);
+        return -1;
+    }
+    
     for(i=0;i<numargs;i++)
     {
       if (mpl_param_unpack_param_set(args_p[i].key_p,
@@ -168,10 +166,10 @@ int mpl_file_read_params_bl(FILE* fp,
       }
       mpl_list_add(param_list_pp, &unpackparam->list_entry);
     }
+    free(args_p);
   }
 
   free(file_buf_p);
-  free(args_p);
   free(buf);
 
   if (res < 0)

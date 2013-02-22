@@ -438,7 +438,7 @@ extern "C" {
  *   </ul>
  * <li> Tagged parameters
  *   <ul>
- *     <li> \b tag \b 56 (legal values 0-99)
+ *     <li> \b tag \b 56 (legal values 0-9999)
  *       <ul>
  *         <li> value: 123
  *         <li> packed: 'my_pset.my_int_param[56]=123'
@@ -1119,7 +1119,7 @@ typedef enum
 #define min_limit_bag   0
 #define min_limit_addr 0
 
-#define MPL_MAX_ARGS 100
+#define MPL_MAX_ARGS 10000
 #define MPL_PARAMID_PREFIX_MAXLEN 20
 
 #define MPL_PARAMID_TYPE_BITS 14       /*  0 reserved (means "invalid" or "base"), range 1-16384 */
@@ -1592,7 +1592,7 @@ typedef uint32_t mpl_param_element_id_t;
  * Listable parameter element
  *
  *     id         parameter identifier
- *     tag        tag of this parameter, 1-99 (used to identify specific
+ *     tag        tag of this parameter, 1-9999 (used to identify specific
  *                instances in a list of parameters of the same type (id))
  *                Note: Use of the tag is optional, default value is 0 (means
  *                no tag).
@@ -4319,6 +4319,32 @@ int mpl_get_args(mpl_arg_t *args,
                  char delimiter,
                  char escape);
 
+
+/**
+ * @ingroup MPL_PARAM
+ * mpl_get_args_2
+ *
+ * Split argument-buffer into array of key/value pairs, version 2
+ * If args_len == 0, array is allocated internally
+ *
+ * @param    args_pp      Pointer to array of key/value pairs
+ * @param    args_len     Length of array (0 means allocate internally)
+ * @param    buf          Null-terminated buffer containing the original arguments
+ *                   Note that the buffer is changed.
+ * @param    equal        Character used as "equal sign" between key and value
+ *                   (argument format could be key=value)
+ * @param    delimiter    Character used as delimiter between arguments
+ * @param    escape       Character used as escape
+ *
+ * @return Number of key/value pairs found or -1 on error.
+ *
+ */
+int mpl_get_args_2(mpl_arg_t **args_pp,
+                   int args_len,
+                   char *buf,
+                   char equal,
+                   char delimiter,
+                   char escape);
 
 /**
  * @ingroup MPL_PARAM

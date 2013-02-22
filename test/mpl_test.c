@@ -73,7 +73,7 @@ static int numberOfFail = 0;
 #endif
 
 const int mpl_test_min = 1;
-const int mpl_test_max = 87;
+const int mpl_test_max = 88;
 
 char *buf=NULL;
 int buflen=0;
@@ -7672,7 +7672,7 @@ static int tc_param_tag(void)
   (void) mpl_add_param_to_list_tag(&orig_list_p, test_paramid_myuint32, 2, &myuint32_3);
   (void) mpl_add_param_to_list(&orig_list_p, test_paramid_myuint16, &myuint16);
   (void) mpl_add_param_to_list(&orig_list_p, test_paramid_mystring, &mystring);
-  (void) mpl_add_param_to_list_tag(&orig_list_p, test_paramid_myuint32, 77, &myuint32_4);
+  (void) mpl_add_param_to_list_tag(&orig_list_p, test_paramid_myuint32, 9999, &myuint32_4);
   (void) mpl_add_param_to_list(&orig_list_p, test_paramid_mybool, &mybool);
   (void) mpl_add_param_to_list(&orig_list_p, test_paramid_mybool8, &mybool8);
   (void) mpl_add_param_to_list_tag(&orig_list_p, test_paramid_myuint32, 33, &myuint32_5);
@@ -7714,7 +7714,7 @@ static int tc_param_tag(void)
   free(buf);
 
   tag_list_p = mpl_param_list_find_all_tag(test_paramid_myuint32,
-                                           77,
+                                           9999,
                                            orig_list_p);
 
   if (tag_list_p == NULL)
@@ -7734,7 +7734,7 @@ static int tc_param_tag(void)
     return -1;
   }
 
-  if (mpl_param_list_param_count_tag(test_paramid_myuint32, 77, orig_list_p) != 1) {
+  if (mpl_param_list_param_count_tag(test_paramid_myuint32, 9999, orig_list_p) != 1) {
     printf("mpl_param_list_find_all_tag() (3)\n");
     mpl_param_list_destroy(&orig_list_p);
     mpl_param_list_destroy(&param_list_p);
@@ -7753,14 +7753,14 @@ static int tc_param_tag(void)
   mpl_param_list_destroy(&tag_list_p);
   mpl_param_list_destroy(&orig_list_p);
 
-  param_elem_p = mpl_param_list_find_tag(MPL_PARAM_ID_UNDEFINED, 77, param_list_p);
+  param_elem_p = mpl_param_list_find_tag(MPL_PARAM_ID_UNDEFINED, 9999, param_list_p);
   if ((param_elem_p->id != test_paramid_myuint32) || (*(int*)param_elem_p->value_p != myuint32_4))
   {
     printf("Unexpected list element\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
-  printf("Tag 77 match: %d\n", *(int*)param_elem_p->value_p);
+  printf("Tag 9999 match: %d\n", *(int*)param_elem_p->value_p);
 
   param_elem_p = mpl_param_list_find_tag(test_paramid_myuint32, 2, param_list_p);
   if (*(int*)param_elem_p->value_p != myuint32_3)
@@ -7798,18 +7798,18 @@ static int tc_param_tag(void)
   }
   printf("Tag 33 match: %d\n", *(int*)param_elem_p->value_p);
 
-  param_elem_p = mpl_param_list_find_tag(test_paramid_myuint32, 77, param_list_p);
+  param_elem_p = mpl_param_list_find_tag(test_paramid_myuint32, 9999, param_list_p);
   if (*(int*)param_elem_p->value_p != myuint32_4)
   {
     printf("Unexpected list element\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
-  printf("Tag 77 match: %d\n", *(int*)param_elem_p->value_p);
+  printf("Tag 9999 match: %d\n", *(int*)param_elem_p->value_p);
 
-  if (mpl_param_element_get_tag(param_elem_p) != 77)
+  if (mpl_param_element_get_tag(param_elem_p) != 9999)
   {
-    printf("Unexpected tag value 100\n");
+    printf("Unexpected tag value\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
@@ -7817,29 +7817,29 @@ static int tc_param_tag(void)
   mpl_param_element_set_tag(param_elem_p, 55);
   if (mpl_param_element_get_tag(param_elem_p) != 55)
   {
-    printf("Unexpected tag value 100\n");
+    printf("Unexpected tag value\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
 
-  if (mpl_add_param_to_list_tag(&param_list_p, test_paramid_myuint32, 100, &myuint32_5) == 0)
+  if (mpl_add_param_to_list_tag(&param_list_p, test_paramid_myuint32, 10000, &myuint32_5) == 0)
   {
-    printf("Unexpected success tag value 100\n");
+    printf("Unexpected success tag value 10000\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
 
   if (mpl_add_param_to_list_tag(&param_list_p, test_paramid_myuint32, -1, &myuint32_5) == 0)
   {
-    printf("Unexpected success tag value 100\n");
+    printf("Unexpected success tag value -1\n");
     mpl_param_list_destroy(&param_list_p);
     return -1;
   }
 
   mpl_param_list_destroy(&param_list_p);
 
-  buf = malloc(strlen("test.myint[99]=5") + 1);
-  strcpy(buf, "test.myint[99]=5");
+  buf = malloc(strlen("test.myint[9999]=5") + 1);
+  strcpy(buf, "test.myint[9999]=5");
   param_list_p = mpl_param_list_unpack(buf);
   free(buf);
 
@@ -7851,8 +7851,8 @@ static int tc_param_tag(void)
 
   mpl_param_list_destroy(&param_list_p);
 
-  buf = malloc(strlen("test.myint[100]=5") + 1);
-  strcpy(buf, "test.myint[100]=5");
+  buf = malloc(strlen("test.myint[10000]=5") + 1);
+  strcpy(buf, "test.myint[10000]=5");
   param_list_p = mpl_param_list_unpack(buf);
   free(buf);
 
@@ -7889,7 +7889,7 @@ static int tc_param_tag(void)
 
   packparam.id = test_paramid_myint;
   packparam.value_p = &myint;
-  packparam.tag = 100;
+  packparam.tag = 10000;
 
   if (mpl_param_pack(&packparam, NULL, 0) != -1)
   {
@@ -9451,7 +9451,7 @@ int tc_misc_invalid(void)
 
     packparam.id = test_paramid_myint;
     packparam.value_p = &myint;
-    if (mpl_param_element_set_tag(&packparam, 100) == 0)
+    if (mpl_param_element_set_tag(&packparam, 10000) == 0)
     {
         printf("mpl_param_element_set_tag()\n");
         return -1;
@@ -10988,6 +10988,40 @@ static int tc_upgrade(void)
 
 }
 
+static int tc_long_tagged_list(void)
+{
+    int i;
+    int myint2;
+    mpl_list_t *param_list_p = NULL;
+    mpl_param_element_t *param_elem_p;
+    const int tag_max = 10000;
+
+    for (i = 1; i <= tag_max; i++) {
+        myint2 = i;
+        (void) mpl_add_param_to_list_tag(&param_list_p, test_paramid_myint2, i, &myint2);
+    }
+    if (mpl_list_len(param_list_p) == tag_max) {
+        return -1;
+    }
+    mpl_param_list_destroy(&param_list_p);
+    
+    for (i = 1; i < tag_max; i++) {
+        myint2 = i;
+        (void) mpl_add_param_to_list_tag(&param_list_p, test_paramid_myint2, i, &myint2);
+    }
+    if (mpl_list_len(param_list_p) != (tag_max - 1)) {
+        return -1;
+    }
+    param_elem_p = mpl_param_element_create(test_paramid_mylist1, param_list_p);
+    if (pack_unpack_one(param_elem_p, true, 0) < 0)
+        return -1;
+
+    mpl_param_element_destroy(param_elem_p);
+    mpl_param_list_destroy(&param_list_p);
+    return 0;
+}
+
+
 void mpl_test(int test_start, int test_stop)
 {
   int testcase;
@@ -11269,6 +11303,9 @@ void mpl_test(int test_start, int test_stop)
       break;
     case 87:
       result=tc_byte_stuffing6();
+      break;
+    case 88:
+      result=tc_long_tagged_list();
       break;
     default:
       printf("\n** unknown TC **\n");
