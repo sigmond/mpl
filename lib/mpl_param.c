@@ -910,9 +910,27 @@ int
         int field_id = -1;
         int eff_param_id;
         mpl_param_descr_set_t *eff_param_descr_p;
+        char *p;
+        const char *n;
+        int i;
+        int found;
+        
+        p = param_descr_p->array[id].name;
+        n = name_str;
+        found = 0;
+        i = 0;
+        do {
+            if (*p != *n)
+                break;
+            p++;
+            if ((++i == name_strlen) && !*p) {
+                found = 1;
+                break;
+            }
+            n++;
+        } while (*p && (i < name_strlen));
 
-        if ((strlen(param_descr_p->array[id].name) == name_strlen) &&
-            (0 == strncmp(param_descr_p->array[id].name, name_str, name_strlen)))
+        if (found)
         {
             if (field_strlen != 0)
             {
