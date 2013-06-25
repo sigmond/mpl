@@ -71,6 +71,26 @@ int mpl_mutex_destroy(mpl_mutex_t *mutex_p);
 
 #define mpl_get_current_thread_id CURRENT_PROC
 
+#elif defined(MPL_USE_FREERTOS_MUTEX)
+
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "task.h"
+
+#define mpl_mutex_t void
+#define mpl_thread_t void *
+
+#define mpl_threads_init()
+#define mpl_threads_deinit()
+
+int mpl_mutex_init(mpl_mutex_t **mutex_pp);
+int mpl_mutex_destroy(mpl_mutex_t *mutex_p);
+
+#define mpl_mutex_lock(mutex_p) xSemaphoreTake(mutex_p, portMAX_DELAY)
+#define mpl_mutex_unlock(mutex_p) xSemaphoreGive(mutex_p)
+
+#define mpl_get_current_thread_id xTaskGetCurrentTaskHandle
+
 #else
 
 #include "apr_thread_proc.h"

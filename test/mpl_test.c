@@ -10999,7 +10999,7 @@ static int tc_long_tagged_list(void)
         myint2 = i;
         (void) mpl_add_param_to_list_tag(&param_list_p, test_paramid_myint2, i, &myint2);
     }
-    printf("len = %d\n", mpl_list_len(param_list_p));
+    printf("len = %zu\n", mpl_list_len(param_list_p));
     if (mpl_list_len(param_list_p) != MPL_MAX_ARGS) {
         return -1;
     }

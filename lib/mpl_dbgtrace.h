@@ -48,6 +48,9 @@
 
 extern const char *MPL_ErrorCodeNames[];
 
+#ifdef NO_MPL_DBG_TRACE_ERROR
+#define MPL_DBG_TRACE_ERROR(E_CODE,E_INFO) (void)0
+#else
 #define MPL_DBG_TRACE_ERROR(E_CODE,E_INFO)                              \
   do                                                                    \
   {                                                                     \
@@ -59,6 +62,7 @@ extern const char *MPL_ErrorCodeNames[];
            file_p!=NULL?file_p:"",__LINE__,MPL_ErrorCodeNames[E_CODE]); \
     printf E_INFO;                                                      \
   } while(0)
+#endif
 
 #define MPL_DBG_ERROR_CODES                                 \
   /* 0  */ MPL_ERROR_CODE_ELEMENT(NO_ERROR) \

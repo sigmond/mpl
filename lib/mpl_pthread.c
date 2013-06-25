@@ -70,6 +70,24 @@ int mpl_mutex_destroy(mpl_mutex_t *mutex_p)
     return 0;
 }
 
+#elif defined(MPL_USE_FREERTOS_MUTEX)
+
+int mpl_mutex_init(mpl_mutex_t **mutex_pp)
+{
+    *mutex_pp = vSemaphoreCreateMutex();
+    
+    if (*mutex_pp == NULL)
+        return -1;
+
+    return 0;
+}
+
+int mpl_mutex_destroy(mpl_mutex_t *mutex_p)
+{
+    vSemaphoreDelete(mutex_p);
+    return 0;
+}
+
 #else
 
 apr_pool_t *mpl_global_pool_p = NULL;

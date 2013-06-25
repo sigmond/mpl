@@ -4217,7 +4217,7 @@ int mpl_pack_param_value_sint32(const void* param_value_p,
     assert(NULL != param_value_p);
     MPL_IDENTIFIER_NOT_USED(descr_p);
     MPL_IDENTIFIER_NOT_USED(options_p)
-        return snprintf(buf, buflen, "=%d", *(sint32_t*)param_value_p);
+        return snprintf(buf, buflen, "=%" PRId32, *(sint32_t*)param_value_p);
 }
 
 /**
@@ -4683,7 +4683,7 @@ int mpl_pack_param_value_uint16(const void* param_value_p,
     assert(NULL != param_value_p);
     MPL_IDENTIFIER_NOT_USED(descr_p);
     MPL_IDENTIFIER_NOT_USED(options_p)
-        return snprintf(buf, buflen, "=0x%" PRIx32, *(uint16_t*)param_value_p);
+        return snprintf(buf, buflen, "=0x%" PRIx16, *(uint16_t*)param_value_p);
 }
 
 /**
@@ -6204,7 +6204,7 @@ int mpl_pack_param_value_uint32_array(const void* param_value_p,
 
         a_p = param_value_p;
 
-    len = snprintf(buf, buflen, "=%08x", a_p->len);
+    len = snprintf(buf, buflen, "=%08" PRIx32, a_p->len);
     if ((int)buflen > len)
         buf += len;
     total_len = len;
@@ -6215,7 +6215,7 @@ int mpl_pack_param_value_uint32_array(const void* param_value_p,
 
         left = (int)buflen > total_len ? (int)buflen - total_len : 0;
 
-        len = snprintf(buf, left, "%08x", a_p->arr_p[i]);
+        len = snprintf(buf, left, "%08" PRIx32, a_p->arr_p[i]);
         if (left > len)
             buf += len;
         total_len += len;
